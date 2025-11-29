@@ -1,0 +1,43 @@
+/* ================================================= */
+/* 您可以將所有的自訂樣式放在這裡 */
+/* ================================================= */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0b0f19; /* 接近您截圖中的深藍背景色 */
+    color: #ffffff;
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    padding: 20px;
+    max-width: 900px;
+    width: 90%;
+}
+
+h1 {
+    font-size: 3em;
+    margin-bottom: 0.5em;
+}
+
+p {
+    font-size: 1.2em;
+    line-height: 1.6;
+}
+
+/* 簡單的 RWD 調整，確保在小螢幕上文字不會過大 */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2em;
+    }
+    p {
+        font-size: 1em;
+    }
+}
