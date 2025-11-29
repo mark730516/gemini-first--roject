@@ -14,7 +14,7 @@
             font-family: 'Arial', 'Microsoft JhengHei', sans-serif;
             margin: 0;
             padding: 0;
-            /* 使用 Flexbox 讓內容垂直和水平置中，增加 RWD 彈性 */
+            /* 使用 Flexbox 讓內容垂直和水平置中 */
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -47,6 +47,31 @@
             opacity: 0.6;
             margin-top: 50px;
         }
+        
+        /*
+        ===================================================================
+        這裡可以添加您新命名的檔案連結 (請務必使用新的英文檔名)
+        ===================================================================
+        */
+        .link-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 30px;
+        }
+
+        .link-list a {
+            color: #4CAF50; /* 綠色連結，易於辨識 */
+            text-decoration: none;
+            font-size: 1.1em;
+            display: block;
+            padding: 8px 0;
+            transition: color 0.3s;
+        }
+
+        .link-list a:hover {
+            color: #66BB6A;
+            text-decoration: underline;
+        }
 
         /* 響應式調整：適用於手機 */
         @media (max-width: 768px) {
@@ -64,6 +89,12 @@
         <h1>知識穹頂 V2.0</h1>
         <p class="subtitle">領域化分組儀表板 • 預設顯示各領域最新 3 專題</p>
 
+        <ul class="link-list">
+            <li><a href="2025-data-vis-status.html">2025 年數據視覺化現況</a></li>
+            <li><a href="hr-digital-center-plan.html">HR 數位媒體體驗中心 - 全方位建置規劃書</a></li>
+            <li><a href="tsmc-apts-visual-strategy-list.html">TSMC APTS 全領域視覺戰略總表</a></li>
+            </ul>
+        
         <p class="footer-text">
             設計原則：聚焦領域、即時內容、彈性編程。
         </p>
