@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDIO X | MEMS 探針卡接觸模擬器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #1a1a1a; color: white; font-family: 'Noto Sans TC', sans-serif; }
+        #ui-container {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.9);
+            padding: 20px 30px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+        input[type=range] {
+            width: 100%;
+            margin: 20px 0;
+            cursor: pointer;
+            accent-color: #06b6d4;
+        }
+        .status-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .status-safe { color: #60a5fa; text-shadow: 0 0 5px rgba(96, 165, 250, 0.5); }
+        .status-contact { color: #f59e0b; text-shadow: 0 0 10px rgba(245, 158, 11, 0.8); }
+        .status-overdrive { color: #ef4444; text-shadow: 0 0 15px rgba(239, 68, 68, 0.8); }
+        
+        #tech-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: right;
+            font-family: 'Orbitron', sans-serif;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="tech-overlay">
+        <h2 class="text-2xl font-bold text-cyan-500">MEMS PROBE ARRAY</h2>
+        <p class="text-xs text-slate-400">TSMC BACKEND TESTING VISUALIZATION</p>
+        <div class="mt-2 text-xs text-slate-500">
+            PITCH: 40um<br>
+            TYPE: VERTICAL MEMS
+        </div>
+    </div>
+
+    <div id="ui-container">
+        <h2 class="text-xl font-bold mb-1 text-white">Touchdown 接觸測試</h2>
+        <p class="text-sm text-slate-400 mb-4">拖動滑桿，模擬探針卡下壓接觸晶圓的瞬間</p>
+        
+        <div class="flex justify-between text-xs text-slate-300 font-mono">
+            <span>▲ UP (懸停)</span>
+            <span>▼ DOWN (接觸)</span>
+        </div>
+        <input type="range" id="driveSlider" min="0" max="100" value="0" step="0.5">
+        
+        <div class="mt-2 flex justify-between items-center px-4">
+            <span class="text-xs text-slate-500 font-mono">Z-AXIS POSITION</span>
+            <span id="statusValue" class="status-label status-safe">HOVERING</span>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // Scene Setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a1a1a); // 提亮背景
+        scene.fog = new THREE.FogExp2(0x1a1a1a, 0.02); // 調整霧氣
+
+        // Camera (Macro Lens Perspective)
+        const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(6, 3, 6); // 稍微調高一點視角
+        camera.lookAt(0, 0.5, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2; // 增加整體曝光
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxPolarAngle = Math.PI / 2 - 0.05; // Prevent going below wafer
+        
+        // --- Materials ---
+        
+        // Wafer Surface (Mirror like)
+        const waferMat = new THREE.MeshStandardMaterial({
+            color: 0x444444, // 提亮
+            roughness: 0.1,
+            metalness: 0.8,
+        });
+
+        // Contact Pads (Micro Bumps - Gold)
+        const padMat = new THREE.MeshStandardMaterial({
+            color: 0xffd700,
+            roughness: 0.3,
+            metalness: 1.0,
+            emissive: 0xffaa00,
+            emissiveIntensity: 0.2
+        });
+
+        // Probe Needles (High Tech Metal)
+        const probeMat = new THREE.MeshStandardMaterial({
+            color: 0xdddddd, // 更亮的金屬
+            roughness: 0.2,
+            metalness: 0.8,
+        });
+
+        // Probe Holder (Ceramic/Space material)
+        const holderMat = new THREE.MeshStandardMaterial({
+            color: 0x333333, // 提亮，不要死黑
+            roughness: 0.8,
+            metalness: 0.2
+        });
+
+        // --- Geometry Construction ---
+
+        // 1. The Wafer (Base)
+        const waferGeo = new THREE.CylinderGeometry(10, 10, 0.5, 64);
+        const wafer = new THREE.Mesh(waferGeo, waferMat);
+        wafer.position.y = -0.25;
+        wafer.receiveShadow = true;
+        scene.add(wafer);
+
+        // 2. The Probe Card Assembly (Moveable Group)
+        const probeGroup = new THREE.Group();
+        scene.add(probeGroup);
+
+        // The main block holding probes
+        const holderGeo = new THREE.BoxGeometry(4, 0.5, 4);
+        const holder = new THREE.Mesh(holderGeo, holderMat);
+        holder.position.y = 2.0; // Top of the needles
+        holder.castShadow = true;
+        probeGroup.add(holder);
+
+        // 3. Generating the "Forest" (Probes & Pads)
+        const gridSize = 8; // 8x8 array
+        const spacing = 0.4;
+        const probeHeight = 1.5;
+        const probeThickness = 0.04;
+
+        const probeGeo = new THREE.BoxGeometry(probeThickness, probeHeight, probeThickness);
+        const padGeo = new THREE.CylinderGeometry(0.1, 0.1, 0.05, 16);
+
+        // Group for just the needles to animate distinct parts if needed
+        const needles = [];
+
+        for(let x = -gridSize/2; x < gridSize/2; x++) {
+            for(let z = -gridSize/2; z < gridSize/2; z++) {
+                const posX = x * spacing + spacing/2;
+                const posZ = z * spacing + spacing/2;
+
+                // A. Create Pad on Wafer (Static)
+                const pad = new THREE.Mesh(padGeo, padMat);
+                pad.position.set(posX, 0.025, posZ); // Slightly above wafer
+                pad.receiveShadow = true;
+                scene.add(pad);
+
+                // B. Create Probe Needle (Attached to Probe Group)
+                // Geometry is centered, so we move it down relative to holder
+                const probe = new THREE.Mesh(probeGeo, probeMat);
+                // Initial position relative to the Group (0,0,0 is ground level ideally for logic)
+                // Let's position them so the tip is at y=0 when group is at y=0
+                probe.position.set(posX, 2.0 - (probeHeight/2), posZ); 
+                probe.castShadow = true;
+                
+                // Add a "tip" taper visually
+                const tipGeo = new THREE.ConeGeometry(probeThickness, 0.2, 4);
+                const tip = new THREE.Mesh(tipGeo, probeMat);
+                tip.rotation.x = Math.PI; // Point down
+                tip.position.y = -probeHeight/2 - 0.1;
+                probe.add(tip);
+
+                probeGroup.add(probe);
+                needles.push(probe);
+            }
+        }
+
+        // --- Lighting Setup (Brightened) ---
+
+        // Ambient (大幅提亮)
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        // Top Hemisphere Light (模擬無塵室頂光)
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
+        hemiLight.position.set(0, 20, 0);
+        scene.add(hemiLight);
+
+        // 1. Key Light (Amber - Grazing the pads)
+        const keyLight = new THREE.SpotLight(0xffaa00, 800); // 增強強度
+        keyLight.position.set(8, 3, 8);
+        keyLight.angle = Math.PI / 6;
+        keyLight.penumbra = 0.5;
+        keyLight.castShadow = true;
+        keyLight.shadow.mapSize.width = 2048;
+        keyLight.shadow.mapSize.height = 2048;
+        keyLight.shadow.bias = -0.0001;
+        scene.add(keyLight);
+
+        // 2. Rim Light (Cyan - Cyberpunk feel on needles)
+        const rimLight = new THREE.SpotLight(0x00ffff, 500); // 增強強度
+        rimLight.position.set(-5, 5, -5);
+        rimLight.lookAt(0, 1, 0);
+        scene.add(rimLight);
+
+        // 3. Fill Light (Soft Blue)
+        const fillLight = new THREE.PointLight(0x0000ff, 100, 20);
+        fillLight.position.set(0, 3, 0);
+        scene.add(fillLight);
+
+        // --- Animation Logic ---
+
+        const slider = document.getElementById('driveSlider');
+        const statusLabel = document.getElementById('statusValue');
+        
+        // Define movement limits
+        const startY = 1.0; // High position
+        const contactY = 0.2; // Point where tip touches pad (approx)
+        const overdriveY = 0.05; // Pushing into the pad (flexing)
+
+        function updatePhysics() {
+            const val = parseFloat(slider.value) / 100;
+            
+            // Calculate current Y position of the Probe Group
+            // Lerp from startY down to overdriveY
+            const currentY = startY - (val * (startY - overdriveY));
+            
+            // Move the whole card assembly
+            // Adjusting logic: 
+            // If val = 0, y = startY. 
+            // If val = 1, y = overdriveY.
+            // We need to shift the whole group. 
+            // Initially, tips are at roughly y=1.2 (2.0 - 0.75 - 0.2). 
+            // Let's calibrate:
+            // Holder is at Y. Needles go down 1.5/2 + 0.2 = 0.95 from holder center.
+            // Tip Y = Holder Y - 0.95.
+            // Target Tip Y = 0.05 (Pad height).
+            // So Contact Holder Y = 0.05 + 0.95 = 1.0.
+            
+            const liftHeight = 0.8; // How high it lifts
+            const baseHolderY = 1.0; // Y where contact happens
+            const overdriveAmount = 0.1; // How much further down it goes
+            
+            let targetHolderY;
+            
+            // Phase 1: Approach (0% - 80% of slider)
+            if (val < 0.8) {
+                const approachProgress = val / 0.8;
+                targetHolderY = (baseHolderY + liftHeight) - (approachProgress * liftHeight);
+                
+                statusLabel.innerText = "HOVERING";
+                statusLabel.className = "status-label status-safe";
+                
+                // Reset Probe Flex
+                needles.forEach(n => {
+                    n.rotation.z = 0;
+                    n.rotation.x = 0;
+                });
+            } 
+            // Phase 2: Contact & Overdrive (80% - 100% of slider)
+            else {
+                const odProgress = (val - 0.8) / 0.2;
+                targetHolderY = baseHolderY - (odProgress * overdriveAmount);
+                
+                if (odProgress > 0.5) {
+                    statusLabel.innerText = "OVERDRIVE (SCRUB)";
+                    statusLabel.className = "status-label status-overdrive";
+                } else {
+                    statusLabel.innerText = "CONTACT";
+                    statusLabel.className = "status-label status-contact";
+                }
+
+                // Simulate Probe Flexing (Bending outwards)
+                // Simple visual trick: rotate them slightly away from center
+                const maxBend = 0.05; // Radians
+                needles.forEach(n => {
+                    // Bend logic based on position relative to center
+                    const dist = Math.sqrt(n.position.x**2 + n.position.z**2);
+                    if (dist > 0.1) { // Don't bend center ones as much
+                        const bend = maxBend * odProgress;
+                        // Calculate angle to center
+                        const angle = Math.atan2(n.position.z, n.position.x);
+                        // Rotate perpendicular to radius? Or just tilt out?
+                        // Let's just tilt x/z based on quadrant for simplicity visual
+                        n.rotation.z = Math.cos(angle) * bend * -1; // Bend out
+                        n.rotation.x = Math.sin(angle) * bend; 
+                    }
+                });
+            }
+
+            probeGroup.position.y = targetHolderY - 2.0; // Offset because we built it at y=2
+        }
+
+        slider.addEventListener('input', updatePhysics);
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        updatePhysics();
+        animate();
+
+    </script>
+</body>
+</html>
