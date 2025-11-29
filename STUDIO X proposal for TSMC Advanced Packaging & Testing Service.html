@@ -1,0 +1,415 @@
+<!--
+Source Material Integration (CRITICAL PROCESS)
+
+1.  Analyze Material:
+    * Source: `tsmc_backend_proposal.md` & `tsmc_testing_flashpoints.md` (Updated)
+    * Topic: STUDIO X proposal for TSMC Advanced Packaging & Testing Service (APTS).
+    * Audience: TSMC APTS / Testing Operation / Recruitment Dept. Tone: Professional, High-Tech, Innovative.
+    * Core Themes: 4 Key Services solving specific pain points for backend operations.
+    * Key Data:
+        1.  Service 1: Macro Cinematography (Pain: Invisible details. Solution: Laowa 2X, Neewer Slider).
+        2.  Service 2: Smart Factory Cinematic (Pain: Boring CCTV style. Solution: Cinema Rig, Slow-mo).
+        3.  Service 3: Engineer Reality Project (Pain: Misconception of low-end work. Solution: EFP Interview).
+        4.  Service 4: Zero-Defect Visualization (Pain: SLT screens are confidential. Solution: AOI Light Simulation).
+        5.  Strategic Value: Image Rebranding, Talent Attraction, Tech Marketing.
+
+2.  Plan Narrative & Structure:
+    1.  Hook: "STUDIO X: 為先進封裝工藝注入電影靈魂"
+    2.  Intro: Addressing the gap between public perception and high-tech reality of backend ops.
+    3.  Section 1: 戰略背景分析 (Strategic Context)
+    4.  Section 2: 四大核心服務方案 (The 4 Solutions - Main visual focus)
+    5.  Section 3: 獨家優勢 (Unique Value Proposition)
+    6.  Conclusion/CTA: "您的視覺戰略夥伴"
+
+3.  Select Optimal Visualizations (Strictly NO SVG, NO MERMAID):
+    * Charts: Chart.js (Radar, Bar, Pie) to visualize qualitative improvements.
+    * Diagrams: HTML/Tailwind structure for process flows.
+    * Color Palette: "Cyberpunk Industrial" - Dark mode base (#0F172A) with Neon Cyan (#06B6D4) and Amber (#F59E0B) accents, matching the "Cinematic Industrial" aesthetic discussed previously.
+-->
+<!DOCTYPE html>
+<html lang="zh-Hant" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDIO X | 台積電先進封裝影音解決方案</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Updated Plotly link -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #0B1120; /* Darker Slate */
+            color: #E2E8F0;
+        }
+        .font-tech {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(6, 182, 212, 0.5);
+            box-shadow: 0 10px 30px -10px rgba(6, 182, 212, 0.3);
+        }
+        .glow-text {
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-white">
+                STUDIO <span class="text-cyan-400 font-tech">X</span>
+            </div>
+            <div class="hidden md:flex space-x-8 text-sm font-medium">
+                <a href="#context" class="text-slate-400 hover:text-cyan-400 transition-colors">戰略背景</a>
+                <a href="#solutions" class="text-slate-400 hover:text-cyan-400 transition-colors">核心方案</a>
+                <a href="#advantage" class="text-slate-400 hover:text-cyan-400 transition-colors">獨家優勢</a>
+                <a href="#contact" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-full transition-colors">預約提案</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-24">
+        <!-- Hero Section -->
+        <section class="py-20 md:py-32 relative overflow-hidden">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-cyan-900/20 to-transparent pointer-events-none"></div>
+            <div class="container mx-auto px-6 text-center relative z-10">
+                <div class="inline-block px-3 py-1 mb-6 border border-cyan-500/50 rounded-full text-cyan-400 text-xs font-tech tracking-widest">
+                    TSMC APTS VISUAL STRATEGY
+                </div>
+                <h1 class="text-4xl md:text-6xl font-black text-white leading-tight mb-6">
+                    為先進封裝工藝
+                    <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-amber-400 glow-text">注入電影靈魂</span>
+                </h1>
+                <p class="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto">
+                    針對台積電「先進封裝與測試營運處」量身打造。我們運用微距工藝攝影與電影級製作，將後段製程重塑為「奈米級建築工藝」，精準解決人才招募與技術行銷痛點。
+                </p>
+            </div>
+        </section>
+
+        <!-- Strategic Context -->
+        <section id="context" class="py-20 bg-slate-900">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold text-white mb-6">戰略背景分析</h2>
+                        <p class="text-slate-400 mb-6">
+                            後段製程已是 AI 時代的決勝關鍵 (CoWoS, SoIC)。然而，外界認知仍停留在傳統印象。STUDIO X 協助您達成三大戰略目標：
+                        </p>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-900/50 flex items-center justify-center text-cyan-400 mt-1">1</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-white">形象重塑</h3>
+                                    <p class="text-sm text-slate-500">從「勞力密集」升級為「奈米工藝」。</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-amber-900/50 flex items-center justify-center text-amber-400 mt-1">2</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-white">人才磁吸</h3>
+                                    <p class="text-sm text-slate-500">吸引對精密機械、材料科學有熱情的頂尖工程師。</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-purple-900/50 flex items-center justify-center text-purple-400 mt-1">3</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-white">技術行銷</h3>
+                                    <p class="text-sm text-slate-500">向國際客戶展現封測的高可靠度與精密度。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3 class="text-lg font-bold text-slate-300 mb-4 text-center">視覺影響力升級預測</h3>
+                        <div class="chart-container h-64 max-h-64">
+                            <canvas id="impactChart"></canvas>
+                        </div>
+                        <p class="text-center text-xs text-slate-500 mt-4">圖表：傳統拍攝 vs 電影級微距 對各項指標的提升預估</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- The 4 Core Solutions -->
+        <section id="solutions" class="py-20 bg-slate-950">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">四大核心服務方案</h2>
+                    <p class="mt-4 text-slate-400">運用 270 萬軍火庫，精準打擊後段營運處痛點。</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <!-- Solution 1 -->
+                    <div class="glass-card border-l-4 border-cyan-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-white">1. 「晶片堆疊的藝術」<br><span class="text-cyan-400">極致微距工藝攝影</span></h3>
+                            <span class="text-xs font-tech text-cyan-500 border border-cyan-500 px-2 py-1 rounded">MACRO</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-6">痛點：一般鏡頭無法呈現 CoWoS 的垂直堆疊震撼。<br>解方：利用老蛙 2X 微距鏡與滑軌，將封裝細節拍出「科技藝術品」質感。</p>
+                        <div class="chart-container h-48 max-h-48">
+                            <canvas id="macroCompareChart"></canvas>
+                        </div>
+                        <div class="mt-4 flex gap-2 flex-wrap">
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded">老蛙 2X 微距</span>
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded">橫置腳架</span>
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded">RGB 燈光</span>
+                        </div>
+                    </div>
+
+                    <!-- Solution 2 -->
+                    <div class="glass-card border-l-4 border-amber-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-white">2. 「智慧工廠」<br><span class="text-amber-400">自動化產線電影級紀錄</span></h3>
+                            <span class="text-xs font-tech text-amber-500 border border-amber-500 px-2 py-1 rounded">CINEMA</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-6">痛點：傳統廠房影片像監視器畫面，缺乏科技張力。<br>解方：運用電影機、穩定器與 120fps 慢動作，捕捉機械手臂的優雅節奏。</p>
+                        
+                        <!-- Visual Element for Time Manipulation -->
+                        <div class="h-48 bg-slate-900/50 rounded flex items-center justify-center border border-slate-800">
+                            <div class="text-center">
+                                <div class="text-4xl font-tech text-amber-500 mb-2">120 FPS</div>
+                                <p class="text-xs text-slate-400">High Frame Rate Slow Motion</p>
+                                <div class="w-32 h-1 bg-slate-700 mt-4 mx-auto overflow-hidden rounded-full">
+                                    <div class="w-full h-full bg-amber-500 origin-left animate-[scale_3s_ease-in-out_infinite]"></div>
+                                </div>
+                                <p class="text-[10px] text-slate-500 mt-1">將工業躁動轉化為優雅律動</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 flex gap-2 flex-wrap">
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded">Cinema Rig</span>
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded">穩定器</span>
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded">R5 4K/120p</span>
+                        </div>
+                    </div>
+
+                    <!-- Solution 3 -->
+                    <div class="glass-card border-l-4 border-purple-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-white">3. 「封測職人」<br><span class="text-purple-400">工程師實境招募計畫</span></h3>
+                            <span class="text-xs font-tech text-purple-500 border border-purple-500 px-2 py-1 rounded">STORY</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-6">痛點：求職者誤以為後段是低階產線。<br>解方：人物誌風格紀錄片，聚焦工程師如何解決物理難題，展現專業深度。</p>
+                        
+                        <!-- Recruitment Flow Diagram -->
+                        <div class="flex justify-between items-center h-48 px-4">
+                            <div class="text-center w-1/3">
+                                <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-2 border border-purple-500/50">🎥</div>
+                                <p class="text-[10px] text-slate-300">多機位訪談<br>(Canon R6x3)</p>
+                            </div>
+                            <div class="text-purple-500 text-xl">→</div>
+                            <div class="text-center w-1/3">
+                                <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-2 border border-purple-500/50">🎙️</div>
+                                <p class="text-[10px] text-slate-300">職人故事<br>(提詞機輔助)</p>
+                            </div>
+                            <div class="text-purple-500 text-xl">→</div>
+                            <div class="text-center w-1/3">
+                                <div class="w-12 h-12 bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-2 border border-purple-500">🚀</div>
+                                <p class="text-[10px] text-white font-bold">雇主品牌<br>提升</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 flex gap-2 flex-wrap">
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded">EFP 多機位</span>
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded">提詞機</span>
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded">DJI Mic</span>
+                        </div>
+                    </div>
+
+                    <!-- Solution 4 (UPDATED) -->
+                    <div class="glass-card border-l-4 border-emerald-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-white">4. 「透視之美」<br><span class="text-emerald-400">AOI 光學檢測視覺化</span></h3>
+                            <span class="text-xs font-tech text-emerald-500 border border-emerald-500 px-2 py-1 rounded">INSPECT</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-6">痛點：SLT 測試畫面有機密限制，無法拍攝。<br>解方：模擬 AOI 雷射掃描效果，將「零缺陷」的檢測過程具象化。</p>
+                        
+                        <!-- Scanning Visual Simulation -->
+                        <div class="bg-slate-900/50 p-4 rounded h-48 flex flex-col justify-center relative overflow-hidden border border-slate-800">
+                            <!-- The Chip -->
+                            <div class="w-24 h-24 mx-auto bg-slate-800 border border-slate-600 flex items-center justify-center relative z-10">
+                                <div class="w-20 h-20 grid grid-cols-4 gap-1">
+                                    <div class="bg-slate-700 rounded-sm"></div><div class="bg-slate-700 rounded-sm"></div><div class="bg-slate-700 rounded-sm"></div><div class="bg-slate-700 rounded-sm"></div>
+                                    <div class="bg-slate-700 rounded-sm"></div><div class="bg-slate-700 rounded-sm"></div><div class="bg-slate-700 rounded-sm"></div><div class="bg-slate-700 rounded-sm"></div>
+                                </div>
+                            </div>
+                            <!-- The Scan Beam -->
+                            <div class="absolute top-0 left-0 w-full h-2 bg-emerald-500/80 shadow-[0_0_15px_rgba(16,185,129,0.8)] animate-[scan_3s_linear_infinite] z-20"></div>
+                            <div class="absolute top-0 left-0 w-full h-full bg-emerald-500/10 animate-[scan_3s_linear_infinite] z-10" style="clip-path: inset(0 0 100% 0); animation-name: scan-mask;"></div>
+                            
+                            <style>
+                                @keyframes scan {
+                                    0% { top: 10%; }
+                                    50% { top: 90%; }
+                                    100% { top: 10%; }
+                                }
+                            </style>
+                            
+                            <p class="text-[10px] text-emerald-400 font-mono text-center mt-4">ZERO DEFECT SCANNING...</p>
+                        </div>
+
+                        <div class="mt-4 flex gap-2 flex-wrap">
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded">SL150III + 束光筒</span>
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded">光效模擬</span>
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded">老蛙微距</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Advantage Section -->
+        <section id="advantage" class="py-20 bg-slate-900 text-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold">STUDIO X 獨家優勢</h2>
+                    <p class="mt-4 text-slate-400">為什麼我們是台積電 APTS 的最佳選擇？</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <div class="p-6">
+                        <div class="text-5xl mb-4">🔬</div>
+                        <h3 class="text-xl font-bold mb-2">微觀視覺化能力</h3>
+                        <p class="text-slate-400 text-sm">擁有市面少見的 2X 超微距設備，能勝任先進封裝所需的極致精細度。</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-5xl mb-4">⚡</div>
+                        <h3 class="text-xl font-bold mb-2">高機動性進廠</h3>
+                        <p class="text-slate-400 text-sm">兔籠系統與輕量化燈光專為快速部署設計，適應無塵室的嚴格限制。</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-5xl mb-4">🛡️</div>
+                        <h3 class="text-xl font-bold mb-2">資安合規經驗</h3>
+                        <p class="text-slate-400 text-sm">設備配合封條管制，並提供 iPad 有線監看方案，消除無線訊號疑慮。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer CTA -->
+        <section id="contact" class="py-20 text-center bg-gradient-to-t from-slate-950 to-slate-900">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-white mb-6">您的視覺戰略夥伴</h2>
+                <p class="text-slate-400 mb-8 max-w-2xl mx-auto">
+                    後段封測不該是沈默的巨人。讓我們協助您展現工藝，吸引人才，贏得信賴。
+                </p>
+                <a href="#" class="px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold rounded-full hover:scale-105 transition-transform shadow-lg shadow-cyan-500/30">
+                    預約能力簡報會議
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Chart.js Config
+        const chartColors = {
+            cyan: 'rgba(6, 182, 212, 0.8)',
+            cyanLow: 'rgba(6, 182, 212, 0.2)',
+            amber: 'rgba(245, 158, 11, 0.8)',
+            amberLow: 'rgba(245, 158, 11, 0.2)',
+            slate: 'rgba(148, 163, 184, 0.5)',
+            white: '#ffffff'
+        };
+
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { labels: { color: '#94a3b8', font: { family: "'Noto Sans TC', sans-serif" } } }
+            },
+            scales: {
+                r: {
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                    pointLabels: { color: '#e2e8f0', font: { size: 12 } },
+                    ticks: { display: false, backdropColor: 'transparent' }
+                }
+            }
+        };
+
+        // 1. Impact Radar Chart
+        new Chart(document.getElementById('impactChart'), {
+            type: 'radar',
+            data: {
+                labels: ['工藝質感', '人才吸引力', '科技信任感', '品牌辨識度', '細節呈現'],
+                datasets: [{
+                    label: '傳統廠房紀錄',
+                    data: [30, 40, 60, 30, 20],
+                    fill: true,
+                    backgroundColor: chartColors.slate,
+                    borderColor: '#64748b',
+                    pointBackgroundColor: '#64748b'
+                }, {
+                    label: 'STUDIO X 電影級方案',
+                    data: [95, 90, 95, 85, 98],
+                    fill: true,
+                    backgroundColor: chartColors.cyanLow,
+                    borderColor: '#06b6d4',
+                    pointBackgroundColor: '#06b6d4',
+                    pointBorderColor: '#fff'
+                }]
+            },
+            options: commonOptions
+        });
+
+        // 2. Macro Comparison Bar Chart
+        new Chart(document.getElementById('macroCompareChart'), {
+            type: 'bar',
+            data: {
+                labels: ['標準鏡頭 (1X)', 'STUDIO X (2X Ultra Macro)'],
+                datasets: [{
+                    label: '可視細節倍率',
+                    data: [1, 2.5], // Slightly exaggerated for visual impact
+                    backgroundColor: ['#64748b', '#06b6d4'],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8' }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: '#e2e8f0', font: { size: 12 } }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
+</body>
+</html>
