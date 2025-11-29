@@ -1,45 +1,44 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>知識穹頂核心系統介面 - 專題成果</title>
+    <title>Knowledge Dome: Core System Interface - Project Output</title>
     <!-- 載入 Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* CSS 變數 */
+        /* CSS Variables */
         :root {
-            --color-bg: #030712; /* 幾乎純黑 */
-            --color-primary: #1e3a8a; /* 核心藍 */
-            --color-accent-cyan: #06b6d4; /* 科技感青色 */
-            --color-accent-green: #10b981; /* 科技感綠色 */
+            --color-bg: #030712; 
+            --color-accent-cyan: #06b6d4; 
+            --color-accent-green: #10b981; 
         }
 
-        /* 全局字體和背景 */
+        /* Global Styles */
         body {
-            font-family: 'Inter', 'Microsoft JhengHei', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--color-bg);
-            color: #e5e7eb; /* 柔和白色 */
+            color: #e5e7eb; 
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* 霓虹光影效果 */
+        /* Neon Effect */
         .neon-text {
             text-shadow: 0 0 5px var(--color-accent-cyan), 0 0 10px var(--color-accent-cyan);
             color: #ffffff;
             font-family: 'Space Mono', monospace;
         }
 
-        /* 卡片玻璃擬態效果 */
+        /* Glass Card Effect */
         .glass-card {
-            background-color: rgba(30, 41, 59, 0.6); /* 半透明深藍 */
+            background-color: rgba(30, 41, 59, 0.6); 
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease-in-out; /* 增加過渡效果 */
+            transition: all 0.3s ease-in-out; 
         }
 
         .category-line {
@@ -49,7 +48,7 @@
             margin-top: 0.5rem;
         }
 
-        /* 響應式調整 */
+        /* Responsive Adjustments */
         @media (max-width: 640px) {
             .hero-title {
                 font-size: 2rem !important;
@@ -63,195 +62,212 @@
 <body class="p-4 sm:p-8">
 
     <div class="max-w-7xl mx-auto w-full">
-        <!-- 頂部標題與核心介面 -->
+        <!-- TOP HEADER -->
         <header class="text-center mb-12 border-b border-gray-700 pb-6">
             <h1 class="text-4xl sm:text-6xl font-extrabold hero-title neon-text" style="--color-accent-cyan: #3DFF8C;">
-                知識穹頂 V2.0：核心系統介面
+                KNOWLEDGE DOME V2.0 // CORE SYSTEM INTERFACE
             </h1>
             <p class="text-base sm:text-xl text-gray-400 mt-2 hero-subtitle">
-                Project Dashboard // 專題成果矩陣與進度追蹤
+                Project Dashboard // Categorized Output Matrix
             </p>
         </header>
 
-        <!-- 核心指標數據區塊 (Data Grid) -->
+        <!-- DATA GRID -->
         <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-            <!-- 模組化數據卡片 -->
             <div class="glass-card p-4 rounded-xl text-center shadow-lg border-l-4 border-cyan-500">
                 <p class="text-sm text-gray-400 font-mono">FILES INDEXED</p>
-                <p class="text-3xl font-bold neon-text text-cyan-400 mt-1">17</p>
+                <p class="text-3xl font-bold neon-text text-cyan-400 mt-1">19</p>
             </div>
             <div class="glass-card p-4 rounded-xl text-center shadow-lg border-l-4 border-green-500">
-                <p class="text-sm text-gray-400 font-mono">PROJECT STATUS</p>
-                <p class="text-3xl font-bold neon-text text-green-400 mt-1">100%</p>
+                <p class="text-sm text-gray-400 font-mono">PROJECT DOMAINS</p>
+                <p class="text-3xl font-bold neon-text text-green-400 mt-1">05</p>
             </div>
             <div class="glass-card p-4 rounded-xl text-center shadow-lg border-l-4 border-blue-500 hidden sm:block">
-                <p class="text-sm text-gray-400 font-mono">LAST UPDATE</p>
+                <p class="text-sm text-gray-400 font-mono">LAST COMMIT</p>
                 <p class="text-xl font-bold mt-2 text-blue-400">2025.11.29</p>
             </div>
             <div class="glass-card p-4 rounded-xl text-center shadow-lg border-l-4 border-fuchsia-500 hidden sm:block">
-                <p class="text-sm text-gray-400 font-mono">CATEGORIES</p>
-                <p class="text-3xl font-bold mt-1 neon-text text-fuchsia-400">05</p>
+                <p class="text-sm text-gray-400 font-mono">CODE BASE</p>
+                <p class="text-3xl font-bold mt-1 neon-text text-fuchsia-400">Stable</p>
             </div>
         </section>
 
-        <!-- 專題模組矩陣 -->
+        <!-- PROJECT MODULE MATRIX -->
         <section class="space-y-12">
             
-            <!-- 模組 1: HR 數位化與轉型 (Cyan) -->
+            <!-- MODULE 1: HR DIGITAL & TRANSFORMATION (CYAN) -->
             <div class="module-section">
                 <h2 class="text-2xl font-bold mb-4 neon-text text-cyan-400">
-                    // Module 01: HR 數位化與體驗中心
+                    // Module 01: HR Digital & Experience Center
                 </h2>
                 <div class="category-line mb-6"></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- hr-digital-ai-strategy.html -->
                     <a href="hr-digital-ai-strategy.html" class="glass-card p-5 rounded-xl transition hover:shadow-cyan-500/50 hover:shadow-2xl hover:border-cyan-400">
                         <p class="text-sm text-cyan-400 font-mono">HR-AI-001</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">AI 戰略整合評估</h3>
-                        <p class="text-gray-400 text-sm">評估 AI 技術潛力與風險，規劃智慧化服務整合路徑。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">AI Strategy Integration Assessment</h3>
+                        <p class="text-gray-400 text-sm">AI integration roadmap and risk assessment for HR digital services.</p>
                     </a>
                     <!-- hr-digital-center-plan.html -->
                     <a href="hr-digital-center-plan.html" class="glass-card p-5 rounded-xl transition hover:shadow-cyan-500/50 hover:shadow-2xl hover:border-cyan-400">
                         <p class="text-sm text-cyan-400 font-mono">HR-PLAN-002</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">HR 數位媒體體驗中心 - 建置規劃書</h3>
-                        <p class="text-gray-400 text-sm">深入探討組織、技術藍圖與營運模式，規劃實施路徑。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">HR Digital Media Center - Build Plan</h3>
+                        <p class="text-gray-400 text-sm">Comprehensive plan covering org structure, tech blueprint, and phased implementation.</p>
                     </a>
                     <!-- hr-digital-feasibility-strategy.html -->
                     <a href="hr-digital-feasibility-strategy.html" class="glass-card p-5 rounded-xl transition hover:shadow-cyan-500/50 hover:shadow-2xl hover:border-cyan-400">
                         <p class="text-sm text-cyan-400 font-mono">HR-FEAS-003</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">可行性評估與戰略規劃</h3>
-                        <p class="text-gray-400 text-sm">分析市場與資源，制定初期的推廣與實施策略。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">Feasibility & Strategic Planning</h3>
+                        <p class="text-gray-400 text-sm">Market analysis and resource assessment for the Experience Center launch.</p>
                     </a>
                 </div>
             </div>
 
-            <!-- 模組 2: 數據與視覺化 (Green) -->
+            <!-- MODULE 2: DATA VISUALIZATION & ANALYTICS (GREEN) -->
             <div class="module-section">
                 <h2 class="text-2xl font-bold mb-4 neon-text text-green-400">
-                    // Module 02: 數據視覺化與分析
+                    // Module 02: Data Visualization & Analytics
                 </h2>
                 <div class="category-line mb-6" style="background: linear-gradient(to right, var(--color-accent-green), transparent);"></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- 2025-data-vis-status.html -->
                     <a href="2025-data-vis-status.html" class="glass-card p-5 rounded-xl transition hover:shadow-green-500/50 hover:shadow-2xl hover:border-green-400">
                         <p class="text-sm text-green-400 font-mono">DV-REPORT-001</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">2025 年數據視覺化現況</h3>
-                        <p class="text-gray-400 text-sm">分析最新視覺化工具、設計趨勢與技術應用場景。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">2025 Data Visualization Status Report</h3>
+                        <p class="text-gray-400 text-sm">Analysis of emerging tools, design trends, and application scenarios for the coming year.</p>
                     </a>
                     <!-- tsmc-apts-visual-strategy-list.html -->
                     <a href="tsmc-apts-visual-strategy-list.html" class="glass-card p-5 rounded-xl transition hover:shadow-green-500/50 hover:shadow-2xl hover:border-green-400">
                         <p class="text-sm text-green-400 font-mono">DV-STRAT-002</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">TSMC APTS 全領域視覺戰略總表</h3>
-                        <p class="text-gray-400 text-sm">制定統一的視覺標準和數據傳達策略。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">TSMC APTS Visual Strategy Masterlist</h3>
+                        <p class="text-gray-400 text-sm">Standardized visual guidelines and data delivery protocols across all APTS domains.</p>
                     </a>
                 </div>
             </div>
 
-            <!-- 模組 3: 技術與系統開發 (Blue) -->
+            <!-- MODULE 3: TECHNICAL & SYSTEM DEVELOPMENT (BLUE) -->
             <div class="module-section">
                 <h2 class="text-2xl font-bold mb-4 neon-text text-blue-400">
-                    // Module 03: 技術與系統開發
+                    // Module 03: Technical & System Development
                 </h2>
                 <div class="category-line mb-6" style="background: linear-gradient(to right, #3b82f6, transparent);"></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- project-nano-architects.html (已修正) -->
+                    <!-- project-nano-architects.html -->
                     <a href="project-nano-architects.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
                         <p class="text-sm text-blue-400 font-mono">DEV-NANO-001</p>
                         <h3 class="text-xl font-semibold mt-1 mb-2">Project Nano Architects</h3>
-                        <p class="text-gray-400 text-sm">專案 Nano Architects 的系統架構設計與實施文件。</p>
+                        <p class="text-gray-400 text-sm">System architecture design and implementation documentation for the Nano Architects initiative.</p>
                     </a>
-                    <!-- studio-x-mems-probe-card-simulator.html (已修正) -->
+                    <!-- studio-x-mems-probe-card-simulator.html -->
                     <a href="studio-x-mems-probe-card-simulator.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
                         <p class="text-sm text-blue-400 font-mono">DEV-MEMS-002</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">STUDIO X | MEMS 探針卡接頭模擬器</h3>
-                        <p class="text-gray-400 text-sm">STUDIO X 專案中 MEMS 探針卡接頭模擬器文件。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">STUDIO X | MEMS Probe Card Simulator</h3>
+                        <p class="text-gray-400 text-sm">Technical documentation for the MEMS probe card connector simulator project.</p>
                     </a>
-                    <!-- studio-x-optical-spring-simulator-v3.html (已修正) -->
+                    <!-- studio-x-optical-spring-simulator-v3.html -->
                     <a href="studio-x-optical-spring-simulator-v3.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
                         <p class="text-sm text-blue-400 font-mono">DEV-OPTIC-003</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">STUDIO X | 光簧試模模擬器 V3</h3>
-                        <p class="text-gray-400 text-sm">STUDIO X 專案中光簧試模模擬器 V3 版本文件。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">STUDIO X | Optical Spring Simulator V3</h3>
+                        <p class="text-gray-400 text-sm">Documentation for the Version 3 release of the optical spring test mold simulator.</p>
                     </a>
                     <!-- obs-transition-plugin-guide.html -->
                     <a href="obs-transition-plugin-guide.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
                         <p class="text-sm text-blue-400 font-mono">DEV-SW-004</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">OBS 特色換場插件開發指南</h3>
-                        <p class="text-gray-400 text-sm">提供 OBS 換場插件的從零開始的開發教學。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">OBS Transition Plugin Dev Guide</h3>
+                        <p class="text-gray-400 text-sm">Step-by-step development guide for custom OBS transition effects plugins.</p>
                     </a>
-                    <!-- studio-x-tsmc-proposal.html (已修正) -->
+                    <!-- studio-x-tsmc-proposal.html -->
                     <a href="studio-x-tsmc-proposal.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
                         <p class="text-sm text-blue-400 font-mono">DEV-PROPOSAL-005</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">STUDIO X proposal for TSMC Advanced Packaging & Testing Service</h3>
-                        <p class="text-gray-400 text-sm">STUDIO X 針對 TSMC 先進封裝與測試服務的提案文件。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">STUDIO X: TSMC APATS Proposal</h3>
+                        <p class="text-gray-400 text-sm">Full proposal targeting TSMC's advanced packaging and testing service needs.</p>
+                    </a>
+                    <!-- batch-print-v16-background-clearance.html -->
+                    <a href="batch-print-v16-background-clearance.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
+                        <p class="text-sm text-blue-400 font-mono">DEV-OPT-006</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">Batch Print v16 Background Clearance</h3>
+                        <p class="text-gray-400 text-sm">Technical note on memory optimization and background clearance for batch printing module.</p>
+                    </a>
+                    <!-- auto-generate-html.html -->
+                    <a href="auto-generate-html.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
+                        <p class="text-sm text-blue-400 font-mono">DEV-AUTO-007</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">Auto-Generate HTML Module</h3>
+                        <p class="text-gray-400 text-sm">Documentation for the automated HTML content generation module.</p>
                     </a>
                 </div>
             </div>
 
-            <!-- 模組 4: 策略與業務規劃 (Fuchsia) -->
+            <!-- MODULE 4: STRATEGY & BUSINESS PLANNING (FUCHSIA) -->
             <div class="module-section">
                 <h2 class="text-2xl font-bold mb-4 neon-text text-fuchsia-400">
-                    // Module 04: 策略與業務規劃
+                    // Module 04: Strategy & Business Planning
                 </h2>
                 <div class="category-line mb-6" style="background: linear-gradient(to right, #d946ef, transparent);"></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- hsinchu-science-park-2024-report.html -->
                     <a href="hsinchu-science-park-2024-report.html" class="glass-card p-5 rounded-xl transition hover:shadow-fuchsia-500/50 hover:shadow-2xl hover:border-fuchsia-400">
                         <p class="text-sm text-fuchsia-400 font-mono">STRAT-REPORT-001</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">新竹科學園區：2024 績效與展望</h3>
-                        <p class="text-gray-400 text-sm">回顧年度重點產業績效，並對未來發展趨勢進行展望。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">Hsinchu Science Park: 2024 Outlook</h3>
+                        <p class="text-gray-400 text-sm">Performance review and future trend forecast for key industries in the park.</p>
                     </a>
                     <!-- personalized-weight-schedule.html -->
                     <a href="personalized-weight-schedule.html" class="glass-card p-5 rounded-xl transition hover:shadow-fuchsia-500/50 hover:shadow-2xl hover:border-fuchsia-400">
                         <p class="text-sm text-fuchsia-400 font-mono">STRAT-HEALTH-002</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">個人化體重調理與補劑優化排程</h3>
-                        <p class="text-gray-400 text-sm">基於數據分析的個人化健康排程與營養補充方案。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">Personalized Weight & Supplement Schedule</h3>
+                        <p class="text-gray-400 text-sm">Data-driven optimization schedule for personalized health and weight management.</p>
                     </a>
-                    <!-- studio-x-light-stage-lighting-strategy.html (已修正) -->
+                    <!-- studio-x-light-stage-lighting-strategy.html -->
                     <a href="studio-x-light-stage-lighting-strategy.html" class="glass-card p-5 rounded-xl transition hover:shadow-fuchsia-500/50 hover:shadow-2xl hover:border-fuchsia-400">
                         <p class="text-sm text-fuchsia-400 font-mono">STRAT-OPTIC-003</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">STUDIO X | 燈台內部佈光策略模組</h3>
-                        <p class="text-gray-400 text-sm">STUDIO X 專案中燈台內部佈光策略模組文件。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">STUDIO X | Light Stage Internal Lighting Strategy</h3>
+                        <p class="text-gray-400 text-sm">Module document detailing internal light array planning and deployment strategy.</p>
                     </a>
                 </div>
             </div>
 
-            <!-- 模組 5: ESG 與影像資產 (Yellow/Amber) -->
+            <!-- MODULE 5: ESG & IMAGE ASSET MANAGEMENT (AMBER) -->
             <div class="module-section">
                 <h2 class="text-2xl font-bold mb-4 neon-text text-amber-400">
-                    // Module 05: ESG 與影像資產管理
+                    // Module 05: ESG & Image Asset Management
                 </h2>
                 <div class="category-line mb-6" style="background: linear-gradient(to right, #fbbf24, transparent);"></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- hsinchu-baoshan-esg-infographic.html -->
                     <a href="hsinchu-baoshan-esg-infographic.html" class="glass-card p-5 rounded-xl transition hover:shadow-amber-500/50 hover:shadow-2xl hover:border-amber-400">
                         <p class="text-sm text-amber-400 font-mono">ESG-COMMUNITY-001</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">新竹寶山 ESG 永續發展資訊圖表</h3>
-                        <p class="text-gray-400 text-sm">視覺化呈現社區在永續發展方面的成果與目標。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">Hsinchu Baoshan ESG Infographic</h3>
+                        <p class="text-gray-400 text-sm">Visual representation of community sustainability achievements and future ESG goals.</p>
                     </a>
                     <!-- lightroom-workflow-infographic.html -->
                     <a href="lightroom-workflow-infographic.html" class="glass-card p-5 rounded-xl transition hover:shadow-amber-500/50 hover:shadow-2xl hover:border-amber-400">
                         <p class="text-sm text-amber-400 font-mono">ASSET-LR-002</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">Lightroom 專業攝影工作流程圖表</h3>
-                        <p class="text-gray-400 text-sm">標準化攝影後期流程，確保影像處理品質。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">Lightroom Pro Workflow Infographic</h3>
+                        <p class="text-gray-400 text-sm">Standardizing the professional post-production workflow for image processing quality.</p>
                     </a>
                     <!-- raw-file-digital-darkroom-guide.html -->
                     <a href="raw-file-digital-darkroom-guide.html" class="glass-card p-5 rounded-xl transition hover:shadow-amber-500/50 hover:shadow-2xl hover:border-amber-400">
                         <p class="text-sm text-amber-400 font-mono">ASSET-RAW-003</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">駕馭 RAW 檔案：數位暗房指南</h3>
-                        <p class="text-gray-400 text-sm">從專業角度教導如何處理和編輯 RAW 格式照片。</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">Mastering RAW Files: Digital Darkroom Guide</h3>
+                        <p class="text-gray-400 text-sm">Professional guide on handling and editing RAW format files for optimal quality output.</p>
+                    </a>
+                    <!-- health_calculator_v200.html -->
+                    <a href="health_calculator_v200.html" class="glass-card p-5 rounded-xl transition hover:shadow-amber-500/50 hover:shadow-2xl hover:border-amber-400">
+                        <p class="text-sm text-amber-400 font-mono">ASSET-HEALTH-004</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">Health Calculator V2.0 Documentation</h3>
+                        <p class="text-gray-400 text-sm">Documentation for the updated health and wellness calculation module (V2.0).</p>
                     </a>
                 </div>
             </div>
 
         </section>
 
-        <!-- 頁腳 -->
+        <!-- FOOTER -->
         <footer class="text-center mt-16 pt-8 border-t border-gray-800">
             <p class="text-sm text-gray-600 font-mono">
                 [SYSTEM LOG] Interface Status: OPERATIONAL // Data Integrity: 100%
             </p>
             <p class="text-xs text-gray-700 mt-1">
-                設計原則：聚焦領域、即時內容、彈性編程。
+                Design Principles: Focus on Domain, Real-Time Content, Flexible Programming.
             </p>
         </footer>
     </div>
