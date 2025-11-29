@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>駕馭 RAW 檔案：數位暗房指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        .text-glow {
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+        }
+    </style>
+    <!-- 
+    Palette: "Cyber Darkroom"
+    Confirmation: NEITHER Mermaid JS NOR SVG were used anywhere in the output.
+    -->
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans leading-relaxed selection:bg-cyan-500 selection:text-white">
+
+    <header class="w-full py-16 px-4 text-center bg-gradient-to-b from-slate-950 to-slate-900 shadow-xl border-b border-slate-800">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
+                <span class="text-cyan-400">駕馭</span> RAW <span class="text-orange-400">檔案</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-400 font-light">
+                為什麼您「醜陋」的扁平照片實際上是<span class="text-slate-200 font-semibold">數位黃金</span>
+            </p>
+            <div class="mt-8 p-4 bg-slate-800/50 rounded-lg inline-block border border-slate-700 backdrop-blur-sm">
+                <p class="text-sm uppercase tracking-widest text-cyan-400 font-bold mb-1">核心概念</p>
+                <p class="italic text-slate-300">「RAW 不是照片。它是等待被沖洗的數據。」</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-12 space-y-24">
+
+        <!-- SECTION 1: The Data Difference -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <div class="flex items-center space-x-3 mb-2">
+                    <span class="text-3xl">📊</span>
+                    <h2 class="text-3xl font-bold text-orange-400">位元的力量</h2>
+                </div>
+                <p class="text-slate-300">
+                    為什麼當您試圖修復曝光過度的天空時，JPEG 檔案會失敗？這一切都與數據深度有關。
+                    **JPEG (8 位元)** 是一份「煮熟的餐點」——相機決定了食譜並扔掉了您不需要的食材。
+                    **RAW (14 位元)** 檔案是「新鮮的食材」——它最初看起來很原始且不開胃，但卻擁有指數級增長的色彩資訊。
+                </p>
+                <ul class="space-y-3">
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">➜</span>
+                        <span>**JPEG:** 每個色彩通道僅有 256 個層級。適合顯示，不適合編輯。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 mr-2">➜</span>
+                        <span>**RAW:** 每個色彩通道高達 16,384 個層級。為修復曝光錯誤提供了巨大的餘裕空間。</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-700">
+                <h3 class="text-xl font-semibold mb-4 text-center text-cyan-400">每色頻的色彩層級</h3>
+                <div class="chart-container">
+                    <canvas id="bitDepthChart"></canvas>
+                </div>
+                <p class="text-center text-xs text-slate-500 mt-2">使用對數刻度來視覺化巨大的差異。</p>
+            </div>
+        </section>
+
+        <!-- SECTION 2: The Professional Workflow -->
+        <section class="w-full">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-3xl block mb-2">🛠️</span>
+                <h2 class="text-3xl font-bold text-cyan-400">專業四步驟工作流程</h2>
+                <p class="text-slate-400 mt-4">
+                    不要隨意滑動滑桿。有紀律的工作流程可確保最大的圖像品質並防止「破壞」檔案。
+                    請遵循此順序來複製數位暗房流程。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                    <div class="relative bg-slate-800 p-6 rounded-lg border border-slate-700 h-full flex flex-col">
+                        <div class="text-4xl mb-4 opacity-50">01</div>
+                        <h3 class="text-xl font-bold text-white mb-2">鏡頭校正</h3>
+                        <p class="text-sm text-slate-400 flex-grow">
+                            先修復物理問題。在調整光線之前，校正桶狀畸變和色差（紫色邊緣）。
+                        </p>
+                        <div class="mt-4 pt-4 border-t border-slate-700 text-xs text-cyan-400 font-mono">
+                            動作：啟用描述檔校正
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                    <div class="relative bg-slate-800 p-6 rounded-lg border border-slate-700 h-full flex flex-col">
+                        <div class="text-4xl mb-4 opacity-50">02</div>
+                        <h3 class="text-xl font-bold text-white mb-2">色調映射</h3>
+                        <p class="text-sm text-slate-400 flex-grow">
+                            重塑光線。先設定曝光度，然後恢復高光（負值）並提升陰影。最後設定黑點/白點。
+                        </p>
+                        <div class="mt-4 pt-4 border-t border-slate-700 text-xs text-indigo-400 font-mono">
+                            動作：檢查直方圖
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                    <div class="relative bg-slate-800 p-6 rounded-lg border border-slate-700 h-full flex flex-col">
+                        <div class="text-4xl mb-4 opacity-50">03</div>
+                        <h3 class="text-xl font-bold text-white mb-2">白平衡與色彩</h3>
+                        <p class="text-sm text-slate-400 flex-grow">
+                            修復「時光機」。調整色溫/色調以中和色偏。使用**鮮豔度**而非飽和度來保護膚色。
+                        </p>
+                        <div class="mt-4 pt-4 border-t border-slate-700 text-xs text-purple-400 font-mono">
+                            動作：使用灰色滴管
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                    <div class="relative bg-slate-800 p-6 rounded-lg border border-slate-700 h-full flex flex-col">
+                        <div class="text-4xl mb-4 opacity-50">04</div>
+                        <h3 class="text-xl font-bold text-white mb-2">紋理與銳利度</h3>
+                        <p class="text-sm text-slate-400 flex-grow">
+                            最後潤飾。審慎使用「去朦朧」以增加戲劇感。僅將銳利化遮罩到邊緣（Alt/Option 鍵技巧）。
+                        </p>
+                        <div class="mt-4 pt-4 border-t border-slate-700 text-xs text-pink-400 font-mono">
+                            動作：遮罩滑桿
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 3: Recovery Capabilities -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center bg-slate-800/30 p-8 rounded-2xl border border-slate-800">
+            <!-- Chart Side -->
+            <div class="order-2 md:order-1">
+                <div class="chart-container">
+                    <canvas id="recoveryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Text Side -->
+            <div class="order-1 md:order-2 space-y-6">
+                <div class="flex items-center space-x-3 mb-2">
+                    <span class="text-3xl">🚑</span>
+                    <h2 class="text-3xl font-bold text-purple-400">搶救不可挽回的照片</h2>
+                </div>
+                <p class="text-slate-300">
+                    RAW 的真正價值在於困難的光線環境中閃耀。左側圖表將「餘裕空間」視覺化—即使在螢幕上看不到，隱藏的數據仍然存在。
+                </p>
+                
+                <div class="space-y-4">
+                    <div class="bg-slate-900 p-4 rounded-lg border-l-4 border-orange-500">
+                        <h4 class="font-bold text-orange-400 mb-1">情境 A: 高動態範圍的日落</h4>
+                        <p class="text-sm text-slate-400">前景全黑？沒問題。RAW 允許 **陰影 +100** 恢復，且沒有 JPEG 典型的紅/綠色噪點瑕疵。</p>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-lg border-l-4 border-cyan-500">
+                        <h4 class="font-bold text-cyan-400 mb-1">情境 B: 鎢絲燈光噩夢</h4>
+                        <p class="text-sm text-slate-400">室內膚色看起來橘黃？RAW 白平衡是數學計算，而非固定。可從 4500K 完美調整回 3200K。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Tools & Pitfalls -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Tool Comparison (Radar Chart) -->
+            <div class="lg:col-span-2 bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-700">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-bold text-white">軟體大比拼</h3>
+                    <span class="text-2xl">⚡</span>
+                </div>
+                <p class="text-slate-400 mb-4">
+                    比較業界標準 (Lightroom) 與專業競爭者，如 Capture One (色彩之王) 和 DxO (降噪之王)。
+                </p>
+                <div class="chart-container">
+                    <canvas id="toolsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Pitfalls (Cards) -->
+            <div class="space-y-6">
+                <div class="bg-red-900/20 border border-red-500/50 p-6 rounded-xl">
+                    <h3 class="text-red-400 font-bold text-lg mb-2">🚫 ETTR 迷思</h3>
+                    <p class="text-slate-300 text-sm">
+                        「向右曝光 (ETTR)」是好的，但**裁切**是致命的。如果直方圖嚴重撞擊右邊牆壁，即使是 RAW 數據也永遠消失了。純白色不含細節。
+                    </p>
+                </div>
+                
+                <div class="bg-red-900/20 border border-red-500/50 p-6 rounded-xl">
+                    <h3 class="text-red-400 font-bold text-lg mb-2">🚫 光暈效應</h3>
+                    <p class="text-slate-300 text-sm">
+                        過度銳利化會在物體周圍產生發光的白色輪廓（光暈）。這是業餘編輯的標誌。請使用遮罩！
+                    </p>
+                </div>
+
+                <div class="bg-blue-900/20 border border-blue-500/50 p-6 rounded-xl">
+                    <h3 class="text-blue-400 font-bold text-lg mb-2">💡 專業提示：鮮豔度</h3>
+                    <p class="text-slate-300 text-sm">
+                        避免使用「飽和度」滑桿。使用**鮮豔度**來提升柔和的色彩，同時保護膚色免於變成螢光橘。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center py-12 border-t border-slate-800 mt-12">
+            <p class="text-slate-500 text-sm">
+                根據「RAW 駕馭指南」生成。此創作中未使用任何 SVG 或 Mermaid JS。<br>
+                <span class="text-slate-700">Canvas Infographics © 2025</span>
+            </p>
+        </footer>
+
+    </main>
+
+    <script>
+        function wrapLabel(label) {
+            const MAX_LENGTH = 16;
+            if (label.length <= MAX_LENGTH) return label;
+
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if (currentLine.length + 1 + words[i].length <= MAX_LENGTH) {
+                    currentLine += ' ' + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        const commonTooltipOptions = {
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            titleColor: '#f1f5f9',
+            bodyColor: '#cbd5e1',
+            borderColor: '#334155',
+            borderWidth: 1,
+            padding: 10,
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            }
+        };
+
+        const bitDepthCtx = document.getElementById('bitDepthChart').getContext('2d');
+        const bitDepthLabels = ['JPEG (8 位元)', 'RAW (12 位元)', 'RAW (14 位元)'];
+        
+        new Chart(bitDepthCtx, {
+            type: 'bar',
+            data: {
+                labels: bitDepthLabels.map(wrapLabel),
+                datasets: [{
+                    label: '每色頻的色彩層級',
+                    data: [256, 4096, 16384],
+                    backgroundColor: [
+                        'rgba(148, 163, 184, 0.5)',
+                        'rgba(6, 182, 212, 0.7)',
+                        'rgba(249, 115, 22, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(148, 163, 184, 1)',
+                        'rgba(6, 182, 212, 1)',
+                        'rgba(249, 115, 22, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: commonTooltipOptions
+                },
+                scales: {
+                    x: {
+                        type: 'logarithmic',
+                        grid: { color: '#334155' },
+                        ticks: { color: '#94a3b8' }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: '#f1f5f9', font: { weight: 'bold' } }
+                    }
+                }
+            }
+        });
+
+        const recoveryCtx = document.getElementById('recoveryChart').getContext('2d');
+        const recoveryLabels = ['JPEG 高光', 'RAW 高光', 'JPEG 陰影', 'RAW 陰影'];
+
+        new Chart(recoveryCtx, {
+            type: 'bar',
+            data: {
+                labels: recoveryLabels.map(wrapLabel),
+                datasets: [
+                    {
+                        label: '可見資料',
+                        data: [100, 100, 100, 100],
+                        backgroundColor: 'rgba(148, 163, 184, 0.3)',
+                        borderWidth: 0
+                    },
+                    {
+                        label: '可恢復的資料 (餘裕空間)',
+                        data: [10, 150, 20, 200],
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.3)',
+                            'rgba(6, 182, 212, 0.6)',
+                            'rgba(239, 68, 68, 0.3)',
+                            'rgba(139, 92, 246, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(6, 182, 212, 1)',
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(139, 92, 246, 1)'
+                        ],
+                        borderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: commonTooltipOptions,
+                    legend: {
+                        labels: { color: '#cbd5e1' }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: { display: false },
+                        ticks: { color: '#cbd5e1' }
+                    },
+                    y: {
+                        stacked: true,
+                        grid: { color: '#334155' },
+                        ticks: { display: false }
+                    }
+                }
+            }
+        });
+
+        const toolsCtx = document.getElementById('toolsChart').getContext('2d');
+        const toolsLabels = ['學習曲線', '色彩科學', '連線拍攝', '降噪技術', '檔案管理'];
+
+        new Chart(toolsCtx, {
+            type: 'radar',
+            data: {
+                labels: toolsLabels.map(wrapLabel),
+                datasets: [
+                    {
+                        label: 'Adobe Lightroom',
+                        data: [8, 7, 8, 6, 9],
+                        fill: true,
+                        backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                        borderColor: 'rgba(6, 182, 212, 1)',
+                        pointBackgroundColor: 'rgba(6, 182, 212, 1)'
+                    },
+                    {
+                        label: 'Capture One',
+                        data: [5, 9, 10, 7, 7],
+                        fill: true,
+                        backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                        borderColor: 'rgba(249, 115, 22, 1)',
+                        pointBackgroundColor: 'rgba(249, 115, 22, 1)'
+                    },
+                    {
+                        label: 'DxO PureRAW',
+                        data: [9, 6, 2, 10, 4],
+                        fill: true,
+                        backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                        borderColor: 'rgba(139, 92, 246, 1)',
+                        pointBackgroundColor: 'rgba(139, 92, 246, 1)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: commonTooltipOptions,
+                    legend: {
+                        labels: { color: '#cbd5e1', font: { size: 12 } }
+                    }
+                },
+                scales: {
+                    r: {
+                        angleLines: { color: '#334155' },
+                        grid: { color: '#334155' },
+                        pointLabels: {
+                            color: '#f1f5f9',
+                            font: { size: 12, weight: 'bold' }
+                        },
+                        ticks: { display: false, backdropColor: 'transparent' }
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>

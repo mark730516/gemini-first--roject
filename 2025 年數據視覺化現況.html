@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 年數據視覺化現況</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            overflow: hidden; 
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        .flow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: white;
+            border-left: 4px solid #4F46E5;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 0.5rem;
+            min-height: 100px;
+            text-align: center;
+        }
+        
+        .arrow-down {
+            width: 0; 
+            height: 0; 
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 15px solid #CBD5E1;
+            margin: 0.5rem auto;
+        }
+
+        @media (min-width: 768px) {
+            .arrow-down {
+                transform: rotate(-90deg);
+                margin: auto 0.5rem;
+            }
+        }
+
+        body {
+            background-color: #F8FAFC;
+            font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #334155;
+        }
+
+        .highlight-text {
+            color: #4F46E5;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <h1 class="text-3xl font-bold text-indigo-600">2025 年數據視覺化現況</h1>
+            <p class="text-sm text-gray-500 uppercase tracking-wide">從原始數據到戰略洞察</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <section>
+            <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-indigo-600">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">認知經濟時代</h2>
+                <p class="mb-6 text-gray-600 leading-relaxed">
+                    我們目前每天產生 <span class="highlight-text">2.5 兆兆位元組</span>的數據。然而，沒有解釋的原始數據毫無用處。在 2025 年，視覺化數據的能力不再是一個利基技能—它已成為商業策略的主要語言。數據累積與數據理解之間的差距就是價值流失之處。
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                    <div class="p-4 bg-slate-50 rounded-lg">
+                        <div class="text-4xl font-extrabold text-cyan-500 mb-2">60,000x</div>
+                        <div class="text-sm font-semibold text-gray-500">更快的處理速度</div>
+                        <p class="text-xs text-gray-400 mt-1">大腦處理視覺比文字快</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-lg">
+                        <div class="text-4xl font-extrabold text-indigo-600 mb-2">28%</div>
+                        <div class="text-sm font-semibold text-gray-500">效率提升</div>
+                        <p class="text-xs text-gray-400 mt-1">使用視覺輔助的會議效率</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-lg">
+                        <div class="text-4xl font-extrabold text-amber-500 mb-2">$13.01</div>
+                        <div class="text-sm font-semibold text-gray-500">投資報酬率</div>
+                        <p class="text-xs text-gray-400 mt-1">每花費 1 美元在商業智慧 (BI) 工具上的回報</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <section class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">組織數據使用分配</h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    現代企業如何利用其視覺化資源？儘管報告仍然佔主導地位，但預測分析正經歷大規模增長。
+                </p>
+                <div class="chart-container">
+                    <canvas id="usageChart"></canvas>
+                </div>
+                <p class="text-xs text-center text-gray-400 mt-2">資料來源：2025 年第一季度全球企業調查</p>
+            </section>
+
+            <section class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">採用速度</h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    自助式 BI 工具的採用速度已超過傳統靜態報告。我們正看到一個轉折點，互動式儀表板成為標準。
+                </p>
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+                <p class="text-xs text-center text-gray-400 mt-2">2020-2025 年市場滲透率 (%)</p>
+            </section>
+
+        </div>
+
+        <section class="bg-indigo-50 rounded-lg shadow-inner p-8">
+            <h3 class="text-xl font-bold text-gray-800 mb-2 text-center">洞察流程</h3>
+            <p class="text-sm text-gray-600 mb-8 text-center max-w-2xl mx-auto">
+                有效的視覺化不僅僅是繪製圖表。它遵循嚴格的數據衛生、探索性分析和敘事構建方法。
+            </p>
+
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div class="flow-step w-full md:w-1/5">
+                    <span class="text-2xl mb-2">📥</span>
+                    <h4 class="font-bold text-indigo-700">數據收集</h4>
+                    <p class="text-xs text-gray-500">從 SQL/API 獲取原始數據</p>
+                </div>
+                
+                <div class="arrow-down"></div>
+
+                <div class="flow-step w-full md:w-1/5">
+                    <span class="text-2xl mb-2">🧹</span>
+                    <h4 class="font-bold text-indigo-700">數據清洗</h4>
+                    <p class="text-xs text-gray-500">標準化、處理空值與異常值</p>
+                </div>
+
+                <div class="arrow-down"></div>
+
+                <div class="flow-step w-full md:w-1/5">
+                    <span class="text-2xl mb-2">📊</span>
+                    <h4 class="font-bold text-indigo-700">探索分析</h4>
+                    <p class="text-xs text-gray-500">統計分析與模式發現</p>
+                </div>
+
+                <div class="arrow-down"></div>
+
+                <div class="flow-step w-full md:w-1/5 bg-indigo-600 !border-l-0 !text-white">
+                    <span class="text-2xl mb-2 text-white">💡</span>
+                    <h4 class="font-bold text-white">視覺化呈現</h4>
+                    <p class="text-xs text-indigo-200">設計選擇與敘事建構</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <section class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">工具效率指標</h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    主要視覺化函式庫和工具在「部署時間」與「客製化能力」之間的權衡比較。
+                </p>
+                <div class="chart-container">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+                <p class="text-xs text-center text-gray-400 mt-2">由 500+ 位數據工程師評分</p>
+            </section>
+
+            <section class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">複雜度 vs. 記憶保留率</h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    讓圖表更複雜會增加觀眾的記憶保留率嗎？數據顯示為倒「U」形曲線—太簡單則無趣，太複雜則令人困惑。
+                </p>
+                <div id="plotlyScatter" class="chart-container"></div>
+                <p class="text-xs text-center text-gray-400 mt-2">對 1 萬次用戶會話的分析</p>
+            </section>
+
+        </div>
+
+        <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">部門技能差距分析</h3>
+            <p class="text-sm text-gray-600 mb-4">
+                不同公司部門之間的數據素養技能分佈。行銷部門正在趕上財務部門，而人力資源部門則相對落後。
+            </p>
+            <div class="chart-container" style="max-height: 350px;">
+                <canvas id="stackedChart"></canvas>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-gray-400 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p>&copy; 2025 數據視覺化洞察小組。由 Canvas 資訊圖表引擎生成。</p>
+        </div>
+    </footer>
+
+    <script>
+        function wrapLabels(label) {
+            const MAX_LENGTH = 16;
+            if (typeof label !== 'string' || label.length <= MAX_LENGTH) {
+                return label;
+            }
+            const words = label.split('');
+            const lines = [];
+            let currentLine = '';
+
+            for (let i = 0; i < words.length; i++) {
+                if ((currentLine.length + 1) < MAX_LENGTH) {
+                    currentLine += words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        function processLabels(labelArray) {
+            return labelArray.map(l => wrapLabels(l));
+        }
+
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: { family: "'Inter', sans-serif", size: 11 }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                    padding: 12,
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                                return label.join('');
+                            } else {
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const colors = {
+            indigo: '#4F46E5',
+            cyan: '#06B6D4',
+            fuchsia: '#D946EF',
+            amber: '#F59E0B',
+            slate: '#64748B'
+        };
+
+        const ctxUsage = document.getElementById('usageChart').getContext('2d');
+        const rawLabelsUsage = [
+            "營運報告與合規性",
+            "預測分析與預測",
+            "客戶行為追蹤",
+            "內部財務審計" 
+        ];
+        
+        new Chart(ctxUsage, {
+            type: 'doughnut',
+            data: {
+                labels: processLabels(rawLabelsUsage),
+                datasets: [{
+                    data: [40, 35, 15, 10],
+                    backgroundColor: [colors.indigo, colors.cyan, colors.fuchsia, colors.amber],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                ...commonOptions,
+                cutout: '65%'
+            }
+        });
+
+        const ctxTrend = document.getElementById('trendChart').getContext('2d');
+        const labelsTrend = ["2020", "2021", "2022", "2023", "2024", "2025"];
+        
+        new Chart(ctxTrend, {
+            type: 'line',
+            data: {
+                labels: labelsTrend,
+                datasets: [{
+                    label: '互動式儀表板',
+                    data: [20, 35, 48, 65, 78, 85],
+                    borderColor: colors.cyan,
+                    backgroundColor: colors.cyan,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 4
+                },
+                {
+                    label: '靜態 PDF 報告',
+                    data: [80, 70, 60, 45, 30, 20],
+                    borderColor: colors.slate,
+                    backgroundColor: colors.slate,
+                    borderDash: [5, 5],
+                    tension: 0.4,
+                    borderWidth: 2,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                ...commonOptions,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        const ctxComp = document.getElementById('comparisonChart').getContext('2d');
+        const rawLabelsComp = [
+            "Python (Pandas/Matplotlib)",
+            "企業 BI 平台 (PowerBI)",
+            "網頁函式庫 (D3/Chart.js)",
+            "傳統試算表軟體"
+        ];
+
+        new Chart(ctxComp, {
+            type: 'bar',
+            data: {
+                labels: processLabels(rawLabelsComp),
+                datasets: [{
+                    label: '部署速度分數',
+                    data: [65, 85, 55, 90],
+                    backgroundColor: colors.indigo,
+                    borderRadius: 4
+                },
+                {
+                    label: '客製化能力分數',
+                    data: [95, 60, 98, 30],
+                    backgroundColor: colors.amber,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        const xValues = [];
+        const yValues = [];
+        const colorsPlotly = [];
+        
+        for (let i = 0; i < 50; i++) {
+            let x = Math.random() * 10;
+            xValues.push(x);
+            
+            let y = -1.5 * Math.pow(x - 5.5, 2) + 80 + (Math.random() * 10);
+            yValues.push(y);
+
+            if(y > 70) colorsPlotly.push(colors.cyan);
+            else if (y > 40) colorsPlotly.push(colors.indigo);
+            else colorsPlotly.push(colors.slate);
+        }
+
+        const trace1 = {
+            x: xValues,
+            y: yValues,
+            mode: 'markers',
+            type: 'scattergl',
+            marker: {
+                size: 12,
+                color: colorsPlotly,
+                opacity: 0.8
+            },
+            text: xValues.map(x => `複雜度: ${x.toFixed(1)}`),
+            hoverinfo: 'text+y'
+        };
+
+        const layout = {
+            margin: { t: 20, r: 20, b: 40, l: 40 },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            xaxis: { 
+                title: '視覺複雜度指標', 
+                showgrid: false,
+                zeroline: false
+            },
+            yaxis: { 
+                title: '資訊記憶保留分數', 
+                showgrid: true, 
+                gridcolor: '#f1f5f9'
+            },
+            autosize: true
+        };
+
+        const config = {
+            responsive: true,
+            displayModeBar: false
+        };
+
+        Plotly.newPlot('plotlyScatter', [trace1], layout, config);
+
+
+        const ctxStack = document.getElementById('stackedChart').getContext('2d');
+        const depts = ["財務", "行銷", "產品", "人力資源"];
+        
+        new Chart(ctxStack, {
+            type: 'bar',
+            data: {
+                labels: depts,
+                datasets: [
+                    {
+                        label: '進階 (SQL/Python)',
+                        data: [20, 15, 45, 5],
+                        backgroundColor: colors.indigo,
+                    },
+                    {
+                        label: '中級 (BI 工具)',
+                        data: [50, 45, 40, 20],
+                        backgroundColor: colors.cyan,
+                    },
+                    {
+                        label: '基礎 (Excel/瀏覽)',
+                        data: [30, 40, 15, 75],
+                        backgroundColor: colors.slate,
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    x: { stacked: true, grid: { display: false } },
+                    y: { stacked: true, grid: { color: '#f1f5f9' } }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>

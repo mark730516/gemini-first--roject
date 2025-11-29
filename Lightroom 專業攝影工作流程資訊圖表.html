@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightroom 專業攝影工作流程資訊圖表</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#073B4C',
+                            blue: '#118AB2',
+                            green: '#06D6A0',
+                            yellow: '#FFD166',
+                            red: '#FF6B6B',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-sans text-brand-dark">
+
+    <main class="container mx-auto max-w-6xl p-4 md:p-8">
+
+        <header class="text-center mb-12 md:mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold text-brand-dark mb-4">從混亂到精選</h1>
+            <p class="text-xl md:text-2xl text-brand-blue font-light">專業攝影師的 Lightroom 高效率工作流程</p>
+        </header>
+
+        <section class="mb-12 md:mb-16">
+            <h2 class="text-3xl font-bold text-brand-dark mb-6 text-center">面臨的挑戰：您是否也沉沒在照片海中？</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="text-6xl font-bold text-brand-red mb-2">1,000+</div>
+                    <p class="text-lg">一場活動拍攝的照片</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="text-6xl font-bold text-brand-yellow mb-2">90%</div>
+                    <p class="text-lg">相似、失焦或失敗的影像</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="text-6xl font-bold text-brand-blue mb-2">8 小時</div>
+                    <p class="text-lg">傳統篩選和編輯所花費的時間</p>
+                </div>
+            </div>
+            <p class="text-center text-lg mt-6 text-gray-700">一個結構化的工作流程，是將時間從「整理」轉移到「創作」的關鍵。</p>
+        </section>
+
+        <section class="mb-12 md:mb-16">
+            <h2 class="text-3xl font-bold text-brand-dark mb-6 text-center">專業的 5 步驟工作流程</h2>
+            <p class="text-lg text-gray-700 mb-8 max-w-3xl mx-auto text-center">這個流程將指導您如何系統性地處理大量照片，確保速度和品質並存。每一步都至關重要。</p>
+            
+            <div class="flex flex-col md:flex-row md:flex-wrap justify-between items-center gap-4">
+                
+                <div class="flex-1 min-w-[180px] bg-white p-6 rounded-lg shadow-lg text-center m-2">
+                    <div class="text-4xl mb-2">1.</div>
+                    <h3 class="text-xl font-bold text-brand-blue mb-2">匯入 (Import)</h3>
+                    <p>建立 1:1 預視，奠定零延遲篩選的基礎。</p>
+                </div>
+
+                <div class="text-4xl text-brand-blue hidden md:block">→</div>
+
+                <div class="flex-1 min-w-[180px] bg-white p-6 rounded-lg shadow-lg text-center m-2">
+                    <div class="text-4xl mb-2">2.</div>
+                    <h3 class="text-xl font-bold text-brand-blue mb-2">篩選 (Culling)</h3>
+                    <p>使用 <span class="font-mono bg-gray-200 px-1 rounded">X</span> 和 <span class="font-mono bg-gray-200 px-1 rounded">P</span> 鍵快速標記廢片與精選。</p>
+                </div>
+
+                <div class="text-4xl text-brand-blue hidden md:block">→</div>
+
+                <div class="flex-1 min-w-[180px] bg-white p-6 rounded-lg shadow-lg text-center m-2">
+                    <div class="text-4xl mb-2">3.</div>
+                    <h3 class="text-xl font-bold text-brand-blue mb-2">過濾 (Filter)</h3>
+                    <p>只顯示標記為「精選」的照片，專注處理。</p>
+                </div>
+
+                <div class="text-4xl text-brand-blue hidden md:block">→</div>
+
+                <div class="flex-1 min-w-[180px] bg-white p-6 rounded-lg shadow-lg text-center m-2">
+                    <div class="text-4xl mb-2">4.</div>
+                    <h3 class="text-xl font-bold text-brand-blue mb-2">後製 (Develop)</h3>
+                    <p>套用預設集、AI 遮色片並同步設定。</p>
+                </div>
+                
+                <div class="text-4xl text-brand-blue hidden md:block">→</div>
+
+                <div class="flex-1 min-w-[180px] bg-white p-6 rounded-lg shadow-lg text-center m-2">
+                    <div class="text-4xl mb-2">5.</div>
+                    <h3 class="text-xl font-bold text-brand-blue mb-2">轉存 (Export)</h3>
+                    <p>使用轉存預設集，快速輸出成果。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12 md:mb-16">
+            <h2 class="text-3xl font-bold text-brand-dark mb-6 text-center">深度解析 (I)：高效篩選漏斗</h2>
+            <p class="text-lg text-gray-700 mb-8 max-w-3xl mx-auto text-center">篩選 (Culling) 是整個流程中節省時間的關鍵。目標不是找到「好」照片，而是快速「刪除」壞照片。這是一個兩階段的漏斗過程。</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center">
+                    <h3 class="text-2xl font-semibold mb-2 text-brand-dark">第一輪：刪除廢片 (按 <span class="font-mono bg-gray-200 px-1 rounded">X</span>)</h3>
+                    <p class="text-gray-600 mb-4 text-center">快速瀏覽，刪除所有明顯失敗 (失焦、閉眼) 的照片。</p>
+                    <div class="relative w-full max-w-lg h-80 sm:h-96 max-h-96">
+                        <canvas id="cullPass1Chart"></canvas>
+                    </div>
+                    <p class="text-lg text-gray-700 mt-4 font-semibold">目標：快速淘汰 60% 以上的檔案。</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center">
+                    <h3 class="text-2xl font-semibold mb-2 text-brand-dark">第二輪：精選相片 (按 <span class="font-mono bg-gray-200 px-1 rounded">P</span>)</h3>
+                    <p class="text-gray-600 mb-4 text-center">從剩下的 40% 中，選出最精華的 10%。</p>
+                    <div class="relative w-full max-w-lg h-80 sm:h-96 max-h-96">
+                        <canvas id="cullPass2Chart"></canvas>
+                    </div>
+                    <p class="text-lg text-gray-700 mt-4 font-semibold">最終只專注於 10% 最好的照片。</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6 mt-8">
+                <h3 class="text-2xl font-semibold mb-4 text-center text-brand-dark">加速篩選的關鍵工具</h3>
+                <ul class="divide-y divide-gray-200">
+                    <li class="py-4 flex flex-col md:flex-row md:items-center">
+                        <span class="font-mono bg-brand-blue text-white rounded px-3 py-1 text-lg font-bold w-full md:w-auto text-center mb-2 md:mb-0 md:mr-4">Caps Lock</span>
+                        <span class="text-gray-700">啟用「自動前進」。當您按下標記鍵 (<span class="font-mono">P</span>/ <span class="font-mono">X</span>) 時，LrC 會自動跳到下一張，節省 50% 的操作！</span>
+                    </li>
+                    <li class="py-4 flex flex-col md:flex-row md:items-center">
+                        <span class="font-mono bg-brand-blue text-white rounded px-3 py-1 text-lg font-bold w-full md:w-auto text-center mb-2 md:mb-0 md:mr-4">N 鍵</span>
+                        <span class="text-gray-700">「篩選檢視 (Survey View)」。將多張連拍照片平鋪比較，快速淘汰相似照片中的弱者。</span>
+                    </li>
+                    <li class="py-4 flex flex-col md:flex-row md:items-center">
+                        <span class="font-mono bg-brand-blue text-white rounded px-3 py-1 text-lg font-bold w-full md:w-auto text-center mb-2 md:mb-0 md:mr-4">C 鍵</span>
+                        <span class="text-gray-700">「比較檢視 (Compare View)」。並排 1:1 放大比較，精準檢查兩張照片的對焦清晰度。</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="mb-12 md:mb-16">
+            <h2 class="text-3xl font-bold text-brand-dark mb-6 text-center">深度解析 (II)：智慧後製</h2>
+            <p class="text-lg text-gray-700 mb-8 max-w-3xl mx-auto text-center">當您只剩下 10% 的精選照片時，後製的目標是「快速」且「高品質」。善用 LrC 的智慧功能，而不是手動調整每一張。</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center">
+                    <h3 class="text-2xl font-semibold mb-4 text-brand-dark text-center">現代後製的效率比較</h3>
+                    <p class="text-gray-600 mb-4 text-center">比較不同技術對「品質影響力」的評分（10 分為滿分）。</p>
+                    <div class="relative w-full max-w-lg h-80 sm:h-96 max-h-96">
+                        <canvas id="developmentChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center">
+                    <h3 class="text-2xl font-semibold mb-4 text-brand-dark text-center">工作流程時間分配</h3>
+                    <p class="text-gray-600 mb-4 text-center">採用此流程後，您的大部分時間將花在最有價值的「篩選」與「編輯」。</p>
+                    <div class="relative w-full max-w-lg h-80 sm:h-96 max-h-96">
+                        <canvas id="timeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 md:mt-16 py-8 border-t border-gray-300">
+            <p class="text-lg text-gray-700">從 1000+ 張照片到 100 張精選。這就是專業工作流程的力量。</p>
+            <p class="text-sm text-gray-500 mt-2">資訊圖表 by Canvas Infographics | 視覺化技術: Chart.js (Canvas) & Tailwind CSS. <br>此頁面不含任何 SVG 或 Mermaid JS 圖形。</p>
+        </footer>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const palette = {
+                dark: '#073B4C',
+                blue: '#118AB2',
+                green: '#06D6A0',
+                yellow: '#FFD166',
+                red: '#FF6B6B',
+                white: '#FFFFFF'
+            };
+
+            Chart.defaults.font.family = "'Inter', 'Noto Sans TC', 'sans-serif'";
+            Chart.defaults.color = palette.dark;
+            Chart.defaults.plugins.legend.position = 'bottom';
+
+            const mandatoryTooltipCallback = {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            };
+
+            const cullPass1ChartCtx = document.getElementById('cullPass1Chart');
+            if (cullPass1ChartCtx) {
+                new Chart(cullPass1ChartCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['淘汰的廢片', '進入第二輪的照片'],
+                        datasets: [{
+                            data: [60, 40],
+                            backgroundColor: [palette.red, palette.blue],
+                            borderColor: palette.white,
+                            borderWidth: 4,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    font: { size: 14 }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: mandatoryTooltipCallback
+                            }
+                        }
+                    }
+                });
+            }
+
+            const cullPass2ChartCtx = document.getElementById('cullPass2Chart');
+            if (cullPass2ChartCtx) {
+                new Chart(cullPass2ChartCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['最終精選 (10%)', '保留但未精選 (30%)'],
+                        datasets: [{
+                            data: [10, 30],
+                            backgroundColor: [palette.green, palette.yellow],
+                            borderColor: palette.white,
+                            borderWidth: 4,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    font: { size: 14 }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: mandatoryTooltipCallback
+                            }
+                        }
+                    }
+                });
+            }
+
+            const developmentChartCtx = document.getElementById('developmentChart');
+            if (developmentChartCtx) {
+                new Chart(developmentChartCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['手動逐一調整', '套用預設集 (Presets)', 'AI 遮色片 (Masks)', '同步設定 (Sync)'],
+                        datasets: [{
+                            label: '品質影響力評分 (滿分10)',
+                            data: [5, 8, 9, 10],
+                            backgroundColor: [palette.red, palette.yellow, palette.green, palette.blue],
+                            borderRadius: 4,
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 10,
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: mandatoryTooltipCallback
+                            }
+                        }
+                    }
+                });
+            }
+
+            const timeChartCtx = document.getElementById('timeChart');
+            if (timeChartCtx) {
+                new Chart(timeChartCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: [
+                            ['篩選 (Sorting)'], 
+                            ['後製 (Editing)'], 
+                            ['匯入 & 轉存', '(Import/Export)']
+                        ],
+                        datasets: [{
+                            data: [50, 35, 15],
+                            backgroundColor: [palette.blue, palette.yellow, palette.red],
+                            borderColor: palette.white,
+                            borderWidth: 4,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    font: { size: 14 }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: mandatoryTooltipCallback
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

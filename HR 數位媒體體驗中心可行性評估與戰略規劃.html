@@ -1,0 +1,562 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR 數位媒體體驗中心 | 可行性評估與戰略規劃</title>
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Configure Tailwind Theme based on "Vibrant Future Tech" Palette -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        deepSpace: '#0B1120',   // Main Background
+                        cardBg: '#1E293B',      // Card Background
+                        neonCyan: '#06b6d4',    // Primary Accent (Cyan-500)
+                        electricPurple: '#8b5cf6', // Secondary Accent (Violet-500)
+                        successGreen: '#10b981', // Positive/Growth
+                        textLight: '#f1f5f9',   // Main Text
+                        textDim: '#94a3b8',     // Secondary Text
+                        warning: '#f59e0b',     // Warning/Highlight
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles & Chart Container Constraints */
+        body {
+            background-color: #0B1120;
+            color: #f1f5f9;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* Chart Container - Strictly Constrained */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Max width constraint */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base mobile height */
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px; /* Tablet/Desktop height */
+            }
+        }
+
+        /* Custom Scrollbar for sleek look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B1120; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4; 
+        }
+
+        /* Glassmorphism Card Effect */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Utility for interactive elements */
+        .hover-lift {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.2);
+            border-color: rgba(6, 182, 212, 0.4);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation (Sticky) -->
+    <nav class="sticky top-0 z-50 bg-deepSpace/90 backdrop-blur border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl mr-2">💠</span>
+                    <span class="font-bold text-xl tracking-wider">Project <span class="text-neonCyan">VISION</span></span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#vision" class="hover:text-neonCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">核心戰略</a>
+                        <a href="#budget" class="hover:text-neonCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">預算分析</a>
+                        <a href="#infrastructure" class="hover:text-neonCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">工程規格</a>
+                        <a href="#suppliers" class="hover:text-neonCyan px-3 py-2 rounded-md text-sm font-medium transition-colors">供應鏈附錄</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden pt-16 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
+                <span class="block text-textLight">HR 數位媒體體驗中心</span>
+                <span class="block text-transparent bg-clip-text bg-gradient-to-r from-neonCyan to-electricPurple mt-2">可行性評估與未來性整合</span>
+            </h1>
+            <p class="mt-4 max-w-2xl mx-auto text-xl text-textDim">
+                從單純的影音空間，升級為與公司 AI 大腦 (tGenie) 對接的數位數據核心。
+                建立 <b>Microsoft Teams 原生整合</b> 的全媒體協作平台。
+            </p>
+        </div>
+    </div>
+
+    <!-- Section 1: Strategic Vision & AI Synergy -->
+    <section id="vision" class="py-12 bg-cardBg/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-white border-l-4 border-neonCyan pl-4">戰略架構：資源極大化</h2>
+                <p class="mt-4 text-textDim leading-relaxed">
+                    本計畫的核心價值不在於購買硬體，而在於「整合」。我們將透過兩個標準化場域 (Zone A & B) 產出高品質數據，並明確定義與公司內部 AI 發展的對接路徑，避免重複投資，實現真正的數位轉型。
+                </p>
+            </div>
+
+            <!-- Strategy Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Zone A -->
+                <div class="glass-panel p-6 rounded-xl hover-lift border border-white/5">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-neonCyan">Zone A: 演播廳</h3>
+                        <span class="text-3xl">🎥</span>
+                    </div>
+                    <p class="text-sm text-textDim mb-4">The Broadcaster - 旗艦級高層訪談與大型會議中心。</p>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li class="flex items-start"><span class="text-neonCyan mr-2">▸</span>NDI 廣播級無損傳輸</li>
+                        <li class="flex items-start"><span class="text-neonCyan mr-2">▸</span>Teams 原生整合操作</li>
+                        <li class="flex items-start"><span class="text-neonCyan mr-2">▸</span>自動化燈光鏡位控制</li>
+                    </ul>
+                </div>
+
+                <!-- Zone B -->
+                <div class="glass-panel p-6 rounded-xl hover-lift border border-white/5">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-electricPurple">Zone B: 錄音艙</h3>
+                        <span class="text-3xl">🎙️</span>
+                    </div>
+                    <p class="text-sm text-textDim mb-4">The Podcaster - 自助式刷臉即用的聲音創作基地。</p>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li class="flex items-start"><span class="text-electricPurple mr-2">▸</span>身份驗證自動啟動</li>
+                        <li class="flex items-start"><span class="text-electricPurple mr-2">▸</span>檔案自動上傳雲端</li>
+                        <li class="flex items-start"><span class="text-electricPurple mr-2">▸</span>NC-25 聲學隔音標準</li>
+                    </ul>
+                </div>
+
+                <!-- AI Future -->
+                <div class="glass-panel p-6 rounded-xl border border-dashed border-gray-600 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-successGreen/20 rounded-full blur-xl"></div>
+                    <div class="flex items-center justify-between mb-4 relative z-10">
+                        <h3 class="text-xl font-bold text-successGreen">AI Synergy</h3>
+                        <span class="text-3xl">🧠</span>
+                    </div>
+                    <p class="text-sm text-textDim mb-4">不外購 AI，而是對接內部 tGenie 與 GenAI 平台。</p>
+                    <div class="space-y-3 relative z-10">
+                        <div class="bg-deepSpace/50 p-2 rounded text-xs text-center border border-gray-700">
+                            <span class="text-neonCyan font-bold">INPUT:</span> 純淨影音數據
+                        </div>
+                        <div class="flex justify-center text-gray-500 text-xs">⬇️ (API 串接)</div>
+                        <div class="bg-deepSpace/50 p-2 rounded text-xs text-center border border-successGreen/30">
+                            <span class="text-successGreen font-bold">PROCESS:</span> 內部 LLM / tGenie
+                        </div>
+                        <div class="flex justify-center text-gray-500 text-xs">⬇️</div>
+                        <div class="bg-deepSpace/50 p-2 rounded text-xs text-center border border-gray-700">
+                            <span class="text-electricPurple font-bold">OUTPUT:</span> 會議摘要、多語系生成
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Financial Feasibility (Budget) -->
+    <section id="budget" class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-white border-l-4 border-electricPurple pl-4">預算配置與成本分析</h2>
+                <p class="mt-4 text-textDim leading-relaxed">
+                    總預算預估為 <b>520萬 ~ 700萬 TWD</b>。分析顯示，為了確保系統長期穩定運作，我們在「基礎建設（網絡+裝修）」投入了約 40% 的資源，這是避免未來技術債的關鍵投資。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Chart 1: Budget Composition -->
+                <div class="glass-panel p-6 rounded-xl">
+                    <h3 class="text-lg font-semibold text-textLight mb-6 flex items-center">
+                        <span class="w-2 h-6 bg-neonCyan rounded mr-2"></span>
+                        資金分配比例 (Budget Allocation)
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="budgetDoughnut"></canvas>
+                    </div>
+                    <p class="text-center text-xs text-textDim mt-4">基礎建設 (網路+裝修) 佔比最高，確保穩定性。</p>
+                </div>
+
+                <!-- Chart 2: Cost Range -->
+                <div class="glass-panel p-6 rounded-xl">
+                    <h3 class="text-lg font-semibold text-textLight mb-6 flex items-center">
+                        <span class="w-2 h-6 bg-electricPurple rounded mr-2"></span>
+                        預算區間分析 (Cost Range)
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="budgetRangeChart"></canvas>
+                    </div>
+                    <p class="text-center text-xs text-textDim mt-4">單位：萬 TWD。藍色為基本預算，淺色為彈性預備金。</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Infrastructure Resilience (Network & Specs) -->
+    <section id="infrastructure" class="py-12 bg-cardBg/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-white border-l-4 border-successGreen pl-4">工程規格與網絡韌性</h2>
+                <p class="mt-4 text-textDim leading-relaxed">
+                    除了看得見的設備，我們更重視看不見的「底層體質」。透過建立物理隔離的 10GbE 光纖骨幹與嚴格的聲學裝修規範，解決一般辦公大樓常見的「網路卡頓」與「環境噪音」問題。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Network Specs -->
+                <div class="lg:col-span-1 space-y-4">
+                    <div class="glass-panel p-5 rounded-lg border-l-2 border-neonCyan">
+                        <h4 class="font-bold text-neonCyan mb-1">🔒 物理隔離 (Air-Gap)</h4>
+                        <p class="text-sm text-gray-400">獨立 AV 專網，不與 OA 搶頻寬，杜絕資安風險。</p>
+                    </div>
+                    <div class="glass-panel p-5 rounded-lg border-l-2 border-electricPurple">
+                        <h4 class="font-bold text-electricPurple mb-1">⚡ 10GbE 光纖骨幹</h4>
+                        <p class="text-sm text-gray-400">Netgear AV Line 交換器，專為 NDI 影音封包優化。</p>
+                    </div>
+                    <div class="glass-panel p-5 rounded-lg border-l-2 border-successGreen">
+                        <h4 class="font-bold text-successGreen mb-1">⏱️ 零延遲 (Zero Latency)</h4>
+                        <p class="text-sm text-gray-400">PTP 時間協定 + QoS 優先權，確保畫面不掉格。</p>
+                    </div>
+                </div>
+
+                <!-- Network Chart -->
+                <div class="lg:col-span-2 glass-panel p-6 rounded-xl">
+                    <h3 class="text-lg font-semibold text-textLight mb-4">頻寬韌性比較 (Bandwidth Capacity)</h3>
+                    <div class="chart-container">
+                        <canvas id="networkChart"></canvas>
+                    </div>
+                    <p class="text-center text-xs text-textDim mt-2">AV 專網提供 10 倍於一般辦公網路的吞吐量。</p>
+                </div>
+
+            </div>
+
+            <!-- Engineering Checkpoints Grid -->
+            <div class="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-deepSpace border border-gray-700 p-6 rounded-lg hover:border-neonCyan transition duration-300">
+                    <div class="text-3xl mb-3">🔇</div>
+                    <h4 class="font-bold text-white mb-2">聲學工程</h4>
+                    <ul class="text-xs text-gray-400 list-disc pl-4 space-y-1">
+                        <li><b>房中房結構：</b>浮動地板隔絕震動</li>
+                        <li><b>聲閘 (Sound Lock)：</b>雙道門防干擾</li>
+                        <li><b>NC-25：</b>極靜背景音值</li>
+                    </ul>
+                </div>
+
+                <div class="bg-deepSpace border border-gray-700 p-6 rounded-lg hover:border-neonCyan transition duration-300">
+                    <div class="text-3xl mb-3">❄️</div>
+                    <h4 class="font-bold text-white mb-2">空調 HVAC</h4>
+                    <ul class="text-xs text-gray-400 list-disc pl-4 space-y-1">
+                        <li><b>低風速：</b>出風口 &lt; 1.5 m/s</li>
+                        <li><b>消音箱：</b>防止主機噪音傳入</li>
+                        <li><b>獨立溫控：</b>不依賴中央空調</li>
+                    </ul>
+                </div>
+
+                <div class="bg-deepSpace border border-gray-700 p-6 rounded-lg hover:border-neonCyan transition duration-300">
+                    <div class="text-3xl mb-3">⚡</div>
+                    <h4 class="font-bold text-white mb-2">電力系統</h4>
+                    <ul class="text-xs text-gray-400 list-disc pl-4 space-y-1">
+                        <li><b>IG 獨立迴路：</b>影音與茶水間分離</li>
+                        <li><b>接地工程：</b>保護精密器材</li>
+                        <li><b>UPS：</b>核心機房不斷電</li>
+                    </ul>
+                </div>
+
+                <div class="bg-deepSpace border border-gray-700 p-6 rounded-lg hover:border-neonCyan transition duration-300">
+                    <div class="text-3xl mb-3">🏗️</div>
+                    <h4 class="font-bold text-white mb-2">空間結構</h4>
+                    <ul class="text-xs text-gray-400 list-disc pl-4 space-y-1">
+                        <li><b>天花板淨高：</b>建議 &gt; 3米</li>
+                        <li><b>燈光佈局：</b>預留燈軌與懸吊點</li>
+                        <li><b>抗靜電：</b>地面材質要求</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Appendix - Supply Chain -->
+    <section id="suppliers" class="py-12 bg-gradient-to-t from-deepSpace to-cardBg/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-white border-l-4 border-warning pl-4">附錄：台灣頂尖供應鏈</h2>
+                <p class="mt-4 text-textDim leading-relaxed">
+                    本計畫整合在地最強技術夥伴，確保維運無虞與即時支援。以下為本次評估之關鍵供應商。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Supplier Cards -->
+                <div class="glass-panel p-5 rounded-lg hover:bg-white/5 transition group cursor-pointer">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="text-lg font-bold text-neonCyan group-hover:text-white transition">魏贊科技</h4>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">會議整合</span>
+                    </div>
+                    <p class="text-sm text-gray-400">Microsoft Teams Rooms (MTR) 認證專家，確保軟硬體無縫接軌。</p>
+                </div>
+
+                <div class="glass-panel p-5 rounded-lg hover:bg-white/5 transition group cursor-pointer">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="text-lg font-bold text-neonCyan group-hover:text-white transition">碩方科技</h4>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">廣播系統</span>
+                    </div>
+                    <p class="text-sm text-gray-400">NewTek TriCaster 台灣總代理，具備電視台等級 NDI 建置經驗。</p>
+                </div>
+
+                <div class="glass-panel p-5 rounded-lg hover:bg-white/5 transition group cursor-pointer">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="text-lg font-bold text-neonCyan group-hover:text-white transition">佳業 / 進懋</h4>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">聲學建材</span>
+                    </div>
+                    <p class="text-sm text-gray-400">提供專業吸音板與隔音門解決方案，確保錄音室等級聲學品質。</p>
+                </div>
+
+                <div class="glass-panel p-5 rounded-lg hover:bg-white/5 transition group cursor-pointer">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="text-lg font-bold text-neonCyan group-hover:text-white transition">優必達 Ubitus</h4>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">雲端串流</span>
+                    </div>
+                    <p class="text-sm text-gray-400">世界級雲端技術夥伴，協助未來大量影音內容的即時算圖與傳輸。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-deepSpace py-8 border-t border-gray-800 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-textDim text-sm">© 2025 HR Digital Media Center Proposal. Designed for Resilience & Scalability.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Utility: Split labels longer than 16 chars ---
+        function splitLabel(label, maxLength = 16) {
+            if (label.length <= maxLength) return label;
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if ((currentLine + ' ' + words[i]).length <= maxLength) {
+                    currentLine += ' ' + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        // --- Chart Global Configuration (Dark Mode) ---
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.font.family = '"Segoe UI", "Roboto", sans-serif';
+
+        const commonPlugins = {
+            legend: {
+                labels: { color: '#f1f5f9', font: { size: 12 } }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                titleColor: '#06b6d4',
+                bodyColor: '#f1f5f9',
+                borderColor: 'rgba(6, 182, 212, 0.3)',
+                borderWidth: 1,
+                padding: 10,
+                callbacks: {
+                    title: function(tooltipItems) {
+                        const item = tooltipItems[0];
+                        let label = item.chart.data.labels[item.dataIndex];
+                        if (Array.isArray(label)) {
+                            return label.join(' ');
+                        } else {
+                            return label;
+                        }
+                    }
+                }
+            }
+        };
+
+        // --- Chart 1: Budget Allocation (Doughnut) ---
+        // Data derived from Document 4 (Summary) & Document 2 (Budget)
+        // Zone A: ~1.5M, Zone B: ~1.3M, Decor/Const: ~1.5M, Network: ~1.0M, Auto: ~0.6M
+        const ctxBudget = document.getElementById('budgetDoughnut').getContext('2d');
+        new Chart(ctxBudget, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    'Zone A: 演播廳 (AV Core)',
+                    'Zone B: 錄音艙 (Acoustic)',
+                    '工程裝修 (Construction)',
+                    '核心網路 (10G Backbone)',
+                    '自動化系統 (Automation)'
+                ].map(l => splitLabel(l)),
+                datasets: [{
+                    data: [1500000, 1300000, 1500000, 1000000, 600000],
+                    backgroundColor: [
+                        '#06b6d4', // Neon Cyan
+                        '#8b5cf6', // Electric Purple
+                        '#64748b', // Slate
+                        '#10b981', // Emerald Green
+                        '#f59e0b'  // Amber Warning
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    ...commonPlugins,
+                    legend: { position: 'right' }
+                }
+            }
+        });
+
+        // --- Chart 2: Cost Range (Stacked Bar) ---
+        // Showing Min budget vs Buffer (Max - Min)
+        const ctxRange = document.getElementById('budgetRangeChart').getContext('2d');
+        new Chart(ctxRange, {
+            type: 'bar',
+            data: {
+                labels: ['Zone A', 'Zone B', 'Network', 'Decor', 'Auto'].map(l => splitLabel(l)),
+                datasets: [
+                    {
+                        label: '基本預算 (Min)',
+                        data: [130, 102, 85, 120, 55], // 10k TWD units
+                        backgroundColor: '#06b6d4',
+                        barPercentage: 0.6
+                    },
+                    {
+                        label: '彈性預備金 (Buffer)',
+                        data: [40, 51, 35, 60, 23],
+                        backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                        borderWidth: 1,
+                        borderColor: '#06b6d4',
+                        barPercentage: 0.6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { stacked: true, grid: { display: false, color: '#334155' } },
+                    y: { 
+                        stacked: true, 
+                        grid: { color: '#334155' },
+                        title: { display: true, text: '金額 (萬 TWD)' }
+                    }
+                },
+                plugins: commonPlugins
+            }
+        });
+
+        // --- Chart 3: Network Resilience (Horizontal Bar) ---
+        // Comparing 1Gbps vs 10Gbps
+        const ctxNet = document.getElementById('networkChart').getContext('2d');
+        new Chart(ctxNet, {
+            type: 'bar',
+            data: {
+                labels: ['一般辦公網路 (OA)', '提案 AV 專用骨幹'].map(l => splitLabel(l)),
+                datasets: [{
+                    label: '頻寬容量 (Bandwidth Gbps)',
+                    data: [1, 10],
+                    backgroundColor: ['#64748b', '#10b981'],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { 
+                        grid: { color: '#334155' },
+                        ticks: { callback: function(val) { return val + ' Gbps'; } }
+                    },
+                    y: { grid: { display: false } }
+                },
+                plugins: {
+                    ...commonPlugins,
+                    legend: { display: false }
+                }
+            }
+        });
+
+    </script>
+
+    <!-- Placeholder Comments Required by Prompt -->
+    <!-- Chosen Palette: Vibrant Future Tech (Deep Space Navy, Neon Cyan, Electric Purple) -->
+    <!-- Application Structure Plan: 
+         1. Hero Section: Sets the strategic context (HR + AI).
+         2. Vision/Strategy: Using Cards layout to define the two zones and the AI future connection (System Integration).
+         3. Budget: Visualizing the numbers from the report (Doughnut for allocation, Stacked Bar for range/buffer).
+         4. Infrastructure: Focusing on the "hidden" value (Network 10G chart & Construction specs grid).
+         5. Appendix: Supplier list to prove feasibility.
+         This flow moves from "Why" -> "What" -> "How Much" -> "How Real".
+    -->
+    <!-- Visualization & Content Choices:
+         1. Strategy Phase -> Goal: Organize -> Cards with Icons -> Cleanest way to show Zone A/B/AI without complex diagrams (NO SVG).
+         2. Budget Allocation -> Goal: Inform/Compare -> Doughnut Chart (Chart.js) -> Best for showing the 40% infrastructure investment.
+         3. Cost Range -> Goal: Compare -> Stacked Bar (Chart.js) -> Shows the "Buffer" clearly.
+         4. Network Bandwidth -> Goal: Compare -> Horizontal Bar (Chart.js) -> Visually impactful 1 vs 10 comparison.
+         5. Specs -> Goal: List -> Grid of HTML Cards -> Replaces text-heavy lists with visual blocks.
+         6. Suppliers -> Goal: Inform -> Simple Cards -> Clear attribution.
+         ** NO SVG graphics used. NO Mermaid JS used. **
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+</body>
+</html>

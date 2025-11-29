@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR 數位媒體體驗中心 - 全方位建置規劃書 (Tech Blue Edition)</title>
+    <!-- 使用 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 使用 Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- 使用 Font Awesome Icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tech: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            950: '#082f49',
+                        },
+                        cyan: {
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        display: ['"Rajdhani"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 全域字體設定 */
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #0f172a; /* 深藍底色 */
+            color: #e2e8f0;
+            scroll-behavior: smooth;
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(14, 165, 233, 0.08), transparent 25%), 
+                radial-gradient(circle at 85% 30%, rgba(6, 182, 212, 0.08), transparent 25%);
+        }
+
+        /* 網格背景動畫 */
+        .grid-bg {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+
+        /* 玻璃擬態卡片 */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 15px rgba(14, 165, 233, 0.15);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        /* 霓虹光暈文字 */
+        .text-glow {
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        }
+
+        /* 進度條動畫 */
+        @keyframes progress-load {
+            from { width: 0; }
+        }
+        .progress-bar {
+            animation: progress-load 1.5s ease-out forwards;
+        }
+
+        /* 章節標題樣式 */
+        .section-header {
+            border-left: 4px solid #0ea5e9;
+            padding-left: 1rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(to right, #0ea5e9, transparent);
+            top: 100%;
+            margin-top: 0.5rem;
+        }
+
+        /* 固定導覽列 */
+        .sticky-nav {
+            background: rgba(15, 23, 42, 0.9);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Icon 容器 */
+        .icon-box {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(14, 165, 233, 0.05));
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            color: #38bdf8;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyan-500 selection:text-white">
+
+    <!-- 頂部固定導覽列 -->
+    <nav class="sticky-nav sticky top-0 z-50 py-4">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded flex items-center justify-center text-white shadow-lg shadow-cyan-500/30">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <div class="font-display font-bold text-white text-lg tracking-wider">HR Digital Media Center</div>
+            </div>
+            <div class="hidden md:flex space-x-6 text-sm font-medium text-slate-300">
+                <a href="#strategy" class="hover:text-cyan-400 transition-colors py-2 border-b-2 border-transparent hover:border-cyan-400">戰略架構</a>
+                <a href="#value" class="hover:text-cyan-400 transition-colors py-2 border-b-2 border-transparent hover:border-cyan-400">架構師價值</a>
+                <a href="#budget" class="hover:text-cyan-400 transition-colors py-2 border-b-2 border-transparent hover:border-cyan-400">預算與網絡</a>
+                <a href="#specs" class="hover:text-cyan-400 transition-colors py-2 border-b-2 border-transparent hover:border-cyan-400">工程規範</a>
+                <a href="#partners" class="hover:text-cyan-400 transition-colors py-2 border-b-2 border-transparent hover:border-cyan-400">台灣供應鏈</a>
+            </div>
+            <a href="#footer" class="bg-slate-800 hover:bg-cyan-900 border border-slate-700 hover:border-cyan-500 text-cyan-400 text-xs font-bold py-2 px-4 rounded transition-all duration-300">
+                聯絡提案人 <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- 主視覺 Hero Section -->
+    <header class="relative pt-24 pb-32 px-6 overflow-hidden">
+        <!-- 背景網格 -->
+        <div class="absolute inset-0 grid-bg z-0 pointer-events-none"></div>
+        
+        <!-- 動態光暈 -->
+        <div class="absolute top-20 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
+        <div class="absolute bottom-20 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div class="max-w-6xl mx-auto text-center relative z-10">
+            <div class="inline-flex items-center gap-2 bg-slate-800/50 backdrop-blur border border-cyan-500/30 px-5 py-2 rounded-full text-sm font-medium mb-10 text-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.15)]">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                <span class="font-display tracking-wide uppercase">Project Vision: Resilient, Integrated, Future-Ready</span>
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 tracking-tight leading-tight text-white drop-shadow-2xl">
+                HR <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-glow">數位媒體</span> 體驗中心
+            </h1>
+            
+            <h2 class="text-xl md:text-3xl font-light text-slate-300 mb-16 tracking-wide font-display">
+                全方位建置規劃書 <span class="text-slate-500 ml-2 text-lg block md:inline mt-2 md:mt-0 font-normal">Comprehensive Implementation Plan</span>
+            </h2>
+            
+            <!-- 核心目標卡片 -->
+            <div class="max-w-4xl mx-auto glass-card p-1 rounded-2xl relative group">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
+                <div class="relative bg-slate-900/90 rounded-xl p-8 md:p-10 flex flex-col md:flex-row items-center gap-8">
+                    <div class="flex-shrink-0 w-20 h-20 bg-slate-800 rounded-2xl flex items-center justify-center text-3xl text-cyan-400 border border-slate-700 shadow-inner">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <div class="text-left">
+                        <h3 class="font-display font-bold text-cyan-500 text-sm uppercase tracking-widest mb-3">Core Mission</h3>
+                        <p class="text-xl md:text-2xl font-medium leading-relaxed text-slate-200">
+                            建立<span class="text-white border-b-2 border-cyan-500 pb-0.5 mx-2 font-bold">Microsoft Teams 原生整合</span>的直覺式全媒體協作平台，並具備與公司內部 AI 工具對接的未來擴充性。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-10 space-y-32 relative z-10">
+
+        <!-- 1. 總體戰略架構 -->
+        <section id="strategy" class="scroll-mt-32">
+            <div class="section-header">
+                <h3 class="text-3xl md:text-4xl font-bold text-white">1. 總體戰略架構</h3>
+                <p class="text-lg text-slate-400 mt-2 font-display tracking-wide">Strategic Architecture Breakdown</p>
+            </div>
+            
+            <div class="grid md:grid-cols-12 gap-8">
+                <!-- Core Phase (佔較大比例) -->
+                <div class="md:col-span-8 glass-card rounded-2xl overflow-hidden group">
+                    <div class="bg-gradient-to-r from-blue-900/50 to-slate-900/50 p-6 border-b border-slate-700/50 flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                                <i class="fas fa-cubes"></i>
+                            </div>
+                            <h4 class="text-xl font-bold text-blue-100">核心場域完美落地</h4>
+                        </div>
+                        <span class="px-3 py-1 bg-blue-500/20 border border-blue-500/30 text-blue-300 text-xs font-bold rounded uppercase tracking-wider">Phase 1: Priority</span>
+                    </div>
+                    
+                    <div class="p-8">
+                        <p class="text-slate-300 mb-8 text-lg">透過系統整合 (SI)，收斂台灣頂尖供應鏈（魏贊、碩方、佳業）為標準化服務，確保基礎建設穩固。</p>
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- Zone A -->
+                            <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700 hover:border-blue-400/50 transition-colors group/item">
+                                <div class="flex items-start gap-4 mb-4">
+                                    <i class="fas fa-video text-blue-400 text-2xl mt-1 group-hover/item:text-blue-300 transition-colors"></i>
+                                    <div>
+                                        <h5 class="font-bold text-white text-lg">Zone A: 旗艦演播廳</h5>
+                                        <p class="text-xs font-display font-bold text-slate-500 uppercase tracking-wider">The Broadcaster</p>
+                                    </div>
+                                </div>
+                                <p class="text-slate-400 text-sm leading-relaxed border-t border-slate-700/50 pt-3">整合 NDI 廣播技術與自動化環控，打造電視台等級畫質，操作邏輯完全符合 Teams 使用習慣。</p>
+                            </div>
+                            
+                            <!-- Zone B -->
+                            <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700 hover:border-blue-400/50 transition-colors group/item">
+                                <div class="flex items-start gap-4 mb-4">
+                                    <i class="fas fa-podcast text-blue-400 text-2xl mt-1 group-hover/item:text-blue-300 transition-colors"></i>
+                                    <div>
+                                        <h5 class="font-bold text-white text-lg">Zone B: 自助錄音艙</h5>
+                                        <p class="text-xs font-display font-bold text-slate-500 uppercase tracking-wider">The Podcaster</p>
+                                    </div>
+                                </div>
+                                <p class="text-slate-400 text-sm leading-relaxed border-t border-slate-700/50 pt-3">結合身份驗證與自動化排程，建立「刷臉即用、自動存檔」的零門檻 Podcast 錄製環境。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Future Phase -->
+                <div class="md:col-span-4 glass-card rounded-2xl overflow-hidden flex flex-col relative">
+                    <!-- 漸層背景裝飾 -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent pointer-events-none"></div>
+                    
+                    <div class="bg-gradient-to-r from-cyan-900/50 to-slate-900/50 p-6 border-b border-slate-700/50 flex justify-between items-center relative z-10">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-cyan-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h4 class="text-xl font-bold text-cyan-100">內部 AI 整合</h4>
+                        </div>
+                        <span class="px-3 py-1 bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-bold rounded uppercase tracking-wider">Phase 2</span>
+                    </div>
+                    
+                    <div class="p-8 flex-grow flex flex-col justify-center relative z-10">
+                        <p class="text-slate-300 mb-6 font-medium leading-relaxed">
+                            在硬體穩定後，啟動研究計畫，探索將數位中心產出的高品質影音，作為公司現有 GenAI 平台（如 tGenie）的訓練素材。
+                        </p>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg border border-slate-700 hover:bg-slate-800 transition-colors">
+                                <i class="fas fa-check-circle text-cyan-500 text-lg"></i>
+                                <span class="text-sm font-bold text-slate-200">優化訓練教材體驗</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg border border-slate-700 hover:bg-slate-800 transition-colors">
+                                <i class="fas fa-check-circle text-cyan-500 text-lg"></i>
+                                <span class="text-sm font-bold text-slate-200">AI 輔助影片後製 (摘要/字幕)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 架構師價值 -->
+        <section id="value" class="scroll-mt-32">
+            <div class="section-header">
+                <h3 class="text-3xl md:text-4xl font-bold text-white">2. 架構師價值</h3>
+                <p class="text-lg text-slate-400 mt-2 font-display tracking-wide">Why Me? The Architect's Value</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Value 1 -->
+                <div class="glass-card p-8 rounded-2xl relative group overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-700 to-slate-600 group-hover:from-cyan-500 group-hover:to-blue-600 transition-all duration-500"></div>
+                    <div class="icon-box w-14 h-14 rounded-xl mb-6 group-hover:bg-cyan-500/20 group-hover:text-cyan-300 group-hover:border-cyan-500/50 transition-all">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2 text-white">供應商管理</h4>
+                    <p class="text-xs font-bold text-slate-500 mb-4 font-display uppercase tracking-widest group-hover:text-cyan-500/80 transition-colors">Vendor Management</p>
+                    <p class="text-slate-400 leading-relaxed text-sm">
+                        憑藉 APTS 與尾牙直播的實戰經驗，我能將 HR 需求精準轉譯為技術規格（NDI、Dante），確保廠商交付零落差，避免規格與預算失控。
+                    </p>
+                </div>
+
+                <!-- Value 2 -->
+                <div class="glass-card p-8 rounded-2xl relative group overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-700 to-slate-600 group-hover:from-cyan-500 group-hover:to-blue-600 transition-all duration-500"></div>
+                    <div class="icon-box w-14 h-14 rounded-xl mb-6 group-hover:bg-cyan-500/20 group-hover:text-cyan-300 group-hover:border-cyan-500/50 transition-all">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2 text-white">UX 規劃能力</h4>
+                    <p class="text-xs font-bold text-slate-500 mb-4 font-display uppercase tracking-widest group-hover:text-cyan-500/80 transition-colors">User-Centric Design</p>
+                    <p class="text-slate-400 leading-relaxed text-sm">
+                        結合 HTML 工具與人臉辨識開發經驗，我將主導環控介面設計，打造「不僅強大，而且優雅」的直覺操作體驗，降低同仁學習門檻。
+                    </p>
+                </div>
+
+                <!-- Value 3 -->
+                <div class="glass-card p-8 rounded-2xl relative group overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-700 to-slate-600 group-hover:from-cyan-500 group-hover:to-blue-600 transition-all duration-500"></div>
+                    <div class="icon-box w-14 h-14 rounded-xl mb-6 group-hover:bg-cyan-500/20 group-hover:text-cyan-300 group-hover:border-cyan-500/50 transition-all">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2 text-white">創作者同理心</h4>
+                    <p class="text-xs font-bold text-slate-500 mb-4 font-display uppercase tracking-widest group-hover:text-cyan-500/80 transition-colors">Content Operations</p>
+                    <p class="text-slate-400 leading-relaxed text-sm">
+                        具備微電影編導與全端直播經驗，我比一般 IT 人員更懂「使用者痛點」，能從創作者的角度驗收設備，確保影音品質與流程順暢。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 建置預算與網絡架構 -->
+        <section id="budget" class="scroll-mt-32">
+            <div class="section-header">
+                <h3 class="text-3xl md:text-4xl font-bold text-white">3. 建置預算與網絡架構</h3>
+                <p class="text-lg text-slate-400 mt-2 font-display tracking-wide">Budget Estimation & Network Resilience</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-10">
+                
+                <!-- Left: Budget Breakdown -->
+                <div class="glass-card p-8 md:p-10 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-end mb-8 border-b border-slate-700 pb-6">
+                            <div>
+                                <p class="text-xs font-bold text-cyan-500 uppercase tracking-wider mb-1 font-display">Estimated Total Budget</p>
+                                <p class="text-4xl md:text-5xl font-black text-white tracking-tight">520~700<span class="text-lg font-bold text-slate-400 ml-2 font-sans">萬 (未稅)</span></p>
+                            </div>
+                            <div class="text-right">
+                                 <p class="text-xs font-bold text-cyan-500 uppercase tracking-wider mb-1 font-display">Space Required</p>
+                                 <p class="text-xl md:text-2xl font-bold text-slate-200">35 ~ 40<span class="text-base font-medium text-slate-500 ml-1 font-sans">坪</span></p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <!-- Budget Item -->
+                            <div class="relative group">
+                                <div class="flex justify-between text-sm font-bold mb-2">
+                                    <span class="text-slate-300 flex items-center gap-2 group-hover:text-white transition-colors"><i class="fas fa-circle text-blue-500 text-[10px]"></i> Zone A 直播廳 (25%)</span>
+                                    <span class="text-slate-400 font-display">130-170萬</span>
+                                </div>
+                                <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                                    <div class="bg-gradient-to-r from-blue-600 to-blue-400 h-full rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)] progress-bar" style="width: 25%"></div>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1 pl-5">NDI 導播系統、4K 遙控攝影機、MTR 會議系統</p>
+                            </div>
+                            
+                            <!-- Budget Item -->
+                            <div class="relative group">
+                                <div class="flex justify-between text-sm font-bold mb-2">
+                                    <span class="text-slate-300 flex items-center gap-2 group-hover:text-white transition-colors"><i class="fas fa-circle text-cyan-500 text-[10px]"></i> Zone B 錄音艙 (20%)</span>
+                                    <span class="text-slate-400 font-display">102-153萬</span>
+                                </div>
+                                <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                                    <div class="bg-gradient-to-r from-cyan-600 to-cyan-400 h-full rounded-full shadow-[0_0_10px_rgba(6,182,212,0.5)] progress-bar" style="width: 20%; animation-delay: 0.2s"></div>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1 pl-5">聲學隔音工程 (NC-25)、人臉辨識門禁</p>
+                            </div>
+
+                            <!-- Budget Item -->
+                            <div class="relative group">
+                                <div class="flex justify-between text-sm font-bold mb-2">
+                                    <span class="text-white flex items-center gap-2"><i class="fas fa-circle text-purple-500 text-[10px]"></i> 網絡骨幹 (17%)</span>
+                                    <span class="text-purple-400 font-bold font-display">88-132萬</span>
+                                </div>
+                                <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                                    <div class="bg-gradient-to-r from-purple-600 to-purple-400 h-full rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)] progress-bar" style="width: 17%; animation-delay: 0.4s"></div>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1 pl-5">Netgear AV 交換器、10GbE 光纖、QoS 設定</p>
+                            </div>
+
+                            <!-- Budget Item -->
+                            <div class="relative group">
+                                <div class="flex justify-between text-sm font-bold mb-2">
+                                    <span class="text-slate-300 flex items-center gap-2 group-hover:text-white transition-colors"><i class="fas fa-circle text-emerald-500 text-[10px]"></i> 自動化整合 (11%)</span>
+                                    <span class="text-slate-400 font-display">55-78萬</span>
+                                </div>
+                                <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                                    <div class="bg-gradient-to-r from-emerald-600 to-emerald-400 h-full rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)] progress-bar" style="width: 11%; animation-delay: 0.6s"></div>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1 pl-5">原始碼買斷、雙向回授邏輯、客製化 UI</p>
+                            </div>
+
+                             <!-- Budget Item -->
+                             <div class="relative group">
+                                <div class="flex justify-between text-sm font-bold mb-2">
+                                    <span class="text-slate-300 flex items-center gap-2 group-hover:text-white transition-colors"><i class="fas fa-circle text-slate-500 text-[10px]"></i> 基礎與預備金 (27%)</span>
+                                    <span class="text-slate-400 font-display">120-170萬</span>
+                                </div>
+                                <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                                    <div class="bg-slate-600 h-full rounded-full progress-bar" style="width: 27%; animation-delay: 0.8s"></div>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1 pl-5">裝修配合款、15% 風險預備金</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Network Architecture -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white p-10 rounded-2xl shadow-2xl border border-slate-800 relative overflow-hidden flex flex-col justify-center">
+                    <!-- Background Decoration -->
+                    <div class="absolute top-0 right-0 p-12 opacity-5 transform rotate-12 scale-150 text-cyan-500">
+                        <i class="fas fa-shield-alt fa-10x"></i>
+                    </div>
+                    <div class="absolute bottom-0 left-0 p-8 opacity-5 text-blue-500">
+                        <i class="fas fa-server fa-8x"></i>
+                    </div>
+                    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMWgydjJIMUMxeiIgZmlsbD0iIzMzMyIgZmlsbC1vcGFjaXR5PSIwLjEiLz48L3N2Zz4=')] opacity-20"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="p-3 bg-indigo-500/20 rounded-xl shadow-[0_0_20px_rgba(99,102,241,0.3)] border border-indigo-500/50 text-indigo-400">
+                                <i class="fas fa-network-wired text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-2xl font-bold text-white font-display tracking-wide">廣播級高韌性網絡</h4>
+                                <p class="text-xs text-indigo-300 font-bold uppercase tracking-wider">Broadcast-Grade Resilience</p>
+                            </div>
+                        </div>
+                        
+                        <p class="mb-10 text-slate-300 text-sm leading-relaxed border-l-2 border-indigo-500 pl-4 bg-indigo-500/5 py-2 pr-2 rounded-r">
+                            為了確保「軍規級抗壓力」，本計畫拒絕使用一般辦公室網絡，而是建置<span class="text-indigo-400 font-bold">獨立封閉的 AV 專網</span>。
+                        </p>
+
+                        <div class="space-y-6">
+                            <div class="flex gap-5 items-start group">
+                                <div class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-500 group-hover:shadow-[0_0_15px_rgba(79,70,229,0.5)] transition-all duration-300 flex-shrink-0">
+                                    <i class="fas fa-lock text-lg"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-base text-white mb-1 group-hover:text-indigo-300 transition-colors">物理隔離 (Air-Gap)</h5>
+                                    <p class="text-xs text-slate-400 leading-relaxed">建立獨立光纖內網，完全不與公司 OA 網絡搶頻寬，杜絕廣播風暴。</p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-5 items-start group">
+                                <div class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-500 group-hover:shadow-[0_0_15px_rgba(79,70,229,0.5)] transition-all duration-300 flex-shrink-0">
+                                    <i class="fas fa-tachometer-alt text-lg"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-base text-white mb-1 group-hover:text-indigo-300 transition-colors">10GbE 光纖骨幹</h5>
+                                    <p class="text-xs text-slate-400 leading-relaxed">採用 10GbE 核心。即使 3 台 4K 攝影機全開，頻寬佔用率仍低於 20%，確保系統「堅不可摧」。</p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-5 items-start group">
+                                <div class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-500 group-hover:shadow-[0_0_15px_rgba(79,70,229,0.5)] transition-all duration-300 flex-shrink-0">
+                                    <i class="fas fa-bolt text-lg"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-base text-white mb-1 group-hover:text-indigo-300 transition-colors">零延遲傳輸</h5>
+                                    <p class="text-xs text-slate-400 leading-relaxed">全線採用 Cat6A 認證線材與光纖，確保訊號傳輸零耗損。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 工程規範 -->
+        <section id="specs" class="scroll-mt-32">
+            <div class="section-header">
+                <h3 class="text-3xl md:text-4xl font-bold text-white">4. 關鍵工程介面規範</h3>
+                <p class="text-lg text-slate-400 mt-2 font-display tracking-wide">Critical Engineering Specs & Checkpoints</p>
+            </div>
+
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <div class="p-8 bg-slate-800/80 border-b border-slate-700 flex items-start gap-4">
+                    <div class="p-3 bg-slate-700 rounded-lg text-slate-300">
+                        <i class="fas fa-hard-hat text-2xl"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-white text-lg">五大工程檢核點</h5>
+                        <p class="text-slate-400 text-sm mt-1">為了克服辦公大樓環境限制，直接作為與廠務 (FAC) 及裝修廠商的溝通規格。</p>
+                    </div>
+                </div>
+                
+                <div class="divide-y divide-slate-700/50">
+                    <!-- Spec 1 -->
+                    <div class="p-6 md:p-8 hover:bg-slate-800/50 transition-colors grid md:grid-cols-12 gap-6 items-center group">
+                        <div class="md:col-span-3 flex items-center gap-4">
+                            <span class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/30 flex items-center justify-center text-xl group-hover:bg-blue-500 group-hover:text-white transition-all"><i class="fas fa-volume-off"></i></span>
+                            <span class="font-bold text-slate-200 text-lg">聲學工程</span>
+                        </div>
+                        <div class="md:col-span-6">
+                            <span class="block text-white font-medium mb-1 group-hover:text-blue-300 transition-colors">NC-25 標準、浮動地板 (Floating Floor)、聲閘 (Sound Lock) 雙道門設計。</span>
+                        </div>
+                        <div class="md:col-span-3">
+                            <span class="text-xs text-slate-500 flex items-center gap-2"><i class="fas fa-info-circle text-blue-500"></i> 隔絕結構噪音與走廊干擾，確保錄音純淨。</span>
+                        </div>
+                    </div>
+
+                    <!-- Spec 2 -->
+                    <div class="p-6 md:p-8 hover:bg-slate-800/50 transition-colors grid md:grid-cols-12 gap-6 items-center group">
+                        <div class="md:col-span-3 flex items-center gap-4">
+                            <span class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-xl group-hover:bg-cyan-500 group-hover:text-white transition-all"><i class="fas fa-wind"></i></span>
+                            <span class="font-bold text-slate-200 text-lg">空調系統</span>
+                        </div>
+                        <div class="md:col-span-6">
+                            <span class="block text-white font-medium mb-1 group-hover:text-cyan-300 transition-colors">風速 &lt; 1.5 m/s、主風管加裝消音箱、獨立溫控。</span>
+                        </div>
+                        <div class="md:col-span-3">
+                            <span class="text-xs text-slate-500 flex items-center gap-2"><i class="fas fa-info-circle text-cyan-500"></i> 避免麥克風收到風切聲，防止主機運轉聲傳入。</span>
+                        </div>
+                    </div>
+
+                    <!-- Spec 3 -->
+                    <div class="p-6 md:p-8 hover:bg-slate-800/50 transition-colors grid md:grid-cols-12 gap-6 items-center group">
+                        <div class="md:col-span-3 flex items-center gap-4">
+                            <span class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center justify-center text-xl group-hover:bg-amber-500 group-hover:text-white transition-all"><i class="fas fa-plug"></i></span>
+                            <span class="font-bold text-slate-200 text-lg">電力工程</span>
+                        </div>
+                        <div class="md:col-span-6">
+                            <span class="block text-white font-medium mb-1 group-hover:text-amber-300 transition-colors">影音專用獨立接地 (IG)、核心機房配置 Online UPS。</span>
+                        </div>
+                        <div class="md:col-span-3">
+                            <span class="text-xs text-slate-500 flex items-center gap-2"><i class="fas fa-info-circle text-amber-500"></i> 避免電流雜訊干擾，確保直播不斷電。</span>
+                        </div>
+                    </div>
+
+                     <!-- Spec 4 -->
+                     <div class="p-6 md:p-8 hover:bg-slate-800/50 transition-colors grid md:grid-cols-12 gap-6 items-center group">
+                        <div class="md:col-span-3 flex items-center gap-4">
+                            <span class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/30 flex items-center justify-center text-xl group-hover:bg-purple-500 group-hover:text-white transition-all"><i class="fas fa-eye"></i></span>
+                            <span class="font-bold text-slate-200 text-lg">視覺工程</span>
+                        </div>
+                        <div class="md:col-span-6">
+                            <span class="block text-white font-medium mb-1 group-hover:text-purple-300 transition-colors">演色性 CRI > 95 照明、100% 全遮光窗簾、深灰色吸光牆面。</span>
+                        </div>
+                        <div class="md:col-span-3">
+                            <span class="text-xs text-slate-500 flex items-center gap-2"><i class="fas fa-info-circle text-purple-500"></i> 確保人臉膚色自然，避免日光色溫干擾。</span>
+                        </div>
+                    </div>
+
+                     <!-- Spec 5 -->
+                     <div class="p-6 md:p-8 bg-red-900/10 hover:bg-red-900/20 transition-colors grid md:grid-cols-12 gap-6 items-center border-l-4 border-red-600 group">
+                        <div class="md:col-span-3 flex items-center gap-4">
+                            <span class="w-12 h-12 rounded-xl bg-red-500/10 text-red-400 border border-red-500/30 flex items-center justify-center text-xl group-hover:bg-red-600 group-hover:text-white transition-all"><i class="fas fa-fire-extinguisher"></i></span>
+                            <span class="font-bold text-red-100 text-lg">消防安全</span>
+                        </div>
+                        <div class="md:col-span-6">
+                            <span class="block text-white font-medium mb-1 group-hover:text-red-200 transition-colors">機房建議安裝 VESDA 極早期偵煙、灑水頭避開機櫃上方。</span>
+                        </div>
+                        <div class="md:col-span-3">
+                            <span class="text-xs text-red-300/70 flex items-center gap-2"><i class="fas fa-shield-alt text-red-500"></i> 符合高規安全標準，同時保護昂貴設備。</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 附錄：台灣頂尖供應鏈實力 (新增區塊) -->
+        <section id="partners" class="scroll-mt-32">
+            <div class="section-header">
+                <h3 class="text-3xl md:text-4xl font-bold text-white">5. 附錄：台灣頂尖供應鏈實力</h3>
+                <p class="text-lg text-slate-400 mt-2 font-display tracking-wide">Top-Tier Local Supply Chain & Partners</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- 魏贊科技 -->
+                <div class="glass-card p-6 rounded-xl relative group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 text-white text-4xl">
+                        <i class="fab fa-microsoft"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded bg-blue-600 flex items-center justify-center text-sm">魏</span> 魏贊科技
+                    </h4>
+                    <span class="text-xs font-bold bg-blue-500/20 text-blue-300 px-2 py-1 rounded border border-blue-500/30 mb-4 inline-block">Microsoft Teams Rooms 認證專家</span>
+                    <p class="text-sm text-slate-400 mb-4 h-20 overflow-hidden">
+                        台灣 MTR 建置市佔第一，擁有 1,900+ 家企業導入經驗。專精 Yealink/Logitech 系統整合，確保直播間與公司 Teams 生態系無縫接軌。
+                    </p>
+                    <div class="border-t border-slate-700 pt-4 mt-auto">
+                        <p class="text-xs text-slate-500 font-bold mb-1 uppercase">Key Achievement</p>
+                        <p class="text-sm text-white flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i> 大型金控/科技廠 MTR 全面升級案</p>
+                    </div>
+                </div>
+
+                <!-- 碩方科技 -->
+                <div class="glass-card p-6 rounded-xl relative group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 text-white text-4xl">
+                        <i class="fas fa-broadcast-tower"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded bg-purple-600 flex items-center justify-center text-sm">碩</span> 碩方科技
+                    </h4>
+                    <span class="text-xs font-bold bg-purple-500/20 text-purple-300 px-2 py-1 rounded border border-purple-500/30 mb-4 inline-block">廣播級影音與虛擬棚</span>
+                    <p class="text-sm text-slate-400 mb-4 h-20 overflow-hidden">
+                        NewTek (TriCaster) 台灣總代理，TVBS、民視背後的系統整合商。專精 NDI 網絡廣播技術與 AR/VR 虛擬攝影棚建置。
+                    </p>
+                    <div class="border-t border-slate-700 pt-4 mt-auto">
+                        <p class="text-xs text-slate-500 font-bold mb-1 uppercase">Key Achievement</p>
+                        <p class="text-sm text-white flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i> TVBS / Yahoo TV 虛擬棚建置</p>
+                    </div>
+                </div>
+
+                <!-- 進懋有限公司 -->
+                <div class="glass-card p-6 rounded-xl relative group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 text-white text-4xl">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded bg-emerald-600 flex items-center justify-center text-sm">進</span> 進懋 (DAC)
+                    </h4>
+                    <span class="text-xs font-bold bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded border border-emerald-500/30 mb-4 inline-block">戰情室與自動化環控</span>
+                    <p class="text-sm text-slate-400 mb-4 h-20 overflow-hidden">
+                        專攻「不能失敗」的控制中心。擅長 Crestron 環控程式撰寫，將複雜訊號簡化為單一觸控面板，實現「一鍵直播」的自動化體驗。
+                    </p>
+                    <div class="border-t border-slate-700 pt-4 mt-auto">
+                        <p class="text-xs text-slate-500 font-bold mb-1 uppercase">Key Achievement</p>
+                        <p class="text-sm text-white flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i> 台灣高鐵行控中心 (OCC)</p>
+                    </div>
+                </div>
+
+                <!-- 佳業聲學 -->
+                <div class="glass-card p-6 rounded-xl relative group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 text-white text-4xl">
+                        <i class="fas fa-wave-square"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded bg-orange-600 flex items-center justify-center text-sm">佳</span> 佳業聲學
+                    </h4>
+                    <span class="text-xs font-bold bg-orange-500/20 text-orange-300 px-2 py-1 rounded border border-orange-500/30 mb-4 inline-block">專業隔音與聲學工程</span>
+                    <p class="text-sm text-slate-400 mb-4 h-20 overflow-hidden">
+                        台灣錄音室裝修的隱形冠軍。提供浮動地板、雙層隔音牆等高階工法，確保錄音室達到 NC-25 廣播級寧靜度，杜絕大樓結構噪音。
+                    </p>
+                    <div class="border-t border-slate-700 pt-4 mt-auto">
+                        <p class="text-xs text-slate-500 font-bold mb-1 uppercase">Key Achievement</p>
+                        <p class="text-sm text-white flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i> 國家級表演廳 / 廣播電台錄音室</p>
+                    </div>
+                </div>
+
+                <!-- 優必達 (Ubitus) -->
+                <div class="glass-card p-6 rounded-xl relative group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 text-white text-4xl">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded bg-cyan-600 flex items-center justify-center text-sm">優</span> 優必達 (Ubitus)
+                    </h4>
+                    <span class="text-xs font-bold bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded border border-cyan-500/30 mb-4 inline-block">AI 虛擬人與雲端串流</span>
+                    <p class="text-sm text-slate-400 mb-4 h-20 overflow-hidden">
+                        雲端遊戲技術領導者，提供 AI Avatar 與 3D 互動串流服務。可協助 HR 打造「隨點即玩」的虛擬廠區導覽與 AI 企業導師。
+                    </p>
+                    <div class="border-t border-slate-700 pt-4 mt-auto">
+                        <p class="text-xs text-slate-500 font-bold mb-1 uppercase">Key Achievement</p>
+                        <p class="text-sm text-white flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i> Nintendo Switch 雲端串流技術</p>
+                    </div>
+                </div>
+
+                <!-- 整合者價值 -->
+                <div class="glass-card p-6 rounded-xl border border-cyan-500/30 bg-cyan-900/20 relative group">
+                    <div class="absolute top-0 right-0 p-4 opacity-20 text-cyan-400 text-4xl">
+                        <i class="fas fa-user-astronaut"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-sm"><i class="fas fa-star"></i></span> 總架構師 (You)
+                    </h4>
+                    <span class="text-xs font-bold bg-white/10 text-white px-2 py-1 rounded border border-white/20 mb-4 inline-block">資源整合與落地執行</span>
+                    <p class="text-sm text-slate-300 mb-4 h-20 overflow-hidden font-bold">
+                        我的角色不是取代這些廠商，而是擔任「指揮官」。我懂得將 HR 的業務需求轉譯為精準的技術規格，協調上述頂尖資源，確保專案成功落地。
+                    </p>
+                    <div class="border-t border-cyan-700/50 pt-4 mt-auto">
+                        <p class="text-xs text-cyan-300 font-bold mb-1 uppercase">Core Competency</p>
+                        <p class="text-sm text-white flex items-center gap-2"><i class="fas fa-check-circle text-cyan-400"></i> 跨領域技術轉譯與專案管理</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Footer / Conclusion -->
+        <footer id="footer" class="text-center py-20 px-6 relative">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent z-0 pointer-events-none"></div>
+            
+            <div class="max-w-4xl mx-auto glass-card p-12 rounded-3xl relative overflow-hidden z-10">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-500"></div>
+                <i class="fas fa-quote-left text-slate-700/50 text-8xl absolute top-8 left-8 -z-10"></i>
+                
+                <h4 class="text-3xl font-black text-white mb-6 tracking-tight font-display">「先穩固根基，再尋求內化創新。」</h4>
+                <p class="text-slate-400 text-lg leading-relaxed mb-10 max-w-2xl mx-auto font-light">
+                    本計畫不僅是一次硬體採購，更是一次數位轉型的基礎建設。透過整合最佳本土資源與高韌性網路架構，我承諾為 HR 團隊打造一座 <span class="font-bold text-cyan-400 bg-cyan-900/30 px-2 py-1 rounded border border-cyan-500/30">穩定、好用、符合 Teams 生態系</span> 的數位媒體中心，並為未來與公司 AI 資產的深度整合做好準備。
+                </p>
+                
+                <div class="inline-block border-t border-slate-700 pt-6">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 font-display">PROPOSAL BY</p>
+                    <p class="text-lg font-bold text-white tracking-wider">[你的名字]</p>
+                </div>
+            </div>
+            <p class="text-slate-600 text-xs mt-12 font-medium font-display">&copy; 2025 HR Digital Media Experience Center Proposal.</p>
+        </footer>
+
+    </main>
+
+</body>
+</html>

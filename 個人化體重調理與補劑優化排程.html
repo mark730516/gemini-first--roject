@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio-Rhythm Optimized Supplement Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* CRITICAL: Chart Container CSS strictly following requirements */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        /* Custom scrollbar for better UX */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3B82F6; 
+            border-radius: 4px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+    <!-- Vibrant Palette Selection: Energetic Blue & Orange -->
+    <!-- Primary: #3B82F6 (Blue), Secondary: #F97316 (Orange), Accent: #10B981 (Emerald) -->
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans leading-relaxed">
+
+    <!-- 1. HEADER & SUMMARY -->
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-2xl md:text-3xl font-bold mb-2">🥗 個人化體重調理與補劑優化排程</h1>
+            <p class="text-blue-100 text-sm md:text-base">針對「腳抽筋、腰部痠痛」症狀優化 | 效益最大化 | 避免交互作用</p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-4 space-y-12">
+
+        <!-- 2. SYMPTOM ANALYSIS & STRATEGY -->
+        <section>
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-slate-800 border-l-4 border-orange-500 pl-3">症狀分析與對策 (Symptom Analysis)</h2>
+                <p class="text-slate-600 mt-2">根據您描述的「腳抽筋」與「腰部痠痛無力」，這通常指向電解質失衡與肌肉神經傳導問題。以下雷達圖顯示了我們如何透過補劑策略來強化您的身體弱點。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <!-- Text Cards -->
+                <div class="space-y-4">
+                    <div class="bg-white p-5 rounded-lg shadow-md border-l-4 border-red-500">
+                        <h3 class="font-bold text-lg flex items-center gap-2">🚨 腳抽筋 (Leg Cramps)</h3>
+                        <p class="text-sm text-slate-600">主要缺乏：<strong>鎂 (Magnesium)</strong>、鉀、鈣。</p>
+                        <p class="text-sm text-slate-600 mt-1">對策：將鎂鈣安排在睡前，放鬆肌肉，避免夜間抽筋。</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-lg shadow-md border-l-4 border-yellow-500">
+                        <h3 class="font-bold text-lg flex items-center gap-2">⚡ 腰部痠痛 (Back Weakness)</h3>
+                        <p class="text-sm text-slate-600">潛在原因：維生素D缺乏、核心肌力不足、神經發炎。</p>
+                        <p class="text-sm text-slate-600 mt-1">對策：高劑量魚油 (抗發炎) + 維生素D3 (骨骼神經支持)。</p>
+                    </div>
+                </div>
+
+                <!-- Chart: Wellness Targets -->
+                <div class="bg-white p-4 rounded-xl shadow-lg">
+                    <h3 class="text-center font-bold text-slate-700 mb-4">調理目標效益預估 (Wellness Targets)</h3>
+                    <div class="chart-container">
+                        <canvas id="symptomRadarChart"></canvas>
+                    </div>
+                    <p class="text-xs text-center text-slate-500 mt-2">透過補劑調整，預計顯著提升肌肉放鬆度與骨骼支撐力。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. THE MASTER SCHEDULE (TIMELINE) -->
+        <section class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="p-6 bg-blue-50 border-b border-blue-100">
+                <h2 class="text-2xl font-bold text-blue-800">📅 每日最佳化時程表 (Master Schedule)</h2>
+                <p class="text-blue-600">依據生物利用率 (Bioavailability) 與您的生活作息安排</p>
+            </div>
+            
+            <div class="p-6 relative">
+                <!-- Timeline Line -->
+                <div class="absolute left-8 md:left-1/2 h-full w-1 bg-blue-200 transform -translate-x-1/2 hidden md:block"></div>
+                <div class="absolute left-6 h-full w-1 bg-blue-200 block md:hidden"></div>
+
+                <!-- 07:00 Slot -->
+                <div class="relative z-10 mb-12 flex flex-col md:flex-row items-center justify-between group">
+                    <div class="order-1 md:w-5/12 text-left md:text-right px-4">
+                        <h3 class="font-bold text-xl text-blue-600">07:00 AM - 起床空腹/早餐</h3>
+                        <p class="text-sm font-semibold text-slate-500">Amway 蛋白飲時段</p>
+                    </div>
+                    <div class="order-1 z-10 flex items-center justify-center w-12 h-12 bg-blue-500 rounded-full shadow-lg border-4 border-white text-white font-bold text-lg shrink-0 md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
+                        ☀
+                    </div>
+                    <div class="order-1 md:w-5/12 px-4 mt-4 md:mt-0">
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 shadow-sm hover:shadow-md transition-shadow">
+                            <ul class="space-y-2">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-500 font-bold">💊 B群 (B-Complex):</span>
+                                    <span class="text-sm text-slate-700">提供整日代謝能量，避免晚上吃影響睡眠。</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-green-600 font-bold">🦠 益生菌 (Probiotics):</span>
+                                    <span class="text-sm text-slate-700">隨蛋白飲食用，避免胃酸破壞，改善腸道吸收。</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-orange-500 font-bold">⚡ Q10 (若有):</span>
+                                    <span class="text-sm text-slate-700">若有食用Q10，早上吃啟動細胞能量。</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 12:00 Slot -->
+                <div class="relative z-10 mb-12 flex flex-col md:flex-row items-center justify-between group">
+                    <div class="order-1 md:w-5/12 text-left md:text-right px-4 md:order-1">
+                        <div class="bg-orange-50 p-4 rounded-lg border border-orange-100 shadow-sm hover:shadow-md transition-shadow md:ml-auto">
+                            <ul class="space-y-2">
+                                <li class="flex items-start gap-2 justify-end text-right">
+                                    <span class="text-sm text-slate-700">隨餐油脂吸收最好，抗發炎護腰。</span>
+                                    <span class="text-orange-600 font-bold">:🐟 魚油 (Fish Oil)</span>
+                                </li>
+                                <li class="flex items-start gap-2 justify-end text-right">
+                                    <span class="text-sm text-slate-700">脂溶性維生素，必須有油才吸收。</span>
+                                    <span class="text-yellow-600 font-bold">:☀ 維生素 D3</span>
+                                </li>
+                                <li class="flex items-start gap-2 justify-end text-right">
+                                    <span class="text-sm text-slate-700">基礎營養打底，隨正餐吃減少胃部不適。</span>
+                                    <span class="text-purple-600 font-bold">:🥗 綜合維他命</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="order-1 z-10 flex items-center justify-center w-12 h-12 bg-orange-500 rounded-full shadow-lg border-4 border-white text-white font-bold text-lg shrink-0 md:absolute md:left-1/2 md:transform md:-translate-x-1/2 md:order-2">
+                        🍴
+                    </div>
+                    <div class="order-1 md:w-5/12 px-4 mt-4 md:mt-0 md:order-3 text-left">
+                        <h3 class="font-bold text-xl text-orange-600">12:00 PM - 午餐 (正餐)</h3>
+                        <p class="text-sm font-semibold text-slate-500">脂溶性營養黃金窗口</p>
+                        <p class="text-xs text-red-500 mt-1">注意：這是您整天油脂最豐富的一餐，魚油與D3務必放這。</p>
+                    </div>
+                </div>
+
+                <!-- 15:00 Slot -->
+                <div class="relative z-10 mb-12 flex flex-col md:flex-row items-center justify-between group">
+                    <div class="order-1 md:w-5/12 text-left md:text-right px-4">
+                        <h3 class="font-bold text-xl text-teal-600">15:00 PM - 下午茶歇</h3>
+                        <p class="text-sm font-semibold text-slate-500">代謝水分補充</p>
+                    </div>
+                    <div class="order-1 z-10 flex items-center justify-center w-12 h-12 bg-teal-500 rounded-full shadow-lg border-4 border-white text-white font-bold text-lg shrink-0 md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
+                        💧
+                    </div>
+                    <div class="order-1 md:w-5/12 px-4 mt-4 md:mt-0">
+                        <div class="bg-teal-50 p-4 rounded-lg border border-teal-100 shadow-sm">
+                            <p class="text-sm text-slate-700">此時段多喝水 (500cc)，幫助早上的B群代謝廢物排出。若有使用<strong class="text-teal-700">燃脂類/纖維粉</strong>產品，適合此時使用，增加飽足感，避免晚餐過量。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 18:00 Slot -->
+                <div class="relative z-10 mb-12 flex flex-col md:flex-row items-center justify-between group">
+                    <div class="order-1 md:w-5/12 text-left md:text-right px-4 md:order-1">
+                        <div class="bg-slate-100 p-4 rounded-lg border border-slate-200 shadow-sm md:ml-auto">
+                            <p class="text-sm text-slate-700">晚餐無澱粉策略很好。此餐不建議安排過多補劑，讓腸胃休息，專注於食物消化。</p>
+                        </div>
+                    </div>
+                    <div class="order-1 z-10 flex items-center justify-center w-12 h-12 bg-indigo-500 rounded-full shadow-lg border-4 border-white text-white font-bold text-lg shrink-0 md:absolute md:left-1/2 md:transform md:-translate-x-1/2 md:order-2">
+                        🌙
+                    </div>
+                    <div class="order-1 md:w-5/12 px-4 mt-4 md:mt-0 md:order-3 text-left">
+                        <h3 class="font-bold text-xl text-indigo-600">18:00 PM - 晚餐 (無澱粉)</h3>
+                        <p class="text-sm font-semibold text-slate-500">輕食時段</p>
+                    </div>
+                </div>
+
+                <!-- 21:00 Slot -->
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between group">
+                    <div class="order-1 md:w-5/12 text-left md:text-right px-4">
+                        <h3 class="font-bold text-xl text-purple-600">21:00 PM - 睡前一小時</h3>
+                        <p class="text-sm font-semibold text-slate-500">肌肉修復與抗抽筋關鍵</p>
+                    </div>
+                    <div class="order-1 z-10 flex items-center justify-center w-12 h-12 bg-purple-600 rounded-full shadow-lg border-4 border-white text-white font-bold text-lg shrink-0 md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
+                        💤
+                    </div>
+                    <div class="order-1 md:w-5/12 px-4 mt-4 md:mt-0">
+                        <div class="bg-purple-50 p-4 rounded-lg border border-purple-100 shadow-md hover:shadow-lg transition-shadow">
+                            <ul class="space-y-2">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-purple-700 font-bold">🦴 鈣鎂片 (Cal/Mag):</span>
+                                    <span class="text-sm text-slate-700">最關鍵的一餐！鎂能放鬆肌肉(抗抽筋)，鈣能穩定神經。分開跟魚油吃，避免皂化反應影響吸收。</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-indigo-600 font-bold">🦵 關節配方 (若有):</span>
+                                    <span class="text-sm text-slate-700">葡萄糖胺/軟骨素，夜間修復效果佳。</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. INTERACTION MATRIX & CHART -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Doughnut Chart: Absorption Rules -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h3 class="font-bold text-xl text-slate-800 mb-4">吸收類型佔比 (Timing Logic)</h3>
+                <p class="text-sm text-slate-500 mb-4">為什麼這樣安排？因為補劑屬性決定了吸收率。</p>
+                <div class="chart-container">
+                    <canvas id="absorptionChart"></canvas>
+                </div>
+                <div class="mt-4 text-sm text-slate-600">
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li><strong>隨餐 (需油脂):</strong> 魚油、維生素D、E、葉黃素。無油不吸收，吃了浪費。</li>
+                        <li><strong>空腹/輕食 (水溶性):</strong> B群、C、膠原蛋白。接觸胃酸時間短，吸收快。</li>
+                        <li><strong>睡前 (礦物質):</strong> 鈣、鎂。利用夜間副交感神經作用修復。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Interaction Warnings (Visual List) -->
+            <div class="bg-white p-6 rounded-xl shadow-md flex flex-col justify-center">
+                <h3 class="font-bold text-xl text-slate-800 mb-4">⚠️ 重要交互作用避雷區</h3>
+                <div class="space-y-4">
+                    <div class="flex items-start p-3 bg-red-50 rounded-lg border-l-4 border-red-500">
+                        <div class="text-2xl mr-3">🚫</div>
+                        <div>
+                            <h4 class="font-bold text-red-700">纖維 vs. 礦物質</h4>
+                            <p class="text-sm text-slate-700">高纖維粉/甲殼素 <span class="font-bold">不可</span> 與鈣片、鐵劑同時吃。纖維會吸附礦物質排出體外。請間隔 2 小時。</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start p-3 bg-orange-50 rounded-lg border-l-4 border-orange-500">
+                        <div class="text-2xl mr-3">🚫</div>
+                        <div>
+                            <h4 class="font-bold text-orange-700">鈣 vs. 鐵/魚油</h4>
+                            <p class="text-sm text-slate-700">高劑量鈣片可能影響鐵吸收，也可能與大量魚油產生皂化 (雖影響不大但建議分開)。所以魚油中午吃，鈣片晚上吃，完美錯開。</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                        <div class="text-2xl mr-3">☕</div>
+                        <div>
+                            <h4 class="font-bold text-blue-700">咖啡/茶 vs. B群/鈣</h4>
+                            <p class="text-sm text-slate-700">咖啡因利尿會加速B群流失，單寧酸會阻礙鈣吸收。建議喝完咖啡 <span class="font-bold">1小時後</span> 再補充營養品。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 py-8 text-center mt-12">
+        <p>© 2023 Personalized Health Plan. Generated for User Context.</p>
+        <p class="text-xs mt-2">Disclaimer: This information is for educational purposes only and not medical advice.</p>
+    </footer>
+
+    <script>
+        // --- UTILITY: Label Wrapping Logic (16 chars) ---
+        function splitLabel(label) {
+            if (label.length <= 16) return label;
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if ((currentLine + " " + words[i]).length <= 16) {
+                    currentLine += " " + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        // --- CHART 1: Symptom Radar Chart ---
+        const ctxRadar = document.getElementById('symptomRadarChart').getContext('2d');
+        
+        // Data labels processed
+        const radarLabels = ['神經放鬆 (Magnesium)', '骨骼支撐 (Calcium/D3)', '抗發炎 (Omega-3)', '代謝能量 (B-Complex)', '腸道吸收 (Probiotics)'].map(splitLabel);
+
+        new Chart(ctxRadar, {
+            type: 'radar',
+            data: {
+                labels: radarLabels,
+                datasets: [{
+                    label: '目前預估狀態 (Current)',
+                    data: [40, 50, 45, 60, 65],
+                    fill: true,
+                    backgroundColor: 'rgba(148, 163, 184, 0.2)',
+                    borderColor: 'rgb(148, 163, 184)',
+                    pointBackgroundColor: 'rgb(148, 163, 184)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(148, 163, 184)'
+                }, {
+                    label: '優化後目標 (Optimized)',
+                    data: [90, 95, 85, 90, 85],
+                    fill: true,
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)', // Blue
+                    borderColor: '#3B82F6',
+                    pointBackgroundColor: '#3B82F6',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#3B82F6'
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                elements: { line: { borderWidth: 3 } },
+                scales: { r: { suggestedMin: 0, suggestedMax: 100 } },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                return Array.isArray(label) ? label.join(' ') : label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 2: Absorption Doughnut Chart ---
+        const ctxDoughnut = document.getElementById('absorptionChart').getContext('2d');
+        const doughnutLabels = ['隨餐食用 (午餐)', '空腹/輕食 (早)', '睡前空腹 (晚)'].map(splitLabel);
+
+        new Chart(ctxDoughnut, {
+            type: 'doughnut',
+            data: {
+                labels: doughnutLabels,
+                datasets: [{
+                    label: '補劑分配數量',
+                    data: [40, 30, 30], // Represents roughly 40% fat soluble, 30% energy, 30% repair
+                    backgroundColor: [
+                        '#F97316', // Orange (Lunch/Fat)
+                        '#3B82F6', // Blue (Morning/Water)
+                        '#8B5CF6'  // Purple (Night/Minerals)
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                return Array.isArray(label) ? label.join(' ') : label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

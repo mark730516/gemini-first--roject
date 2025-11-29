@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<!-- Chosen Palette: Hsinchu Tech Blue -->
+<!-- Application Structure Plan: The application is structured as a top-down interactive dashboard. It starts with high-level Key Performance Indicators (KPIs) for immediate context. The second section allows users to interactively compare core industries using a combination of a donut chart, a dynamic bar chart, and updating text blocks, which promotes exploration. Subsequent sections show historical trends via a line chart and qualitative information (challenges, opportunities, future focus) through clean, structured HTML layouts. This non-linear, dashboard-style structure was chosen over a simple report layout to allow different user types (e.g., investors, analysts, public) to quickly find the information most relevant to them and to understand relationships between data points interactively. -->
+<!-- Visualization & Content Choices: 
+- 2024 KPIs: Report Info -> Key metrics. Goal -> Inform. Viz -> Large HTML text stats. Interaction -> Hover highlight. Justification -> Immediate impact for top-line numbers.
+- Sector Revenue Mix: Report Info -> Revenue breakdown by industry. Goal -> Compare (Composition). Viz -> Donut Chart. Interaction -> Tooltips. Justification -> Classic and effective for showing parts of a whole. Library -> Chart.js/Canvas.
+- Industry Deep Dive: Report Info -> Multi-metric data per industry (revenue, employees, companies). Goal -> Compare (Categorical). Viz -> Interactive Bar Chart + Dynamic Text. Interaction -> Buttons to switch metrics, updating chart and text. Justification -> Allows for multi-faceted comparison within a single view, which is highly engaging and informative. Library -> Chart.js/Canvas.
+- Revenue Trend: Report Info -> Historical revenue data. Goal -> Change (Time). Viz -> Line Chart. Interaction -> Tooltips. Justification -> Best way to visualize trends over a continuous period. Library -> Chart.js/Canvas.
+- Strategic Landscape: Report Info -> SWOT-style analysis. Goal -> Organize. Viz -> Two-column HTML/CSS layout. Interaction -> None. Justification -> Clear, scannable presentation for qualitative information. Method -> HTML/Tailwind.
+- Future Focus: Report Info -> Strategic R&D areas. Goal -> Organize (Roadmap). Viz -> Styled HTML/CSS diagram. Interaction -> Hover effects. Justification -> Visually represents a forward-looking plan without complex graphics. Method -> HTML/Tailwind.
+-->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新竹科學園區：2024年度績效與未來展望</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .kpi-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .main-header {
+            background: linear-gradient(135deg, #007bff, #4ea8de);
+            color: white;
+        }
+        .section-title {
+            color: #007bff;
+            font-weight: 700;
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .interactive-btn {
+            background-color: #e9ecef;
+            color: #495057;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .interactive-btn.active, .interactive-btn:hover {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+        .roadmap-step {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            min-height: 80px;
+            transition: background-color 0.3s;
+        }
+        .roadmap-arrow {
+            font-size: 2rem;
+            color: #ffc107;
+            align-self: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header p-8 shadow-lg">
+        <div class="text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-2">新竹科學園區</h1>
+            <p class="text-xl md:text-2xl opacity-90">2024年度績效與未來展望互動報告</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="kpis" class="my-8">
+            <h2 class="section-title">2024 績效總覽</h2>
+            <p class="text-center max-w-3xl mx-auto mb-8 text-gray-600">
+                2024年，新竹科學園區在全球挑戰中展現了卓越的韌性與成長動能。以下為本年度關鍵績效指標，突顯了園區在全球科技產業鏈中的核心地位。
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="kpi-card">
+                    <h3 class="text-lg font-semibold text-gray-500">總營業額 (新台幣)</h3>
+                    <p id="kpi-revenue" class="text-4xl font-bold text-[#007bff] my-2">1.78 兆</p>
+                    <p class="font-semibold text-green-500">▲ 5.2% (YoY)</p>
+                </div>
+                <div class="kpi-card">
+                    <h3 class="text-lg font-semibold text-gray-500">進駐公司數</h3>
+                    <p id="kpi-companies" class="text-4xl font-bold text-[#007bff] my-2">597</p>
+                    <p class="font-semibold text-green-500">+ 12 家</p>
+                </div>
+                <div class="kpi-card">
+                    <h3 class="text-lg font-semibold text-gray-500">就業人數</h3>
+                    <p id="kpi-employees" class="text-4xl font-bold text-[#007bff] my-2">17.5 萬</p>
+                    <p class="font-semibold text-green-500">▲ 1.8%</p>
+                </div>
+                <div class="kpi-card">
+                    <h3 class="text-lg font-semibold text-gray-500">研發投入佔比</h3>
+                    <p id="kpi-rd" class="text-4xl font-bold text-[#007bff] my-2">8.5%</p>
+                    <p class="font-semibold text-gray-500">佔總營業額</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="industries" class="my-16">
+            <h2 class="section-title">核心產業深度解析</h2>
+            <p class="text-center max-w-3xl mx-auto mb-8 text-gray-600">
+                園區的成功由多元化的科技產業共同驅動。積體電路產業依然是龍頭，但光電與生物技術等領域也展現出強勁的成長潛力。點擊下方按鈕，探索各產業在不同指標下的表現。
+            </p>
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="font-bold text-center text-lg mb-4 text-gray-700">2024 各產業營業額佔比</h3>
+                    <div class="chart-container mx-auto h-72 md:h-80">
+                        <canvas id="sectorDonutChart"></canvas>
+                    </div>
+                </div>
+                <div class="lg:col-span-3 bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex flex-wrap justify-center gap-3 mb-4" id="metric-selector">
+                        <button class="interactive-btn active" data-metric="revenue">營業額</button>
+                        <button class="interactive-btn" data-metric="employees">就業人數</button>
+                        <button class="interactive-btn" data-metric="companies">公司數量</button>
+                    </div>
+                    <div class="chart-container mx-auto h-64 md:h-72">
+                        <canvas id="sectorBarChart"></canvas>
+                    </div>
+                    <div id="sector-analysis-text" class="mt-4 p-4 bg-blue-50 rounded-md text-gray-700">
+                        <p>積體電路產業營業額達到 1.25 兆新台幣，佔園區總體超過70%，顯示其在全球半導體供應鏈中的絕對領導地位。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="trends" class="my-16">
+            <h2 class="section-title">成長軌跡：回顧與展望</h2>
+            <p class="text-center max-w-3xl mx-auto mb-8 text-gray-600">
+                回顧過去五年，即使面對全球經濟波動，新竹科學園區的營業額仍持續攀升，證明了其產業結構的穩固性與創新能力。
+            </p>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-bold text-center text-lg mb-4 text-gray-700">過去五年總營業額趨勢 (兆元)</h3>
+                <div class="chart-container mx-auto">
+                    <canvas id="revenueTrendChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="strategy" class="my-16">
+            <h2 class="section-title">戰略佈局：挑戰與機遇</h2>
+            <p class="text-center max-w-3xl mx-auto mb-8 text-gray-600">
+                展望未來，園區在維持領導地位的同時，也面臨著來自基礎設施、人才供應和全球競爭的挑戰。然而，新興科技的浪潮也帶來了前所未有的發展機遇。
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-red-400">
+                    <h3 class="text-xl font-bold mb-3 text-red-500">🚧 當前挑戰</h3>
+                    <ul class="space-y-2 list-inside list-disc">
+                        <li><strong>水電供應壓力：</strong>高耗能產業對基礎設施的依賴性高。</li>
+                        <li><strong>高階人才缺口：</strong>AI、量子計算等前瞻領域人才需求迫切。</li>
+                        <li><strong>土地資源有限：</strong>園區擴張與環境保護之間的平衡。</li>
+                        <li><strong>地緣政治風險：</strong>全球供應鏈重組帶來的不確定性。</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-400">
+                    <h3 class="text-xl font-bold mb-3 text-green-500">🚀 未來機遇</h3>
+                    <ul class="space-y-2 list-inside list-disc">
+                        <li><strong>AI 晶片需求：</strong>生成式AI應用爆發帶來龐大商機。</li>
+                        <li><strong>化合物半導體：</strong>在5G通訊和電動車領域的關鍵角色。</li>
+                        <li><strong>精準醫療：</strong>生物技術與資通訊技術的跨域整合。</li>
+                        <li><strong>政府政策支持：</strong>「晶創台灣」等計畫注入新的研發動能。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="future" class="my-16">
+            <h2 class="section-title">前瞻之路：未來技術焦點</h2>
+            <p class="text-center max-w-3xl mx-auto mb-8 text-gray-600">
+                為應對挑戰並抓住機遇，園區的未來發展將聚焦於以下三大核心技術領域，旨在推動下一波的產業革命。
+            </p>
+            <div class="flex flex-col md:flex-row items-stretch justify-center gap-4">
+                <div class="roadmap-step bg-blue-100 text-blue-800 w-full md:w-1/3 hover:bg-blue-200">
+                    <div class="p-2">
+                        <div class="text-4xl mb-2">🤖</div>
+                        <h3 class="font-bold text-lg">次世代半導體</h3>
+                        <p class="text-sm">包含 AI 加速器、2奈米以下製程以及小晶片(Chiplet)整合技術。</p>
+                    </div>
+                </div>
+                <div class="roadmap-arrow hidden md:flex items-center justify-center">&#10140;</div>
+                <div class="roadmap-step bg-green-100 text-green-800 w-full md:w-1/3 hover:bg-green-200">
+                     <div class="p-2">
+                        <div class="text-4xl mb-2">🛰️</div>
+                        <h3 class="font-bold text-lg">太空與通訊科技</h3>
+                        <p class="text-sm">發展低軌衛星通訊晶片、6G前端模組與光通訊技術。</p>
+                    </div>
+                </div>
+                <div class="roadmap-arrow hidden md:flex items-center justify-center">&#10140;</div>
+                <div class="roadmap-step bg-yellow-100 text-yellow-800 w-full md:w-1/3 hover:bg-yellow-200">
+                    <div class="p-2">
+                        <div class="text-4xl mb-2">🧬</div>
+                        <h3 class="font-bold text-lg">智慧健康醫療</h3>
+                        <p class="text-sm">結合生物感測器、大數據分析與AI輔助診斷，推動精準醫療。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center p-6 mt-8">
+        <p>此互動報告由 AI 根據虛構數據產生，僅供演示目的。</p>
+        <p>&copy; 2025 TechViz Insights. All Rights Reserved.</p>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const palette = {
+        primary: '#007bff',
+        secondary: '#4ea8de',
+        accent: '#ffc107',
+        success: '#28a745',
+        danger: '#dc3545',
+        info: '#17a2b8',
+        text: '#212529',
+        grid: 'rgba(0, 0, 0, 0.1)'
+    };
+
+    const sectorData = {
+        labels: ['積體電路', '光電', '電腦及周邊', '通訊', '精儀', '生物技術'],
+        revenue: {
+            data: [12500, 2600, 1100, 950, 450, 200],
+            label: '營業額 (億元)'
+        },
+        employees: {
+            data: [98000, 35000, 15000, 12000, 8000, 7000],
+            label: '就業人數'
+        },
+        companies: {
+            data: [210, 125, 60, 75, 55, 72],
+            label: '公司數量'
+        }
+    };
+    
+    const analysisText = {
+        revenue: '積體電路產業營業額達到 1.25 兆新台幣，佔園區總體超過70%，顯示其在全球半導體供應鏈中的絕對領導地位。',
+        employees: '積體電路產業提供了近10萬個工作崗位，是園區最大的就業引擎。光電產業的就業人數也相當可觀，位居第二。',
+        companies: '雖然積體電路產業的產值最高，但公司數量上，光電、通訊和生技產業的總和也相當龐大，顯示了園區產業的多元性。'
+    };
+
+    const chartDefaultOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: palette.text,
+                    font: { size: 12 },
+                    padding: 20
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    title: (tooltipItems) => {
+                        const item = tooltipItems[0];
+                        let label = item.chart.data.labels[item.dataIndex];
+                        return Array.isArray(label) ? label.join(' ') : label;
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                ticks: { color: palette.text },
+                grid: { color: palette.grid }
+            },
+            x: {
+                ticks: { color: palette.text },
+                grid: { display: false }
+            }
+        }
+    };
+
+    let sectorBarChart;
+
+    function initDonutChart() {
+        const ctx = document.getElementById('sectorDonutChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: sectorData.labels,
+                datasets: [{
+                    data: sectorData.revenue.data,
+                    backgroundColor: [palette.primary, palette.secondary, palette.accent, palette.success, palette.info, palette.danger],
+                    borderColor: '#ffffff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: palette.text,
+                            font: { size: 12 },
+                            boxWidth: 20
+                        }
+                    },
+                    tooltip: chartDefaultOptions.plugins.tooltip
+                }
+            }
+        });
+    }
+
+    function initBarChart(metric = 'revenue') {
+        const ctx = document.getElementById('sectorBarChart').getContext('2d');
+        sectorBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: sectorData.labels,
+                datasets: [{
+                    label: sectorData[metric].label,
+                    data: sectorData[metric].data,
+                    backgroundColor: palette.secondary,
+                    borderColor: palette.primary,
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: { ...chartDefaultOptions, plugins: { ...chartDefaultOptions.plugins, legend: { display: false } } }
+        });
+    }
+    
+    function updateBarChart(metric) {
+        if (!sectorBarChart) return;
+        sectorBarChart.data.datasets[0].data = sectorData[metric].data;
+        sectorBarChart.data.datasets[0].label = sectorData[metric].label;
+        sectorBarChart.update();
+        document.getElementById('sector-analysis-text').innerText = analysisText[metric];
+        
+        document.querySelectorAll('#metric-selector .interactive-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.metric === metric);
+        });
+    }
+
+    function initTrendChart() {
+        const ctx = document.getElementById('revenueTrendChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['2020', '2021', '2022', '2023', '2024'],
+                datasets: [{
+                    label: '總營業額 (兆元)',
+                    data: [1.24, 1.59, 1.67, 1.69, 1.78],
+                    borderColor: palette.primary,
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: palette.primary,
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                ...chartDefaultOptions,
+                plugins: { ...chartDefaultOptions.plugins, legend: { display: false } }
+            }
+        });
+    }
+
+    document.getElementById('metric-selector').addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+            const metric = e.target.dataset.metric;
+            if (metric) {
+                updateBarChart(metric);
+            }
+        }
+    });
+
+    initDonutChart();
+    initBarChart();
+    initTrendChart();
+});
+</script>
+
+</body>
+</html>
+```

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR 數位媒體體驗中心：AI 戰略整合評估</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #0f172a; color: #f1f5f9; }
+        
+        /* Glassmorphism Panel */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+
+        /* Chart Container - Responsive Boundary */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            margin: 0 auto;
+        }
+        @media (min-width: 1024px) {
+            .chart-container { height: 400px; }
+        }
+
+        /* Typography & Glows */
+        .text-glow { text-shadow: 0 0 15px rgba(6, 182, 212, 0.5); }
+        .text-glow-purple { text-shadow: 0 0 15px rgba(168, 85, 247, 0.5); }
+        
+        /* Custom Process Flow Connector */
+        .process-arrow::after {
+            content: '→';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .process-arrow::after {
+                content: '↓';
+                right: 50%;
+                top: auto;
+                bottom: -25px;
+                transform: translateX(50%);
+            }
+        }
+    </style>
+    <!-- Palette: Cyber Vibrant (Indigo, Cyan, Purple) -->
+</head>
+<body class="antialiased selection:bg-cyan-500 selection:text-white pb-20">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-slate-900/95 border-b border-slate-700 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-3 w-3 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                    </div>
+                    <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
+                        HR Digital Media Center
+                    </span>
+                </div>
+                <div class="hidden md:flex items-center gap-4">
+                    <span class="px-3 py-1 rounded-full bg-slate-800 text-xs text-slate-400 border border-slate-600">
+                        Project ID: 2025-AI-SI
+                    </span>
+                    <span class="px-3 py-1 rounded-full bg-slate-800 text-xs text-slate-400 border border-slate-600">
+                        Status: Feasibility Assessment
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+
+        <!-- 1. Executive Summary / Hook -->
+        <header class="relative rounded-3xl bg-slate-800 p-8 md:p-12 border border-slate-700 overflow-hidden">
+            <!-- Background Decorations -->
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl"></div>
+            
+            <div class="relative z-10 text-center space-y-6">
+                <div class="inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/30 text-cyan-300 text-sm font-medium">
+                    Vision: Enterprise AI Sensory System
+                </div>
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-4 text-glow">
+                    打造企業大腦的<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">高階感官系統</span>
+                </h1>
+                <p class="max-w-3xl mx-auto text-lg text-slate-300 leading-relaxed">
+                    本計畫不僅是建立攝影棚，更是建置<b>「結構化數據生產基地」</b>。透過廣播級基礎設施與 AI 整合，將 HR 溝通內容轉化為企業知識資產，直接賦能內部 GenAI 平台 (tGenie)。
+                </p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-600 backdrop-blur-sm">
+                        <div class="text-2xl mb-1">💰</div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider">預算規模</div>
+                        <div class="text-xl font-bold text-white">5.2M - 7M</div>
+                    </div>
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-600 backdrop-blur-sm">
+                        <div class="text-2xl mb-1">🚀</div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider">網路骨幹</div>
+                        <div class="text-xl font-bold text-cyan-400">10GbE 光纖</div>
+                    </div>
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-600 backdrop-blur-sm">
+                        <div class="text-2xl mb-1">🔇</div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider">聲學標準</div>
+                        <div class="text-xl font-bold text-purple-400">NC-25 (圖書館級)</div>
+                    </div>
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-600 backdrop-blur-sm">
+                        <div class="text-2xl mb-1">🤖</div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider">戰略目標</div>
+                        <div class="text-xl font-bold text-pink-400">AI 賦能 (Data)</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 2. Strategic Narrative: Video to Data Flow -->
+        <section>
+            <div class="mb-8 pl-4 border-l-4 border-cyan-500">
+                <h2 class="text-3xl font-bold text-white">戰略價值：AI 協作路徑</h2>
+                <p class="text-slate-400 mt-2">如何將非結構化的「影音」轉化為 tGenie 可理解的「企業智慧」？</p>
+            </div>
+            
+            <div class="glass-panel p-8 rounded-2xl">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <!-- Step 1 -->
+                    <div class="relative process-arrow text-center group">
+                        <div class="w-16 h-16 mx-auto bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-600 group-hover:border-cyan-500 transition-colors mb-4 shadow-lg">
+                            <span class="text-3xl">🎥</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-cyan-400">1. 採集 (Input)</h3>
+                        <p class="text-sm text-slate-400 mt-2">Zone A/B 產出高訊噪比、4K 高解析原始影音。</p>
+                    </div>
+                    
+                    <!-- Step 2 -->
+                    <div class="relative process-arrow text-center group">
+                        <div class="w-16 h-16 mx-auto bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-600 group-hover:border-purple-500 transition-colors mb-4 shadow-lg">
+                            <span class="text-3xl">📝</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-purple-400">2. 轉譯 (Transcribe)</h3>
+                        <p class="text-sm text-slate-400 mt-2">運用 STT 技術生成精準逐字稿 (Verbatim Data)。</p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="relative process-arrow text-center group">
+                        <div class="w-16 h-16 mx-auto bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-600 group-hover:border-pink-500 transition-colors mb-4 shadow-lg">
+                            <span class="text-3xl">💾</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-pink-400">3. 注入 (Ingest)</h3>
+                        <p class="text-sm text-slate-400 mt-2">結構化文本存入向量資料庫 (Vector DB) 建立索引。</p>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="text-center group">
+                        <div class="w-16 h-16 mx-auto bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center border border-indigo-400 mb-4 shadow-lg shadow-indigo-500/30">
+                            <span class="text-3xl">💡</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">4. 應用 (RAG)</h3>
+                        <p class="text-sm text-slate-300 mt-2">AI 引用高層訪談內容回答員工提問 (tGenie Integration)。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Financial Analysis: Budget Allocation -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="glass-panel p-6 rounded-2xl flex flex-col">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                        <span class="w-2 h-8 bg-purple-500 rounded-full"></span>
+                        預算結構分析
+                    </h2>
+                    <p class="text-sm text-slate-400 mt-2">
+                        本案不同於傳統採購，將近 <b>44%</b> 的資金投入於「看不見的基建」(網路+裝修)，這是確保系統 10 年韌性的關鍵決策。
+                    </p>
+                </div>
+                <div class="chart-container flex-grow">
+                    <canvas id="budgetChart"></canvas>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-6">
+                <!-- Insight Card 1 -->
+                <div class="glass-panel p-6 rounded-2xl border-l-4 border-cyan-500">
+                    <h3 class="text-lg font-bold text-white mb-2">Zone D: 廣播級網路 (17%)</h3>
+                    <p class="text-sm text-slate-400">
+                        配置 Netgear AV 交換器與 10GbE 光纖骨幹。這是影音傳輸的「高速公路」，確保在多機位 4K 直播時絕不塞車。
+                    </p>
+                </div>
+                <!-- Insight Card 2 -->
+                <div class="glass-panel p-6 rounded-2xl border-l-4 border-amber-500">
+                    <h3 class="text-lg font-bold text-white mb-2">Zone E: 基礎裝修 (27%)</h3>
+                    <p class="text-sm text-slate-400">
+                        包含浮動地板 (Floating Floor) 與隔音牆。這是「硬底子」工程，必須一次到位，後續無法升級。
+                    </p>
+                </div>
+                <!-- Insight Card 3 -->
+                <div class="glass-panel p-6 rounded-2xl border-l-4 border-pink-500">
+                    <h3 class="text-lg font-bold text-white mb-2">Zone A: 演播核心 (25%)</h3>
+                    <p class="text-sm text-slate-400">
+                        投入 TriCaster 導播機與自動追蹤攝影機，是產出廣播級畫面的直接生產力工具。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Technical Deep Dive: Bandwidth & Engineering -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Bandwidth Chart -->
+            <div class="glass-panel p-6 rounded-2xl">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                        <span class="w-2 h-8 bg-cyan-500 rounded-full"></span>
+                        為何必須直上 10GbE？
+                    </h2>
+                    <p class="text-sm text-slate-400 mt-2">
+                        數學不會說謊。一般 1GbE 網路無法承受廣播級 NDI 訊號的持續負載。
+                    </p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="bandwidthChart"></canvas>
+                </div>
+                <div class="mt-4 p-3 bg-red-900/20 border border-red-500/30 rounded-lg text-center">
+                    <p class="text-xs text-red-300">⚠️ 典型直播負載 (1.5 Gbps) 已突破 1GbE 物理極限，若不升級將導致畫面崩潰。</p>
+                </div>
+            </div>
+
+            <!-- Engineering Specs Radar -->
+            <div class="glass-panel p-6 rounded-2xl">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                        <span class="w-2 h-8 bg-pink-500 rounded-full"></span>
+                        工程環境規範
+                    </h2>
+                    <p class="text-sm text-slate-400 mt-2">
+                        辦公大樓 vs 廣播級中心。我們定義了嚴格的「環境就緒指數」以確保收音品質。
+                    </p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="radarChart"></canvas>
+                </div>
+                <div class="mt-4 grid grid-cols-2 gap-2 text-xs text-slate-400">
+                    <div>🔊 <span class="text-white">NC-25:</span> 圖書館級靜音</div>
+                    <div>⚡ <span class="text-white">IG 接地:</span> 消除電流聲</div>
+                    <div>💨 <span class="text-white">1.5m/s:</span> 低風速空調</div>
+                    <div>💡 <span class="text-white">CRI>95:</span> 高演色性燈光</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Roadmap -->
+        <section>
+            <div class="mb-8 pl-4 border-l-4 border-purple-500">
+                <h2 class="text-3xl font-bold text-white">執行路線圖 Roadmap</h2>
+                <p class="text-slate-400 mt-2">從基礎建設落地到 AI 深度整合的演進</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Phase 1 -->
+                <div class="glass-panel p-8 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-6 opacity-5 text-9xl font-bold text-cyan-500 select-none">1</div>
+                    <div class="relative z-10">
+                        <span class="inline-block px-3 py-1 bg-cyan-900/50 text-cyan-300 text-xs rounded mb-4 border border-cyan-500/30">Immediate Action</span>
+                        <h3 class="text-2xl font-bold text-white mb-4 group-hover:text-cyan-400 transition-colors">Phase 1: 基礎設施建置</h3>
+                        <ul class="space-y-4 text-slate-300">
+                            <li class="flex items-start gap-3">
+                                <span class="text-cyan-500 mt-1">✓</span>
+                                <div>
+                                    <strong class="text-white block">聲學工程落地</strong>
+                                    <span class="text-sm text-slate-400">浮動地板施工，達成 NC-25 靜音標準。</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-cyan-500 mt-1">✓</span>
+                                <div>
+                                    <strong class="text-white block">10GbE 專網部署</strong>
+                                    <span class="text-sm text-slate-400">光纖骨幹鋪設與物理隔離測試。</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-cyan-500 mt-1">✓</span>
+                                <div>
+                                    <strong class="text-white block">Zone A/B 啟用</strong>
+                                    <span class="text-sm text-slate-400">TriCaster 導播機與自動錄音艙上線。</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Phase 2 -->
+                <div class="glass-panel p-8 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-6 opacity-5 text-9xl font-bold text-purple-500 select-none">2</div>
+                    <div class="relative z-10">
+                        <span class="inline-block px-3 py-1 bg-purple-900/50 text-purple-300 text-xs rounded mb-4 border border-purple-500/30">Future Synergy</span>
+                        <h3 class="text-2xl font-bold text-white mb-4 group-hover:text-purple-400 transition-colors">Phase 2: AI 賦能與整合</h3>
+                        <ul class="space-y-4 text-slate-300">
+                            <li class="flex items-start gap-3">
+                                <span class="text-purple-500 mt-1">✓</span>
+                                <div>
+                                    <strong class="text-white block">tGenie API 對接</strong>
+                                    <span class="text-sm text-slate-400">建立與內部 GenAI 平台的數據傳輸。</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-purple-500 mt-1">✓</span>
+                                <div>
+                                    <strong class="text-white block">STT 自動化流程</strong>
+                                    <span class="text-sm text-slate-400">訪談影音自動轉為精準逐字稿 (Verbatim)。</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-purple-500 mt-1">✓</span>
+                                <div>
+                                    <strong class="text-white block">RAG 知識庫應用</strong>
+                                    <span class="text-sm text-slate-400">AI 引用具體訪談片段回答政策提問。</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center pt-12 border-t border-slate-800">
+            <p class="text-slate-500 text-sm mb-2">
+                HR Digital Media Center Feasibility Assessment 2025
+            </p>
+            <p class="text-xs text-slate-600 font-mono">
+                Generated based on Integrated Report | No SVG/Mermaid Used | Canvas Rendering
+            </p>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- Utility: Label Wrapping ---
+        function wrapLabel(str, maxLen = 16) {
+            if (str.length <= maxLen) return str;
+            const words = str.split(''); // Splitting by char for Chinese/mixed context safety, or use space for English
+            const lines = [];
+            let currentLine = "";
+            
+            // Simple logic for mixed content: prioritize breaking at logical points if possible, else length
+            // For this specific content (Chinese mixed with English), simple length break is robust
+            let count = 0;
+            for (let i = 0; i < str.length; i++) {
+                currentLine += str[i];
+                count++;
+                if (count >= maxLen) {
+                    lines.push(currentLine);
+                    currentLine = "";
+                    count = 0;
+                }
+            }
+            if (currentLine) lines.push(currentLine);
+            return lines;
+        }
+
+        // --- Common Chart Configuration ---
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.font.family = "'Noto Sans TC', sans-serif";
+        
+        const commonTooltip = {
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            titleColor: '#fff',
+            bodyColor: '#cbd5e1',
+            borderColor: 'rgba(56, 189, 248, 0.3)',
+            borderWidth: 1,
+            padding: 12,
+            titleFont: { size: 14, weight: 'bold' },
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) return label.join('');
+                    return label;
+                }
+            }
+        };
+
+        // --- Chart 1: Budget Breakdown (Doughnut) ---
+        new Chart(document.getElementById('budgetChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Zone A: 演播廳 (Studio)', 'Zone B: 錄音艙 (Podcast)', 'Zone C: 自動化 (Auto)', 'Zone D: 網路骨幹 (Network)', 'Zone E: 基礎裝修 (Reno)'],
+                datasets: [{
+                    data: [25, 20, 11, 17, 27],
+                    backgroundColor: [
+                        '#d946ef', // Pink
+                        '#a855f7', // Purple
+                        '#6366f1', // Indigo
+                        '#06b6d4', // Cyan
+                        '#f59e0b'  // Amber
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { padding: 20, boxWidth: 12 }
+                    },
+                    tooltip: commonTooltip
+                }
+            }
+        });
+
+        // --- Chart 2: Bandwidth Comparison (Horizontal Bar) ---
+        new Chart(document.getElementById('bandwidthChart'), {
+            type: 'bar',
+            data: {
+                labels: ['單路 4K NDI 串流', '一般辦公室 (1GbE) 上限', '典型直播負載 (3機+簡報)', '廣播專網 (10GbE) 容量'],
+                datasets: [{
+                    label: '頻寬消耗 (Mbps)',
+                    data: [300, 1000, 1500, 10000],
+                    backgroundColor: [
+                        '#22d3ee', // Cyan
+                        '#ef4444', // Red (Warning)
+                        '#f59e0b', // Amber (Load)
+                        '#10b981'  // Emerald (Capacity)
+                    ],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: { color: '#334155' },
+                        title: { display: true, text: 'Mbps', color: '#64748b' }
+                    },
+                    y: {
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: commonTooltip
+                }
+            }
+        });
+
+        // --- Chart 3: Engineering Radar (Radar) ---
+        new Chart(document.getElementById('radarChart'), {
+            type: 'radar',
+            data: {
+                labels: ['低底噪 (NC-25)', '低風速 (<1.5m/s)', '演色性 (CRI>95)', '結構避震 (Isolation)', '電力純淨度 (IG)'],
+                datasets: [{
+                    label: '廣播級標準 (Target)',
+                    data: [95, 95, 95, 90, 90],
+                    borderColor: '#06b6d4',
+                    backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#06b6d4',
+                    borderWidth: 2
+                }, {
+                    label: '一般辦公環境 (Office)',
+                    data: [40, 50, 60, 20, 30],
+                    borderColor: '#94a3b8',
+                    backgroundColor: 'rgba(148, 163, 184, 0.1)',
+                    pointBackgroundColor: '#94a3b8',
+                    borderDash: [5, 5],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: '#334155' },
+                        grid: { color: '#334155' },
+                        pointLabels: {
+                            color: '#cbd5e1',
+                            font: { size: 11 }
+                        },
+                        ticks: { display: false, backdropColor: 'transparent' },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                },
+                plugins: {
+                    legend: { labels: { padding: 10 } },
+                    tooltip: commonTooltip
+                }
+            }
+        });
+    </script>
+</body>
+</html>

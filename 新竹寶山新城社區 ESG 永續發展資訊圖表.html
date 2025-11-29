@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新竹寶山新城社區 ESG 永續發展資訊圖表</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 設定 Inter 字體 (如果系統可用) -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f7f3e8; /* 淺米色背景 */
+            color: #333;
+        }
+        .section-title {
+            position: relative;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 4px;
+            background-color: #79ac78; /* 清新綠色線 */
+            border-radius: 2px;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'xincheng-green': '#79ac78', /* 主色調：生機綠 */
+                        'xincheng-brown': '#a9714b', /* 輔色調：黑糖棕 */
+                        'xincheng-cream': '#f7f3e8', /* 背景色：奶油米 */
+                        'xincheng-dark': '#3a3a3a', /* 文字色：深灰 */
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div class="max-w-6xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden">
+        
+        <!-- Header & Title -->
+        <header class="bg-xincheng-green p-8 sm:p-12 text-center rounded-t-3xl">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-white mb-2 tracking-wide">
+                新竹寶山新城社區 永續發展藍圖
+            </h1>
+            <p class="text-lg sm:text-xl text-xincheng-cream font-medium">
+                以「黑糖反哺長照」為核心的 ESG 地方創生典範
+            </p>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="p-6 sm:p-10 space-y-12">
+            
+            <!-- Section 1: 地方發展前瞻性 (ESG 亮點) -->
+            <section>
+                <h2 class="section-title text-3xl font-bold text-xincheng-brown mb-8 mx-auto w-fit">
+                    地方發展前瞻性：ESG 永續亮點
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- E - 環境永續 -->
+                    <div class="bg-xincheng-cream p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-t-4 border-xincheng-green">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <!-- Icon: Leaf for Environment -->
+                            <svg class="w-8 h-8 text-xincheng-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <h3 class="text-xl font-bold text-xincheng-dark">E - 環境永續</h3>
+                        </div>
+                        <ul class="list-disc pl-5 text-gray-700 space-y-2">
+                            <li>**淨零與綠美化：** 推動節能燈具、省水設備，舉辦綠色療育課程。</li>
+                            <li>**生態循環：** 成功復耕休耕蔗田，達成「種植-生產-銷售」的完整產業鏈。</li>
+                        </ul>
+                    </div>
+
+                    <!-- S - 社會共融 -->
+                    <div class="bg-xincheng-cream p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-t-4 border-xincheng-brown">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <!-- Icon: Heart/People for Social -->
+                            <svg class="w-8 h-8 text-xincheng-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354c-4.142-4.142-10.457 1.556-4.142 6.854 2.5 2.5 5.5 4 8.25 4.5m1.5-7.5c-4.142-4.142-10.457 1.556-4.142 6.854"></path></svg>
+                            <h3 class="text-xl font-bold text-xincheng-dark">S - 社會共融</h3>
+                        </div>
+                        <ul class="list-disc pl-5 text-gray-700 space-y-2">
+                            <li>**長者照護典範：** 提供免費午餐、專車接送，將長者從獨居帶入社區據點。</li>
+                            <li>**產業反哺社會：** 甘蔗產業收入直接回饋、支撐長者照護，實現永續循環。</li>
+                        </ul>
+                    </div>
+
+                    <!-- G - 良好治理 -->
+                    <div class="bg-xincheng-cream p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-t-4 border-xincheng-green">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <!-- Icon: Check/Governance -->
+                            <svg class="w-8 h-8 text-xincheng-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <h3 class="text-xl font-bold text-xincheng-dark">G - 良好治理</h3>
+                        </div>
+                        <ul class="list-disc pl-5 text-gray-700 space-y-2">
+                            <li>**由下而上自立：** 居民主動溝通與努力，成功推動並維持產業與長照結合。</li>
+                            <li>**經濟自主性：** 降低對政府補助的依賴，社區發展具備高度自主性。</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 2: 核心困境與挑戰 -->
+            <section class="bg-red-50 p-6 sm:p-8 rounded-2xl border-2 border-red-200">
+                <h2 class="section-title text-3xl font-bold text-red-600 mb-8 mx-auto w-fit after:bg-red-400">
+                    核心困境與挑戰
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <!-- 困境 1: 高齡化與人才流失 -->
+                    <div class="flex items-start space-x-4">
+                        <!-- Icon: Elderly person -->
+                        <svg class="flex-shrink-0 w-10 h-10 text-red-500 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-3c0-4.556-4.666-6-8-6s-8 1.444-8 6v3h5M2 20h5v-3c0-4.556 4.666-6 8-6s8 1.444 8 6v3h-5M9 12a3 3 0 11-6 0 3 3 0 016 0zm12 0a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <div>
+                            <h3 class="text-xl font-semibold text-red-700">高齡化壓力加劇</h3>
+                            <p class="mt-1 text-gray-800">寶山鄉已接近超高齡化地區 (高齡人口近 20%)，照護人力、服務需求與社區參與度面臨持續考驗。</p>
+                        </div>
+                    </div>
+
+                    <!-- 困境 2: 市場拓展與能見度 -->
+                    <div class="flex items-start space-x-4">
+                        <!-- Icon: Magnifying Glass / Globe -->
+                        <svg class="flex-shrink-0 w-10 h-10 text-red-500 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707"></path></svg>
+                        <div>
+                            <h3 class="text-xl font-semibold text-red-700">品牌溝通與市場能見度不足</h3>
+                            <p class="mt-1 text-gray-800">雖然實踐 ESG，但缺乏現代化、系統化的 ESG 品牌包裝與市場行銷，難以將品牌價值推向更廣泛的企業或都會市場。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: 建議方向 (深耕與拓展) -->
+            <section>
+                <h2 class="section-title text-3xl font-bold text-xincheng-brown mb-8 mx-auto w-fit">
+                    建議方向：深耕社區 與 拓展能見度
+                </h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <!-- 策略組 1: 深耕社區 (內部強化) -->
+                    <div class="p-6 bg-xincheng-green/10 rounded-xl shadow-lg border-l-8 border-xincheng-green">
+                        <h3 class="text-2xl font-bold text-xincheng-green mb-4">
+                            深耕社區：活化組織與傳承
+                        </h3>
+                        <ol class="space-y-4 text-gray-800">
+                            <li class="flex items-start space-x-3">
+                                <span class="flex-shrink-0 font-bold text-lg text-xincheng-green">1.</span>
+                                <div>
+                                    <p class="font-semibold">發展「社區 ESG 顧問團」</p>
+                                    <p class="text-sm">培訓在地長者或青年擔任講師/導覽員，將長者從被照顧者轉為知識傳承者。</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <span class="flex-shrink-0 font-bold text-lg text-xincheng-green">2.</span>
+                                <div>
+                                    <p class="font-semibold">建立「跨代共學」機制</p>
+                                    <p class="text-sm">推動與大學 CSR 合作，讓返鄉青年與長者共同設計甘蔗種植/製糖體驗課程。</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <span class="flex-shrink-0 font-bold text-lg text-xincheng-green">3.</span>
+                                <div>
+                                    <p class="font-semibold">零碳生活落實</p>
+                                    <p class="text-sm">將節能減碳行動深化為居民日常生活習慣，邁向零碳社區。</p>
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+                    
+                    <!-- 策略組 2: 拓展能見度 (對外行銷) -->
+                    <div class="p-6 bg-xincheng-brown/10 rounded-xl shadow-lg border-l-8 border-xincheng-brown">
+                        <h3 class="text-2xl font-bold text-xincheng-brown mb-4">
+                            拓展能見度：品牌溝通與合作
+                        </h3>
+                        <ol class="space-y-4 text-gray-800">
+                            <li class="flex items-start space-x-3">
+                                <span class="flex-shrink-0 font-bold text-lg text-xincheng-brown">1.</span>
+                                <div>
+                                    <p class="font-semibold">產品「ESG 故事化」包裝</p>
+                                    <p class="text-sm">產品標示「照護反饋比例」 (例如：每份黑糖支持長者一餐)，強化購買的社會責任動機。</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <span class="flex-shrink-0 font-bold text-lg text-xincheng-brown">2.</span>
+                                <div>
+                                    <p class="font-semibold">鎖定企業 ESG 合作對象</p>
+                                    <p class="text-sm">接洽科學園區企業，推銷「一日新城 ESG 學習之旅」作為員工環境教育/社會服務日。</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <span class="flex-shrink-0 font-bold text-lg text-xincheng-brown">3.</span>
+                                <div>
+                                    <p class="font-semibold">參與永續發展獎項</p>
+                                    <p class="text-sm">投稿國家永續發展獎、地方創生獎項，提升全國知名度與公信力。</p>
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-xincheng-dark text-white text-center p-4 rounded-b-3xl">
+            <p class="text-sm">新城風糖：產業永續與世代共融的在地實踐</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
