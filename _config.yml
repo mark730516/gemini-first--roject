@@ -1,0 +1,4 @@
+# 告訴 GitHub Pages 啟用 Jekyll 處理
+# 這行是可選的，但用於確認啟用
+plugins:
+  - jekyll-paginate
