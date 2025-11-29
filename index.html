@@ -3,274 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>知識穹頂核心系統介面 - 專題成果</title>
-    <!-- 載入 Tailwind CSS CDN -->
+    <title>知識穹頂 V2.0 (分組儀表板) | 專案總覽</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS 變數 */
-        :root {
-            --color-bg: #030712; /* 幾乎純黑 */
-            --color-accent-cyan: #06b6d4; /* 科技感青色 */
-            --color-accent-green: #10b981; /* 科技感綠色 */
-        }
-
-        /* 全局字體和背景 */
+        /* 核心設計配色與字體 */
         body {
-            font-family: 'Inter', 'Microsoft JhengHei', sans-serif; /* 支援中文 */
-            background-color: var(--color-bg);
-            color: #e5e7eb; /* 柔和白色 */
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #0F172A; /* Slate 900 - 深藍科技感 */
+            color: #E2E8F0; /* Slate 200 - 淺色文字 */
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
-
-        /* 霓虹光影效果 */
-        .neon-text {
-            text-shadow: 0 0 5px var(--color-accent-cyan), 0 0 10px var(--color-accent-cyan);
-            color: #ffffff;
-            font-family: 'Space Mono', monospace;
+        .text-neon-cyan {
+            color: #22D3EE; /* Cyan 400 */
         }
-
-        /* 卡片玻璃擬態效果 */
-        .glass-card {
-            background-color: rgba(30, 41, 59, 0.6); /* 半透明深藍 */
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease-in-out; 
+        .panel-bg {
+            background-color: #1E293B; /* Slate 800 - 面板背景 */
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
-
-        .category-line {
-            height: 3px;
-            background: linear-gradient(to right, var(--color-accent-cyan), transparent);
-            width: 100%;
-            margin-top: 0.5rem;
+        .card-bg {
+            background-color: #0F172A; /* Slate 900 - 卡片背景 */
         }
-
-        /* 響應式調整 */
-        @media (max-width: 640px) {
-            .hero-title {
-                font-size: 2rem !important;
-            }
-            .hero-subtitle {
-                font-size: 1rem !important;
-            }
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(34, 211, 238, 0.2);
+            border-color: #22D3EE;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        .tag {
+            background-color: #334155; /* Slate 700 - 標籤背景 */
+            color: #94A3B8; /* Slate 400 - 標籤文字 */
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            white-space: nowrap;
+        }
+        .panel-header {
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+        .panel-header:hover {
+            background-color: #334155;
+        }
+        .panel-icon {
+            transition: transform 0.3s ease;
+        }
+        .panel-collapsed .panel-icon {
+            transform: rotate(-90deg);
+        }
+        /* 自定義捲軸 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0F172A; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #22D3EE; }
     </style>
 </head>
-<body class="p-4 sm:p-8">
+<body class="p-4 md:p-8">
 
-    <div class="max-w-7xl mx-auto w-full">
-        <!-- 頂部標題與核心介面 -->
-        <header class="text-center mb-12 border-b border-gray-700 pb-6">
-            <h1 class="text-4xl sm:text-6xl font-extrabold hero-title neon-text" style="--color-accent-cyan: #3DFF8C;">
-                知識穹頂 V2.0 // 核心系統介面
+    <div class="max-w-7xl mx-auto">
+        
+        <header class="text-center py-12 border-b border-slate-700 mb-12">
+            <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight mb-2">
+                知識<span class="text-neon-cyan">穹頂</span> V2.0
             </h1>
-            <p class="text-base sm:text-xl text-gray-400 mt-2 hero-subtitle">
-                專案儀表板 // 領域化成果矩陣
-            </p>
+            <p class="text-xl text-slate-400">領域化分組儀表板：預設顯示各領域最新 3 專題</p>
         </header>
 
-        <!-- 核心指標數據區塊 (DATA GRID) -->
-        <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-            <div class="glass-card p-4 rounded-xl text-center shadow-lg border-l-4 border-cyan-500">
-                <p class="text-sm text-gray-400 font-mono">FILES INDEXED</p>
-                <p class="text-3xl font-bold neon-text text-cyan-400 mt-1">19</p>
-            </div>
-            <div class="glass-card p-4 rounded-xl text-center shadow-lg border-l-4 border-green-500">
-                <p class="text-sm text-gray-400 font-mono">PROJECT DOMAINS</p>
-                <p class="text-3xl font-bold neon-text text-green-400 mt-1">05</p>
-            </div>
-            <div class="glass-card p-4 rounded-xl text-center shadow-lg border-l-4 border-blue-500 hidden sm:block">
-                <p class="text-sm text-gray-400 font-mono">LAST COMMIT</p>
-                <p class="text-xl font-bold mt-2 text-blue-400">2025.11.29</p>
-            </div>
-            <div class="glass-card p-4 rounded-xl text-center shadow-lg border-l-4 border-fuchsia-500 hidden sm:block">
-                <p class="text-sm text-gray-400 font-mono">CODE BASE</p>
-                <p class="text-3xl font-bold mt-1 neon-text text-fuchsia-400">Stable</p>
-            </div>
-        </section>
-
-        <!-- 專題模組矩陣 -->
-        <section class="space-y-12">
-            
-            <!-- MODULE 1: HR DIGITAL & TRANSFORMATION (CYAN) -->
-            <div class="module-section">
-                <h2 class="text-2xl font-bold mb-4 neon-text text-cyan-400">
-                    // Module 01: HR 數位化與體驗中心
-                </h2>
-                <div class="category-line mb-6"></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- hr-digital-ai-strategy.html -->
-                    <a href="hr-digital-ai-strategy.html" class="glass-card p-5 rounded-xl transition hover:shadow-cyan-500/50 hover:shadow-2xl hover:border-cyan-400">
-                        <p class="text-sm text-cyan-400 font-mono">HR-AI-001</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">AI 戰略整合評估</h3>
-                        <p class="text-gray-400 text-sm">AI 技術潛力與風險評估，規劃智慧化服務的整合路徑。</p>
-                    </a>
-                    <!-- hr-digital-center-plan.html -->
-                    <a href="hr-digital-center-plan.html" class="glass-card p-5 rounded-xl transition hover:shadow-cyan-500/50 hover:shadow-2xl hover:border-cyan-400">
-                        <p class="text-sm text-cyan-400 font-mono">HR-PLAN-002</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">HR 數位媒體體驗中心 - 建置規劃書</h3>
-                        <p class="text-gray-400 text-sm">涵蓋組織架構、技術藍圖與營運模式的完整建置規劃。</p>
-                    </a>
-                    <!-- hr-digital-feasibility-strategy.html -->
-                    <a href="hr-digital-feasibility-strategy.html" class="glass-card p-5 rounded-xl transition hover:shadow-cyan-500/50 hover:shadow-2xl hover:border-cyan-400">
-                        <p class="text-sm text-cyan-400 font-mono">HR-FEAS-003</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">可行性評估與戰略規劃</h3>
-                        <p class="text-gray-400 text-sm">市場分析與資源評估，制定體驗中心初期的推廣策略。</p>
-                    </a>
-                </div>
+        <div id="content-panels" class="space-y-10">
             </div>
 
-            <!-- MODULE 2: DATA VISUALIZATION & ANALYTICS (GREEN) -->
-            <div class="module-section">
-                <h2 class="text-2xl font-bold mb-4 neon-text text-green-400">
-                    // Module 02: 數據視覺化與分析
-                </h2>
-                <div class="category-line mb-6" style="background: linear-gradient(to right, var(--color-accent-green), transparent);"></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- 2025-data-vis-status.html -->
-                    <a href="2025-data-vis-status.html" class="glass-card p-5 rounded-xl transition hover:shadow-green-500/50 hover:shadow-2xl hover:border-green-400">
-                        <p class="text-sm text-green-400 font-mono">DV-REPORT-001</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">2025 年數據視覺化現況報告</h3>
-                        <p class="text-gray-400 text-sm">分析最新工具、設計趨勢與應用場景，為年度策略提供參考。</p>
-                    </a>
-                    <!-- tsmc-apts-visual-strategy-list.html -->
-                    <a href="tsmc-apts-visual-strategy-list.html" class="glass-card p-5 rounded-xl transition hover:shadow-green-500/50 hover:shadow-2xl hover:border-green-400">
-                        <p class="text-sm text-green-400 font-mono">DV-STRAT-002</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">TSMC APTS 全領域視覺戰略總表</h3>
-                        <p class="text-gray-400 text-sm">制定統一的視覺標準和數據傳達策略，確保資訊一致性。</p>
-                    </a>
-                </div>
-            </div>
-
-            <!-- MODULE 3: TECHNICAL & SYSTEM DEVELOPMENT (BLUE) -->
-            <div class="module-section">
-                <h2 class="text-2xl font-bold mb-4 neon-text text-blue-400">
-                    // Module 03: 技術與系統開發
-                </h2>
-                <div class="category-line mb-6" style="background: linear-gradient(to right, #3b82f6, transparent);"></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- project-nano-architects.html -->
-                    <a href="project-nano-architects.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
-                        <p class="text-sm text-blue-400 font-mono">DEV-NANO-001</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">Project Nano Architects 專案文件</h3>
-                        <p class="text-gray-400 text-sm">專案 Nano Architects 的系統架構設計與實施文件。</p>
-                    </a>
-                    <!-- studio-x-mems-probe-card-simulator.html -->
-                    <a href="studio-x-mems-probe-card-simulator.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
-                        <p class="text-sm text-blue-400 font-mono">DEV-MEMS-002</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">STUDIO X | MEMS 探針卡接頭模擬器</h3>
-                        <p class="text-gray-400 text-sm">STUDIO X 專案中 MEMS 探針卡接頭模擬器技術文件。</p>
-                    </a>
-                    <!-- studio-x-optical-spring-simulator-v3.html -->
-                    <a href="studio-x-optical-spring-simulator-v3.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
-                        <p class="text-sm text-blue-400 font-mono">DEV-OPTIC-003</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">STUDIO X | 光簧試模模擬器 V3</h3>
-                        <p class="text-gray-400 text-sm">光簧試模模擬器 V3 版本文件，著重於光學彈簧測試。</p>
-                    </a>
-                    <!-- obs-transition-plugin-guide.html -->
-                    <a href="obs-transition-plugin-guide.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
-                        <p class="text-sm text-blue-400 font-mono">DEV-SW-004</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">OBS 特色換場插件開發指南</h3>
-                        <p class="text-gray-400 text-sm">OBS 特色換場效果插件的從零開始開發教學。</p>
-                    </a>
-                    <!-- studio-x-tsmc-proposal.html -->
-                    <a href="studio-x-tsmc-proposal.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
-                        <p class="text-sm text-blue-400 font-mono">DEV-PROPOSAL-005</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">STUDIO X 提案：TSMC 先進封裝與測試服務</h3>
-                        <p class="text-gray-400 text-sm">針對 TSMC 先進封裝與測試服務需求的完整提案文件。</p>
-                    </a>
-                    <!-- batch-print-v16-background-clearance.html -->
-                    <a href="batch-print-v16-background-clearance.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
-                        <p class="text-sm text-blue-400 font-mono">DEV-OPT-006</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">批次列印 v16_背景清除記憶體優化</h3>
-                        <p class="text-gray-400 text-sm">批次列印模組的記憶體優化與背景清除技術說明。</p>
-                    </a>
-                    <!-- auto-generate-html.html -->
-                    <a href="auto-generate-html.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
-                        <p class="text-sm text-blue-400 font-mono">DEV-AUTO-007</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">自動產生 HTML 模組文件</h3>
-                        <p class="text-gray-400 text-sm">自動化 HTML 內容生成模組的技術文件。</p>
-                    </a>
-                </div>
-            </div>
-
-            <!-- MODULE 4: STRATEGY & BUSINESS PLANNING (FUCHSIA) -->
-            <div class="module-section">
-                <h2 class="text-2xl font-bold mb-4 neon-text text-fuchsia-400">
-                    // Module 04: 策略與業務規劃
-                </h2>
-                <div class="category-line mb-6" style="background: linear-gradient(to right, #d946ef, transparent);"></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- hsinchu-science-park-2024-report.html -->
-                    <a href="hsinchu-science-park-2024-report.html" class="glass-card p-5 rounded-xl transition hover:shadow-fuchsia-500/50 hover:shadow-2xl hover:border-fuchsia-400">
-                        <p class="text-sm text-fuchsia-400 font-mono">STRAT-REPORT-001</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">新竹科學園區：2024 年度績效與展望</h3>
-                        <p class="text-gray-400 text-sm">回顧年度重點產業績效，並對未來發展趨勢進行展望。</p>
-                    </a>
-                    <!-- personalized-weight-schedule.html -->
-                    <a href="personalized-weight-schedule.html" class="glass-card p-5 rounded-xl transition hover:shadow-fuchsia-500/50 hover:shadow-2xl hover:border-fuchsia-400">
-                        <p class="text-sm text-fuchsia-400 font-mono">STRAT-HEALTH-002</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">個人化體重調理與補劑優化排程</h3>
-                        <p class="text-gray-400 text-sm">基於數據分析的個人化健康排程與營養補充方案。</p>
-                    </a>
-                    <!-- studio-x-light-stage-lighting-strategy.html -->
-                    <a href="studio-x-light-stage-lighting-strategy.html" class="glass-card p-5 rounded-xl transition hover:shadow-fuchsia-500/50 hover:shadow-2xl hover:border-fuchsia-400">
-                        <p class="text-sm text-fuchsia-400 font-mono">STRAT-OPTIC-003</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">STUDIO X | 燈台內部佈光策略模組</h3>
-                        <p class="text-gray-400 text-sm">詳述內部燈光陣列規劃與部署策略的模組文件。</p>
-                    </a>
-                </div>
-            </div>
-
-            <!-- MODULE 5: ESG & IMAGE ASSET MANAGEMENT (AMBER) -->
-            <div class="module-section">
-                <h2 class="text-2xl font-bold mb-4 neon-text text-amber-400">
-                    // Module 05: ESG 與影像資產管理
-                </h2>
-                <div class="category-line mb-6" style="background: linear-gradient(to right, #fbbf24, transparent);"></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- hsinchu-baoshan-esg-infographic.html -->
-                    <a href="hsinchu-baoshan-esg-infographic.html" class="glass-card p-5 rounded-xl transition hover:shadow-amber-500/50 hover:shadow-2xl hover:border-amber-400">
-                        <p class="text-sm text-amber-400 font-mono">ESG-COMMUNITY-001</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">新竹寶山 ESG 永續發展資訊圖表</h3>
-                        <p class="text-gray-400 text-sm">視覺化呈現社區在永續發展方面的成果與未來目標。</p>
-                    </a>
-                    <!-- lightroom-workflow-infographic.html -->
-                    <a href="lightroom-workflow-infographic.html" class="glass-card p-5 rounded-xl transition hover:shadow-amber-500/50 hover:shadow-2xl hover:border-amber-400">
-                        <p class="text-sm text-amber-400 font-mono">ASSET-LR-002</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">Lightroom 專業攝影工作流程圖表</h3>
-                        <p class="text-gray-400 text-sm">標準化攝影後期流程，確保影像處理品質。</p>
-                    </a>
-                    <!-- raw-file-digital-darkroom-guide.html -->
-                    <a href="raw-file-digital-darkroom-guide.html" class="glass-card p-5 rounded-xl transition hover:shadow-amber-500/50 hover:shadow-2xl hover:border-amber-400">
-                        <p class="text-sm text-amber-400 font-mono">ASSET-RAW-003</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">駕馭 RAW 檔案：數位暗房指南</h3>
-                        <p class="text-gray-400 text-sm">從專業角度教導如何處理和編輯 RAW 格式照片。</p>
-                    </a>
-                    <!-- health_calculator_v200.html -->
-                    <a href="health_calculator_v200.html" class="glass-card p-5 rounded-xl transition hover:shadow-amber-500/50 hover:shadow-2xl hover:border-amber-400">
-                        <p class="text-sm text-amber-400 font-mono">ASSET-HEALTH-004</p>
-                        <h3 class="text-xl font-semibold mt-1 mb-2">健康計算器 V2.0 文件</h3>
-                        <p class="text-gray-400 text-sm">健康與健康計算模組 V2.0 版本的更新文件。</p>
-                    </a>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- 頁腳 -->
-        <footer class="text-center mt-16 pt-8 border-t border-gray-800">
-            <p class="text-sm text-gray-600 font-mono">
-                [SYSTEM LOG] Interface Status: OPERATIONAL // Data Integrity: 100%
-            </p>
-            <p class="text-xs text-gray-700 mt-1">
-                設計原則：聚焦領域、即時內容、彈性編程。
-            </p>
+        <footer class="text-center mt-20 py-8 border-t border-slate-700">
+            <p class="text-slate-500 text-sm">設計原則：聚焦領域、即時內容、彈性擴展。**所有圖卡皆會另開視窗。**</p>
         </footer>
+
     </div>
 
+    <script>
+        // --- 核心資料庫: 專案數據 (已整合多媒體作品集) ---
+        // 注意：領域是根據第一個標籤自動分類的。
+        const projectsData = [
+            // 專業技能 (Pro Skills) - **新的多媒體作品集已加入並置於首位**
+            { id: 'dark-portfolio', title: '個人多媒體成果展示', subtitle: '多媒體作品集：涵蓋主題影片、活動紀錄與靜態攝影精選', tags: ['專業技能', '作品集', '多媒體', '影視製作', '攝影'], file: 'dark_portfolio_v1.html', icon: '🌟' },
+            { id: 'lightroom-workflow', title: 'Lightroom 專業攝影工作流程', subtitle: '高效篩選漏斗與智慧後製步驟', tags: ['專業技能', '工作流程', '影像處理', '效率優化', '技術指南'], file: 'Lightroom 專業攝影工作流程資訊圖表.html', icon: '📸' },
+            { id: 'raw-darkroom-guide', title: '駕馭 RAW 檔案：數位暗房指南', subtitle: '14 位元數據的力量：專業四步驟修圖流程', tags: ['專業技能', '影像處理', '技術指南', '報告分析', '效率優化'], file: '駕馭 RAW 檔案：數位暗房指南.html', icon: '🖼️' },
+            
+            // 科技製造 (Tech/Mfg)
+            { id: 'hr-digital-media-center', title: 'HR 數位媒體體驗中心', subtitle: '可行性評估：Teams 整合與 AI 對接戰略', tags: ['科技製造', '戰略規劃', '工程技術', 'AI整合', '報告分析'], file: 'HR 數位媒體體驗中心可行性評估與戰略規劃.html', icon: '🖥️' },
+            { id: 'tsmc-apts-strategy', title: 'TSMC APTS 全領域視覺戰略', subtitle: '奈米級建築工藝：COUPÉ 堆疊與 OHT 自動化協奏', tags: ['科技製造', '戰略規劃', '製造流程', '工程技術', '報告分析'], file: 'TSMC APTS 全領域視覺戰略總表.html', icon: '🔬' },
+            { id: 'hsinchu-science-park', title: '新竹科學園區年度績效', subtitle: '核心產業深度解析與未來技術焦點 (AI, 6G, Chiplet)', tags: ['科技製造', '產業趨勢', '戰略規劃', '報告分析', 'AI整合'], file: '新竹科學園區：2024年度績效與未來展望.html', icon: '💡' },
+
+            // 軟體開發 (Software Dev)
+            { id: 'obs-transition-plugin', title: 'OBS 特色換場插件開發', subtitle: '視覺過渡技術指南：Shader 渲染邏輯與類型分析矩陣', tags: ['軟體開發', '插件開發', '編程指南', '視覺特效', '技術指南'], file: 'OBS 特色換場插件開發指南.html', icon: '🎮' },
+            
+            // 社會人文 (Social/Health)
+            { id: 'bio-rhythm-schedule', title: '個人化體重調理與補劑優化排程', subtitle: '生物時鐘優化：針對「抽筋、痠痛」的補劑時程', tags: ['社會人文', '健康優化', '營養學', '效率優化', '報告分析'], file: '個人化體重調理與補劑優化排程.html', icon: '🧬' },
+            { id: 'hsinchu-xincheng-esg', title: '寶山新城社區 ESG 永續發展', subtitle: '黑糖反哺長照典範：核心困境與品牌拓展建議', tags: ['社會人文', 'ESG', '地方創生', '戰略規劃', '報告分析'], file: '新竹寶山新城社區 ESG 永續發展資訊圖表.html', icon: '🌱' },
+        ];
+        
+        // --- 領域定義與分組邏輯 ---
+        const domains = {
+            '專業技能': { icon: '🛠️', description: '專注於個人專業工具、工作流程與效率優化。', count: 0, items: [] },
+            '科技製造': { icon: '🤖', description: '專注於半導體、高科技設施與企業數位轉型戰略。', count: 0, items: [] },
+            '軟體開發': { icon: '💻', description: '專注於編程指南、插件開發與程式視覺化技術。', count: 0, items: [] },
+            '社會人文': { icon: '🌍', description: '專注於 ESG、地方創生與個人健康優化。', count: 0, items: [] }
+        };
+
+        // 1. 將專案依據第一個標籤 (領域) 進行分組和計數
+        projectsData.forEach(project => {
+            const domainKey = project.tags[0];
+            if (domains[domainKey]) {
+                domains[domainKey].items.push(project);
+                domains[domainKey].count++;
+            }
+        });
+
+        const contentPanels = document.getElementById('content-panels');
+
+        // 2. 核心渲染函數：生成整個分組面板
+        function renderPanels() {
+            contentPanels.innerHTML = ''; // 清空內容
+
+            Object.keys(domains).forEach(domainKey => {
+                const domain = domains[domainKey];
+                const totalItems = domain.items.length;
+                const latestItems = domain.items.slice(0, 3); // 只取最新的 3 個專題
+
+                const panelHtml = `
+                    <div id="panel-${domainKey.replace(/\s/g, '-')}" class="panel-bg p-6">
+                        <div class="panel-header flex justify-between items-center p-2 rounded-t-lg mb-4" onclick="togglePanel('${domainKey.replace(/\s/g, '-')}', this)">
+                            <h2 class="text-3xl font-bold flex items-center">
+                                <span class="text-neon-cyan text-4xl mr-3">${domain.icon}</span>
+                                ${domainKey} (${totalItems} 篇)
+                            </h2>
+                            <span class="text-neon-cyan text-3xl panel-icon transform rotate-0">▼</span>
+                        </div>
+
+                        <div class="panel-body grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-total-count="${totalItems}">
+                            ${latestItems.map(createCardHtml).join('')}
+                        </div>
+
+                        ${totalItems > 3 ? `
+                            <div class="text-center mt-6">
+                                <button class="bg-neon-cyan hover:bg-cyan-400 text-slate-900 font-bold py-2 px-6 rounded-full transition-colors" onclick="showAllItems('${domainKey.replace(/\s/g, '-')}', this)">
+                                    顯示所有 ${totalItems} 篇報告
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                contentPanels.innerHTML += panelHtml;
+            });
+        }
+
+        // 3. 生成單一專題卡片 HTML
+        function createCardHtml(project) {
+            // **關鍵變更：確保 a 標籤包含 target="_blank"**
+            // 第一個標籤是領域標籤，略過
+            const contentTags = project.tags.slice(1).map(tag => `<span class="tag">${tag}</span>`).join('');
+            
+            return `
+                <a href="${project.file}" target="_blank" class="card-bg p-4 rounded-lg border border-slate-700 card-hover block">
+                    <div class="text-2xl mb-2 text-neon-cyan">${project.icon}</div>
+                    <h3 class="text-lg font-bold text-white mb-1">${project.title}</h3>
+                    <p class="text-xs text-slate-400 mb-3 truncate">${project.subtitle}</p>
+                    <div class="flex flex-wrap gap-2">${contentTags}</div>
+                </a>
+            `;
+        }
+
+        // 4. 收合/展開功能 (Toggle)
+        window.togglePanel = function(panelId, headerElement) {
+            const panel = document.getElementById(`panel-${panelId}`);
+            const body = panel.querySelector('.panel-body');
+            const icon = headerElement.querySelector('.panel-icon');
+            
+            panel.classList.toggle('panel-collapsed');
+            
+            if (panel.classList.contains('panel-collapsed')) {
+                body.style.display = 'none';
+                icon.style.transform = 'rotate(-90deg)';
+            } else {
+                body.style.display = 'grid';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // 5. 顯示所有項目功能
+        window.showAllItems = function(panelId, button) {
+            const panel = document.getElementById(`panel-${panelId}`);
+            const body = panel.querySelector('.panel-body');
+            const domainKey = panelId.replace(/-/g, ' '); // 轉換回原始 key
+            
+            // 重新渲染所有項目
+            const allItems = domains[domainKey].items;
+            body.innerHTML = allItems.map(createCardHtml).join('');
+
+            // 隱藏按鈕
+            button.style.display = 'none';
+        }
+
+        // --- 初始化頁面 ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPanels();
+        });
+    </script>
 </body>
 </html>
