@@ -3,35 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>測試頁面 - 最小可行網頁</title>
+    
+    <title>知識穹頂 V2.0</title>
 
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0; /* 淺灰色背景 */
-            color: #333333; /* 深色文字 */
+            /* 您的原始背景色 */
+            background-color: #0b0f19; 
+            color: #ffffff;
+            font-family: 'Arial', 'Microsoft JhengHei', sans-serif;
             margin: 0;
-            padding: 50px;
-            text-align: center;
-        }
-        h1 {
-            color: #007bff; /* 藍色標題 */
-        }
-        p {
-            font-size: 1.2em;
+            padding: 0;
+            /* 使用 Flexbox 讓內容垂直和水平置中，增加 RWD 彈性 */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* 手機 RWD 測試 */
-        @media (max-width: 600px) {
+        .content-container {
+            padding: 40px 20px;
+            max-width: 800px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3.5em; /* 放大標題 */
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 0.2em;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        .footer-text {
+            font-size: 0.9em;
+            opacity: 0.6;
+            margin-top: 50px;
+        }
+
+        /* 響應式調整：適用於手機 */
+        @media (max-width: 768px) {
             h1 {
-                font-size: 1.5em; /* 在小螢幕上縮小標題 */
+                font-size: 2.5em;
+            }
+            .subtitle {
+                font-size: 1.1em;
             }
         }
     </style>
 </head>
 <body>
-    <h1>網頁載入成功！ (V3.0 最小測試)</h1>
-    <p>如果看到這個畫面，表示 HTML 和基礎樣式已正確載入。</p>
-    <p>請檢查：<br>1. 清除手機快取後，是否能看到此頁面。<br>2. 嘗試切換 Wi-Fi 與行動網路。</p>
+    <div class="content-container">
+        <h1>知識穹頂 V2.0</h1>
+        <p class="subtitle">領域化分組儀表板 • 預設顯示各領域最新 3 專題</p>
+
+        <p class="footer-text">
+            設計原則：聚焦領域、即時內容、彈性編程。
+        </p>
+    </div>
 </body>
 </html>
