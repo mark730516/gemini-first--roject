@@ -3,249 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知識穹頂核心系統介面 - 專題成果</title>
+    <!-- 載入 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     
-    <title>知識穹頂 V2.0 - 科技極簡儀表板</title>
-
     <style>
-        /* 基礎變數與全局設定 */
+        /* CSS 變數 */
         :root {
-            --bg-dark: #070912;          /* 更深的背景色 */
-            --main-text: #E0E0E0;        /* 柔和的白色文字 */
-            --accent-green: #3DFF8C;     /* 科技感亮綠色 */
-            --glass-bg: rgba(255, 255, 255, 0.05); /* 玻璃背景 */
-            
-            /* 五大類別色彩，用於強調標籤 */
-            --color-hr: #58A6FF;         /* 亮藍色 */
-            --color-data: #FFD700;       /* 金黃色 */
-            --color-tech: #FF6347;       /* 亮紅色 */
-            --color-strategy: #A970FF;   /* 亮紫色 */
-            --color-esg: #00FFFF;        /* 青綠色 */
+            --color-bg: #030712; /* 幾乎純黑 */
+            --color-primary: #1e3a8a; /* 核心藍 */
+            --color-accent-cyan: #06b6d4; /* 科技感青色 */
+            --color-accent-green: #10b981; /* 科技感綠色 */
         }
-        
+
+        /* 全局字體和背景 */
         body {
-            background-color: var(--bg-dark); 
-            color: var(--main-text);
-            font-family: 'Arial', 'Microsoft JhengHei', sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: 'Inter', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--color-bg);
+            color: #e5e7eb; /* 柔和白色 */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
         }
 
-        .main-wrapper {
-            width: 90%;
-            max-width: 1400px;
-            padding: 60px 0;
+        /* 霓虹光影效果 */
+        .neon-text {
+            text-shadow: 0 0 5px var(--color-accent-cyan), 0 0 10px var(--color-accent-cyan);
+            color: #ffffff;
+            font-family: 'Space Mono', monospace;
         }
 
-        /* 標題區塊 */
-        .header {
-            text-align: center;
-            margin-bottom: 70px;
-            text-shadow: 0 0 10px rgba(61, 255, 140, 0.3); /* 霓虹陰影效果 */
+        .neon-border {
+            border-image: linear-gradient(to right, var(--color-accent-cyan), var(--color-accent-green), var(--color-accent-cyan)) 1;
+            border-width: 2px;
+            border-style: solid;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+            transition: all 0.3s ease-in-out;
         }
 
-        .header h1 {
-            font-size: 4.5em; /* 放大主標題 */
-            letter-spacing: 5px;
-            margin-bottom: 5px;
-            color: var(--accent-green);
+        /* 卡片玻璃擬態效果 */
+        .glass-card {
+            background-color: rgba(30, 41, 59, 0.6); /* 半透明深藍 */
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .header .subtitle {
-            font-size: 1.4em;
-            opacity: 0.8;
-        }
-
-        /* 內容分區設定 */
-        .category-section {
-            margin-bottom: 80px;
-            position: relative;
-        }
-
-        .category-section h2 {
-            font-size: 1.8em;
-            margin-bottom: 25px;
-            text-align: left;
-            color: var(--main-text);
-            padding-left: 15px;
-            border-left: 4px solid var(--accent-green); /* 側邊重點線 */
-        }
-        
-        /* 網格佈局 */
-        .content-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-        }
-
-        /* 內容卡片樣式：玻璃擬態 */
-        .content-card {
-            background-color: var(--glass-bg);
-            backdrop-filter: blur(8px); /* 玻璃模糊效果 */
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1); /* 輕微邊框 */
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
-            text-decoration: none;
-            color: var(--main-text);
-            display: block;
-            padding: 25px;
-            min-height: 180px;
-        }
-
-        .content-card:hover {
-            transform: translateY(-8px);
-            background-color: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
-        }
-
-        .card-title {
-            font-size: 1.6em;
-            margin-top: 5px;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-
-        .card-tag {
-            font-size: 0.9em;
-            padding: 5px 12px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
-        .card-summary {
-            font-size: 1em;
-            opacity: 0.7;
-            margin-top: 15px;
-            line-height: 1.5;
-        }
-
-        /* 頁腳 */
-        .footer {
-            text-align: center;
-            padding: 40px;
-            opacity: 0.4;
-            font-size: 0.9em;
+        .category-line {
+            height: 3px;
+            background: linear-gradient(to right, var(--color-accent-cyan), transparent);
+            width: 100%;
+            margin-top: 0.5rem;
         }
 
         /* 響應式調整 */
-        @media (max-width: 900px) {
-            .header h1 { font-size: 3em; letter-spacing: 3px; }
-            .content-grid { grid-template-columns: 1fr; }
-            .category-section { margin-bottom: 50px; }
+        @media (max-width: 640px) {
+            .hero-title {
+                font-size: 2rem !important;
+            }
+            .hero-subtitle {
+                font-size: 1rem !important;
+            }
         }
     </style>
 </head>
-<body>
-    <div class="main-wrapper">
-        <header class="header">
-            <h1>知識穹頂 V2.0</h1>
-            <p class="subtitle">企業知識資產儀表板 • 模組化與科技感介面</p>
+<body class="p-4 sm:p-8">
+
+    <div class="max-w-7xl mx-auto w-full">
+        <!-- 頂部標題與核心介面 -->
+        <header class="text-center mb-12 border-b border-gray-700 pb-6">
+            <h1 class="text-4xl sm:text-6xl font-extrabold hero-title neon-text" style="--color-accent-cyan: #3DFF8C;">
+                知識穹頂 V2.0：核心系統介面
+            </h1>
+            <p class="text-base sm:text-xl text-gray-400 mt-2 hero-subtitle">
+                Project Dashboard // 專題成果矩陣與進度追蹤
+            </p>
         </header>
 
-        <section class="category-section">
-            <h2 style="color: var(--color-hr); border-left-color: var(--color-hr);">HR 數位化與體驗中心 (3 份文件)</h2>
-            <div class="content-grid">
-                
-                <a href="hr-digital-center-plan.html" class="content-card">
-                    <span class="card-tag" style="background-color: var(--color-hr);">#規劃文件</span>
-                    <h3 class="card-title">HR 數位媒體體驗中心 - 全方位建置規劃書</h3>
-                    <p class="card-summary">探討體驗中心之組織、技術藍圖與營運模式，具體規劃分階段實施路徑。</p>
-                </a>
-
-                <a href="hr-digital-feasibility-strategy.html" class="content-card">
-                    <span class="card-tag" style="background-color: var(--color-hr);">#策略評估</span>
-                    <h3 class="card-title">HR 數位媒體體驗中心 可行性評估與戰略規劃</h3>
-                    <p class="card-summary">分析建置體驗中心的可行性，並制定初期推廣策略。</p>
-                </a>
-                
-                <a href="hr-digital-ai-strategy.html" class="content-card">
-                    <span class="card-tag" style="background-color: var(--color-hr);">#AI整合</span>
-                    <h3 class="card-title">HR 數位媒體體驗中心：AI 戰略整合評估</h3>
-                    <p class="card-summary">評估 AI 技術在 HR 數位體驗中的應用潛力與風險，規劃智慧化服務的整合路徑。</p>
-                </a>
+        <!-- 核心指標數據區塊 (Data Grid) -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+            <!-- 模組化數據卡片 -->
+            <div class="glass-card p-4 rounded-xl text-center shadow-lg border-l-4 border-cyan-500">
+                <p class="text-sm text-gray-400 font-mono">FILES INDEXED</p>
+                <p class="text-3xl font-bold neon-text text-cyan-400 mt-1">12</p>
+            </div>
+            <div class="glass-card p-4 rounded-xl text-center shadow-lg border-l-4 border-green-500">
+                <p class="text-sm text-gray-400 font-mono">PROJECT STATUS</p>
+                <p class="text-3xl font-bold neon-text text-green-400 mt-1">98%</p>
+            </div>
+            <div class="glass-card p-4 rounded-xl text-center shadow-lg border-l-4 border-blue-500 hidden sm:block">
+                <p class="text-sm text-gray-400 font-mono">LAST UPDATE</p>
+                <p class="text-xl font-bold mt-2 text-blue-400">2025.11.29</p>
+            </div>
+            <div class="glass-card p-4 rounded-xl text-center shadow-lg border-l-4 border-fuchsia-500 hidden sm:block">
+                <p class="text-sm text-gray-400 font-mono">CATEGORIES</p>
+                <p class="text-3xl font-bold mt-1 neon-text text-fuchsia-400">05</p>
             </div>
         </section>
 
-        <section class="category-section">
-            <h2 style="color: var(--color-data); border-left-color: var(--color-data);">數據視覺化與儀表板 (2 份文件)</h2>
-            <div class="content-grid">
-                
-                <a href="2025-data-vis-status.html" class="content-card">
-                    <span class="card-tag" style="background-color: var(--color-data);">#趨勢分析</span>
-                    <h3 class="card-title">2025 年數據視覺化現況</h3>
-                    <p class="card-summary">分析最新視覺化工具、設計趨勢與技術應用場景，為年度策略提供參考。</p>
-                </a>
-
-                <a href="tsmc-apts-visual-strategy-list.html" class="content-card">
-                    <span class="card-tag" style="background-color: var(--color-data);">#戰略總表</span>
-                    <h3 class="card-title">TSMC APTS 全領域視覺戰略總表</h3>
-                    <p class="card-summary">統一視覺標準和數據傳達策略，確保資訊一致性與效率。</p>
-                </a>
+        <!-- 專題模組矩陣 -->
+        <section class="space-y-12">
+            <!-- 模組 1: HR 數位化 (Cyan) -->
+            <div class="module-section">
+                <h2 class="text-2xl font-bold mb-4 neon-text text-cyan-400">
+                    // Module 01: HR 數位化轉型
+                </h2>
+                <div class="category-line mb-6"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 卡片 1-1 -->
+                    <a href="hr-digital-center-plan.html" class="glass-card p-5 rounded-xl transition hover:shadow-cyan-500/50 hover:shadow-2xl hover:border-cyan-400">
+                        <p class="text-sm text-cyan-400 font-mono">HR-PLAN-001</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">HR 數位媒體體驗中心 - 建置規劃書</h3>
+                        <p class="text-gray-400 text-sm">深入探討組織、技術藍圖與營運模式，規劃實施路徑。</p>
+                    </a>
+                    <!-- 卡片 1-2 -->
+                    <a href="hr-digital-ai-strategy.html" class="glass-card p-5 rounded-xl transition hover:shadow-cyan-500/50 hover:shadow-2xl hover:border-cyan-400">
+                        <p class="text-sm text-cyan-400 font-mono">HR-AI-002</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">AI 戰略整合評估</h3>
+                        <p class="text-gray-400 text-sm">評估 AI 技術潛力與風險，規劃智慧化服務整合路徑。</p>
+                    </a>
+                    <!-- 卡片 1-3 -->
+                    <a href="hr-digital-feasibility-strategy.html" class="glass-card p-5 rounded-xl transition hover:shadow-cyan-500/50 hover:shadow-2xl hover:border-cyan-400">
+                        <p class="text-sm text-cyan-400 font-mono">HR-FEAS-003</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">可行性評估與戰略規劃</h3>
+                        <p class="text-gray-400 text-sm">分析市場與資源，制定初期的推廣與實施策略。</p>
+                    </a>
+                </div>
             </div>
+
+            <!-- 模組 2: 數據視覺化 (Green) -->
+            <div class="module-section">
+                <h2 class="text-2xl font-bold mb-4 neon-text text-green-400">
+                    // Module 02: 數據視覺化與分析
+                </h2>
+                <div class="category-line mb-6" style="background: linear-gradient(to right, var(--color-accent-green), transparent);"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 卡片 2-1 -->
+                    <a href="2025-data-vis-status.html" class="glass-card p-5 rounded-xl transition hover:shadow-green-500/50 hover:shadow-2xl hover:border-green-400">
+                        <p class="text-sm text-green-400 font-mono">DV-REPORT-001</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">2025 年數據視覺化現況</h3>
+                        <p class="text-gray-400 text-sm">分析最新視覺化工具、設計趨勢與技術應用場景。</p>
+                    </a>
+                    <!-- 卡片 2-2 -->
+                    <a href="tsmc-apts-visual-strategy-list.html" class="glass-card p-5 rounded-xl transition hover:shadow-green-500/50 hover:shadow-2xl hover:border-green-400">
+                        <p class="text-sm text-green-400 font-mono">DV-STRAT-002</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">TSMC APTS 全領域視覺戰略總表</h3>
+                        <p class="text-gray-400 text-sm">制定統一的視覺標準和數據傳達策略。</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 模組 3: 技術與軟體應用 (Blue) -->
+            <div class="module-section">
+                <h2 class="text-2xl font-bold mb-4 neon-text text-blue-400">
+                    // Module 03: 技術與軟體開發
+                </h2>
+                <div class="category-line mb-6" style="background: linear-gradient(to right, #3b82f6, transparent);"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 卡片 3-1 -->
+                    <a href="obs-transition-plugin-guide.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
+                        <p class="text-sm text-blue-400 font-mono">DEV-OBS-001</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">OBS 特色換場插件開發指南</h3>
+                        <p class="text-gray-400 text-sm">提供 OBS 換場插件的從零開始的開發教學。</p>
+                    </a>
+                    <!-- 卡片 3-2 -->
+                    <a href="lightroom-workflow-infographic.html" class="glass-card p-5 rounded-xl transition hover:shadow-blue-500/50 hover:shadow-2xl hover:border-blue-400">
+                        <p class="text-sm text-blue-400 font-mono">DEV-LR-002</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">Lightroom 專業攝影工作流程圖表</h3>
+                        <p class="text-gray-400 text-sm">標準化攝影後期流程，確保影像處理品質。</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 模組 4: 策略與規劃 (Fuchsia) -->
+            <div class="module-section">
+                <h2 class="text-2xl font-bold mb-4 neon-text text-fuchsia-400">
+                    // Module 04: 策略與業務規劃
+                </h2>
+                <div class="category-line mb-6" style="background: linear-gradient(to right, #d946ef, transparent);"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 卡片 4-1 -->
+                    <a href="hsinchu-science-park-2024-report.html" class="glass-card p-5 rounded-xl transition hover:shadow-fuchsia-500/50 hover:shadow-2xl hover:border-fuchsia-400">
+                        <p class="text-sm text-fuchsia-400 font-mono">STRAT-REPORT-001</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">新竹科學園區：2024 績效與展望</h3>
+                        <p class="text-gray-400 text-sm">回顧年度重點產業績效，並對未來發展趨勢進行展望。</p>
+                    </a>
+                    <!-- 卡片 4-2 -->
+                    <a href="personalized-weight-schedule.html" class="glass-card p-5 rounded-xl transition hover:shadow-fuchsia-500/50 hover:shadow-2xl hover:border-fuchsia-400">
+                        <p class="text-sm text-fuchsia-400 font-mono">STRAT-HEALTH-002</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">個人化體重調理與補劑優化排程</h3>
+                        <p class="text-gray-400 text-sm">基於數據分析的個人化健康排程與營養補充方案。</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 模組 5: ESG 與資產管理 (Yellow/Amber) -->
+            <div class="module-section">
+                <h2 class="text-2xl font-bold mb-4 neon-text text-amber-400">
+                    // Module 05: ESG 與資產管理
+                </h2>
+                <div class="category-line mb-6" style="background: linear-gradient(to right, #fbbf24, transparent);"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 卡片 5-1 -->
+                    <a href="hsinchu-baoshan-esg-infographic.html" class="glass-card p-5 rounded-xl transition hover:shadow-amber-500/50 hover:shadow-2xl hover:border-amber-400">
+                        <p class="text-sm text-amber-400 font-mono">ESG-COMMUNITY-001</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">新竹寶山 ESG 永續發展資訊圖表</h3>
+                        <p class="text-gray-400 text-sm">視覺化呈現社區在永續發展方面的成果與目標。</p>
+                    </a>
+                    <!-- 卡片 5-2 -->
+                    <a href="raw-file-digital-darkroom-guide.html" class="glass-card p-5 rounded-xl transition hover:shadow-amber-500/50 hover:shadow-2xl hover:border-amber-400">
+                        <p class="text-sm text-amber-400 font-mono">ASSET-RAW-002</p>
+                        <h3 class="text-xl font-semibold mt-1 mb-2">駕馭 RAW 檔案：數位暗房指南</h3>
+                        <p class="text-gray-400 text-sm">專業角度教導如何處理和編輯 RAW 格式照片。</p>
+                    </a>
+                </div>
+            </div>
+
         </section>
 
-        <section class="category-section">
-            <h2 style="color: var(--color-tech); border-left-color: var(--color-tech);">技術與軟體應用 (2 份文件)</h2>
-            <div class="content-grid">
-                
-                <a href="obs-transition-plugin-guide.html" class="content-card">
-                    <span class="card-tag" style="background-color: var(--color-tech);">#開發指南</span>
-                    <h3 class="card-title">OBS 特色換場插件開發指南</h3>
-                    <p class="card-summary">提供 OBS 換場插件的從零開始的開發教學，包括 API 接口與編譯指南。</p>
-                </a>
-                
-                <a href="lightroom-workflow-infographic.html" class="content-card">
-                    <span class="card-tag" style="background-color: var(--color-tech);">#攝影工作流</span>
-                    <h3 class="card-title">Lightroom 專業攝影工作流程資訊圖表</h3>
-                    <p class="card-summary">標準化攝影後期流程，確保影像處理品質與效率。</p>
-                </a>
-            </div>
-        </section>
-
-        <section class="category-section">
-            <h2 style="color: var(--color-strategy); border-left-color: var(--color-strategy);">策略與規劃 (2 份文件)</h2>
-            <div class="content-grid">
-                
-                <a href="hsinchu-science-park-2024-report.html" class="content-card">
-                    <span class="card-tag" style="background-color: var(--color-strategy);">#年度報告</span>
-                    <h3 class="card-title">新竹科學園區：2024 年度績效與未來展望</h3>
-                    <p class="card-summary">回顧園區 2024 年重點產業績效，並對未來五年關鍵技術發展趨勢進行展望。</p>
-                </a>
-
-                <a href="personalized-weight-schedule.html" class="content-card">
-                    <span class="card-tag" style="background-color: var(--color-strategy);">#個人化</span>
-                    <h3 class="card-title">個人化體重調理與補劑優化排程</h3>
-                    <p class="card-summary">基於數據分析的個人化健康排程，優化體重管理與營養補充方案。</p>
-                </a>
-            </div>
-        </section>
-
-        <section class="category-section">
-            <h2 style="color: var(--color-esg); border-left-color: var(--color-esg);">ESG 與影像處理 (2 份文件)</h2>
-            <div class="content-grid">
-                
-                <a href="hsinchu-baoshan-esg-infographic.html" class="content-card">
-                    <span class="card-tag" style="background-color: var(--color-esg);">#ESG永續</span>
-                    <h3 class="card-title">新竹寶山新城社區 ESG 永續發展資訊圖表</h3>
-                    <p class="card-summary">視覺化呈現社區在環境、社會、公司治理方面的永續成果與未來目標。</p>
-                </a>
-                
-                <a href="raw-file-digital-darkroom-guide.html" class="content-card">
-                    <span class="card-tag" style="background-color: var(--color-esg);">#數位暗房</span>
-                    <h3 class="card-title">駕馭 RAW 檔案：數位暗房指南</h3>
-                    <p class="card-summary">從專業角度教導如何處理和編輯 RAW 格式照片，實現最佳畫質輸出。</p>
-                </a>
-            </div>
-        </section>
-        
-        <footer class="footer">
-            設計原則：聚焦領域、即時內容、彈性編程。
+        <!-- 頁腳 -->
+        <footer class="text-center mt-16 pt-8 border-t border-gray-800">
+            <p class="text-sm text-gray-600 font-mono">
+                [SYSTEM LOG] Interface Status: OPERATIONAL // Data Integrity: 100%
+            </p>
+            <p class="text-xs text-gray-700 mt-1">
+                設計原則：聚焦領域、即時內容、彈性編程。
+            </p>
         </footer>
     </div>
+
 </body>
 </html>
