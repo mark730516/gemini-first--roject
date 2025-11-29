@@ -3,61 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>知識穹頂 V2.0 - 網站首頁</title>
+    <title>測試頁面 - 最小可行網頁</title>
 
-    <link rel="stylesheet" href="styles.css"> 
-    
     <style>
-        /* 內嵌基本樣式，確保即使外部 CSS 載入失敗，仍能看到內容 */
         body {
             font-family: Arial, sans-serif;
+            background-color: #f0f0f0; /* 淺灰色背景 */
+            color: #333333; /* 深色文字 */
             margin: 0;
-            padding: 0;
-            background-color: #0b0f19; /* 接近您截圖中的深藍背景色 */
-            color: #ffffff;
+            padding: 50px;
             text-align: center;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
         }
-
-        .container {
-            padding: 20px;
-            max-width: 900px;
-            width: 90%;
-        }
-
         h1 {
-            font-size: 3em;
-            margin-bottom: 0.5em;
+            color: #007bff; /* 藍色標題 */
         }
-
         p {
             font-size: 1.2em;
-            line-height: 1.6;
         }
 
-        /* 簡單的 RWD 調整 */
+        /* 手機 RWD 測試 */
         @media (max-width: 600px) {
             h1 {
-                font-size: 2em;
-            }
-            p {
-                font-size: 1em;
+                font-size: 1.5em; /* 在小螢幕上縮小標題 */
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>知識穹頂 V2.0</h1>
-        <p>領域化分組儀表板 • 預設顯示各領域最新 3 專題</p>
-        <p style="margin-top: 50px; font-size: 0.9em;">
-            設計原則：聚焦領域、即時內容、彈性編程。
-        </p>
-        </div>
+    <h1>網頁載入成功！ (V3.0 最小測試)</h1>
+    <p>如果看到這個畫面，表示 HTML 和基礎樣式已正確載入。</p>
+    <p>請檢查：<br>1. 清除手機快取後，是否能看到此頁面。<br>2. 嘗試切換 Wi-Fi 與行動網路。</p>
 </body>
 </html>
