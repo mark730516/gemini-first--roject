@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>進階個人化健康數據與日誌工具</title>
+    <!-- 引入 Chart.js 圖表函式庫 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #005a9c;
+            --secondary-color: #007bff;
+            --light-bg: #f8f9fa;
+            --border-color: #dee2e6;
+            --text-color: #343a40;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --white-color: #fff;
+            --info-color: #17a2b8;
+        }
+
+        /* 全域與基礎樣式 */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: var(--white-color);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            border-top: 5px solid var(--primary-color);
+        }
+        h1, h2, h3, h4 {
+            color: var(--primary-color);
+            text-align: center;
+        }
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.5rem; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-top: 30px; }
+        h3 { font-size: 1.3rem; }
+        h4 { 
+            text-align: left; 
+            margin-top: 15px; 
+            margin-bottom: 10px; 
+            color: #495057;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* 允許標題內的按鈕換行 */
+        }
+        
+        /* 使用者管理 */
+        .user-management {
+            background-color: var(--light-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+        }
+        .user-management-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: flex-end;
+        }
+        .user-management-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+         .user-management button {
+            margin-top: 0;
+            white-space: nowrap;
+         }
+        
+        /* 頁籤導覽列 */
+        .tab-nav {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .tab-button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            border-bottom: 3px solid transparent;
+            transition: color 0.3s, border-color 0.3s;
+            text-align: center;
+            flex-grow: 1; /* 在小螢幕上均分寬度 */
+        }
+        .tab-button:hover {
+            color: var(--primary-color);
+        }
+        .tab-button.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .app-content.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .input-section {
+            background: #fdfdff;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        .form-group { display: flex; flex-direction: column; }
+        label { margin-bottom: 8px; font-weight: 600; color: #495057; }
+        input, select {
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%; /* 確保輸入框不會超出容器 */
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+        button {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+        button.primary { width: 100%; padding: 15px; }
+        button:hover { background-color: var(--primary-color); }
+        button.danger { background-color: var(--danger-color); }
+        button.export { background-color: var(--success-color); }
+        button.import { background-color: var(--info-color); }
+        button.small { padding: 5px 10px; font-size: 0.8rem; margin-top: 0; }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .result-card {
+            background: var(--light-bg);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .result-card h3 { margin-top: 0; text-align: left; font-size: 1.2rem; border-bottom: 1px solid #ccc; padding-bottom: 8px; margin-bottom: 15px; }
+        .result-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 0.95rem; }
+        .result-item-value { font-weight: bold; font-size: 1.1rem; color: #d9534f; }
+        
+        .bmi-status { font-size: 1.1rem; text-align: center; font-weight: bold; margin-top: 10px; padding: 10px; border-radius: 6px; color: white; }
+        .status-healthy { background-color: var(--success-color); }
+        .status-warning { background-color: var(--warning-color); color: #333; }
+        .status-danger { background-color: var(--danger-color); }
+
+        .info-box { background: #fffbe6; border: 1px solid #ffe58f; border-left: 5px solid var(--warning-color); padding: 15px; margin-top: 20px; border-radius: 6px; }
+        .info-box h3 { color: var(--warning-color); text-align: left; margin:0 0 10px 0; font-size:1.1rem; }
+
+        /* 日誌 & 快速新增 樣式 */
+        #log-date-nav { display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
+        #log-date-nav button { margin: 0 10px; }
+        #current-date { font-size: 1.2rem; font-weight: bold; width: 150px; text-align: center; }
+        
+        #diet-list { list-style: none; padding: 0; }
+        #diet-list li { display: flex; justify-content: space-between; align-items: center; background: var(--light-bg); padding: 10px; border-radius: 5px; margin-bottom: 8px; border-left: 4px solid var(--secondary-color); }
+        .diet-macros { font-size: 0.8rem; color: #6c757d; }
+        #diet-summary { border-top: 2px solid var(--border-color); padding-top: 10px; margin-top: 15px; font-weight: bold; }
+        
+        /* 提示訊息 */
+        #notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translate(-50%, 200%);
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.5s ease-in-out;
+            z-index: 1000;
+        }
+        #notification.show {
+             transform: translate(-50%, 0);
+        }
+        #notification.success { background-color: var(--success-color); }
+        #notification.error { background-color: var(--danger-color); }
+
+        /* 全新飲食紀錄介面 */
+        .quick-add-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .quick-add-categories button {
+            flex-grow: 1;
+        }
+        .quick-add-items-container {
+            padding: 15px;
+            background: var(--light-bg);
+            border-radius: 6px;
+            display: none; /* Default hidden */
+        }
+        .quick-add-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .quick-add-item-btn {
+            background-color: var(--white-color);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            font-size: 0.9rem;
+            padding: 8px 12px;
+            font-weight: normal;
+            margin-top: 0;
+            cursor: pointer;
+        }
+        .quick-add-item-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+        }
+        .advanced-add-toggle {
+            cursor: pointer;
+            color: var(--secondary-color);
+            font-weight: bold;
+            margin-top: 15px;
+            display: inline-block;
+        }
+        #advanced-add-container {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border-color);
+        }
+        
+        .database-add-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 0.5fr auto;
+            gap: 20px;
+            align-items: flex-end;
+        }
+        
+        /* 目標達成率樣式 */
+        .progress-bar-container {
+            width: 100%;
+            background-color: var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .progress-bar {
+            height: 20px;
+            background-color: var(--success-color);
+            width: 0%; /* 動態設定 */
+            transition: width 0.5s ease-in-out;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            font-size: 0.8rem;
+        }
+        .progress-bar.over {
+            background-color: var(--danger-color);
+        }
+        #weight-goal-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+
+        /* 響應式設計 Media Queries */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+            }
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.4rem; }
+
+            .results-grid { 
+                grid-template-columns: 1fr; 
+            }
+            .database-add-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .user-management-actions button {
+                flex-grow: 1; /* 讓按鈕填滿寬度 */
+            }
+            .tab-button {
+                padding: 10px 5px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>進階個人化健康數據與日誌工具</h1>
+        
+        <div class="user-management">
+            <div class="user-management-grid">
+                <div class="form-group">
+                    <label for="user-select">目前使用者</label>
+                    <select id="user-select" onchange="switchUser()"></select>
+                </div>
+                <div class="form-group">
+                    <label for="new-user-name">新增使用者</label>
+                    <input type="text" id="new-user-name" placeholder="請輸入名稱">
+                </div>
+                <div class="form-group">
+                    <button onclick="addUser()">新增</button>
+                </div>
+            </div>
+            <div class="user-management-actions">
+                <button class="danger" onclick="deleteUser()">刪除目前使用者</button>
+                <button class="export" onclick="exportDataToCSV()">匯出個人數據 (CSV)</button>
+                <button class="export" onclick="exportAllDataToJSON()">備份所有資料 (JSON)</button>
+                <button class="import" onclick="importDataFromJSON()">還原資料 (JSON)</button>
+                <input type="file" id="import-file-input" accept=".json" style="display: none;">
+            </div>
+        </div>
+
+        <div id="app-content">
+            <div class="tab-nav">
+                <button class="tab-button active" onclick="switchTab('calculator')">健康計算機</button>
+                <button class="tab-button" onclick="switchTab('logging')">每日紀錄</button>
+                <button class="tab-button" onclick="switchTab('charts')">進度圖表</button>
+            </div>
+
+            <!-- Tab 1: 健康計算機 -->
+            <div id="calculator-tab" class="tab-content active">
+                 <p style="text-align: center; color: #6c757d;">分析您的身體數據，計算 BMI、TDEE 等健康指標。</p>
+                <div id="calculator-form">
+                    <h2>A. 基本資料</h2>
+                    <div class="input-section form-grid">
+                        <div class="form-group"><label for="gender">生理性別</label><select id="gender"><option value="male">男性</option><option value="female">女性</option></select></div>
+                        <div class="form-group"><label for="birthdate">出生日期</label><input type="date" id="birthdate"></div>
+                        <div class="form-group"><label for="height">身高 (公分)</label><input type="number" id="height" placeholder="例如：186"></div>
+                        <div class="form-group"><label for="weight">體重 (公斤)</label><input type="number" id="weight" placeholder="例如：107"></div>
+                    </div>
+                    <h2>B. 生活方式與目標</h2>
+                    <div class="input-section form-grid">
+                        <div class="form-group"><label for="activity">每日活動量</label><select id="activity"><option value="1.2">久坐</option><option value="1.375">輕度活動</option><option value="1.55">中度活動</option><option value="1.725">高度活動</option><option value="1.9">極度活動</option></select></div>
+                        <div class="form-group"><label for="intake">每日計畫攝取熱量 (大卡)</label><input type="number" id="intake" placeholder="例如：2000"></div>
+                        <div class="form-group"><label for="targetWeight">目標體重 (公斤)</label><input type="number" id="targetWeight" placeholder="例如: 80"></div>
+                    </div>
+                    <h2>C. 身體圍度 (選填)</h2>
+                    <div class="input-section form-grid">
+                        <div class="form-group"><label for="chest">胸圍 (公分)</label><input type="number" id="chest" placeholder="非必填"></div>
+                        <div class="form-group"><label for="arm">手臂圍 (公分)</label><input type="number" id="arm" placeholder="非必填"></div>
+                        <div class="form-group"><label for="waistUpper">上腹圍 (公分)</label><input type="number" id="waistUpper" placeholder="肋骨下緣"></div>
+                        <div class="form-group"><label for="waistMiddle">中腹圍 (公分)</label><input type="number" id="waistMiddle" placeholder="肚臍水平線 (用於計算比率)"></div>
+                        <div class="form-group"><label for="waistLower">下腹圍 (公分)</label><input type="number" id="waistLower" placeholder="骨盆上緣"></div>
+                        <div class="form-group"><label for="hip">臀圍 (公分)</label><input type="number" id="hip" placeholder="臀部最寬處"></div>
+                        <div class="form-group"><label for="thigh">大腿圍 (公分)</label><input type="number" id="thigh" placeholder="非必填"></div>
+                    </div>
+                    <button onclick="calculateAll()" class="primary">計算並儲存基本資料</button>
+                </div>
+                <div id="results-container"></div>
+            </div>
+
+            <!-- Tab 2: 每日紀錄 -->
+            <div id="logging-tab" class="tab-content">
+                 <div id="log-date-nav">
+                    <button onclick="changeDate(-1)">&lt; 前一天</button>
+                    <span id="current-date"></span>
+                    <button onclick="changeDate(1)">後一天 &gt;</button>
+                </div>
+                
+                <div class="input-section">
+                    <h3>今日身體數據紀錄</h3>
+                    <div class="form-grid">
+                        <div class="form-group"><label for="log-weight">體重 (公斤)</label><input type="number" id="log-weight" step="0.1"></div>
+                        <div class="form-group"><label for="log-bodyFat">體脂率 (%)</label><input type="number" id="log-bodyFat" step="0.1"></div>
+                        <div class="form-group"><label for="log-muscleMass">肌肉量 (kg)</label><input type="number" id="log-muscleMass" step="0.1"></div>
+                        <div class="form-group"><label for="log-visceralFat">內臟脂肪 (等級)</label><input type="number" id="log-visceralFat" step="0.1"></div>
+                        <div class="form-group"><label for="log-bodyAge">身體年齡</label><input type="number" id="log-bodyAge"></div>
+                        <div class="form-group"><label for="log-chest">胸圍 (公分)</label><input type="number" id="log-chest" step="0.1"></div>
+                        <div class="form-group"><label for="log-arm">手臂圍 (公分)</label><input type="number" id="log-arm" step="0.1"></div>
+                        <div class="form-group"><label for="log-waistUpper">上腹圍 (公分)</label><input type="number" id="log-waistUpper" step="0.1"></div>
+                        <div class="form-group"><label for="log-waistMiddle">中腹圍 (公分)</label><input type="number" id="log-waistMiddle" step="0.1"></div>
+                        <div class="form-group"><label for="log-waistLower">下腹圍 (公分)</label><input type="number" id="log-waistLower" step="0.1"></div>
+                        <div class="form-group"><label for="log-hip">臀圍 (公分)</label><input type="number" id="log-hip" step="0.1"></div>
+                        <div class="form-group"><label for="log-thigh">大腿圍 (公分)</label><input type="number" id="log-thigh" step="0.1"></div>
+                    </div>
+                    <button onclick="saveDailyLog()" style="width: 100%; margin-top: 20px;">儲存今日身體數據</button>
+                </div>
+
+                <div class="input-section">
+                    <h3>飲食紀錄</h3>
+                    
+                    <h4>快速新增常見餐點</h4>
+                    <div id="quick-add-container">
+                        <!-- Quick add buttons will be generated here -->
+                    </div>
+                    
+                    <div class="advanced-add-toggle" onclick="toggleAdvancedAdd()">
+                        顯示進階選項 (從食材庫新增/手動新增)
+                    </div>
+
+                    <div id="advanced-add-container">
+                        <hr>
+                        <h4>從食材資料庫新增</h4>
+                        <div class="database-add-grid">
+                            <div class="form-group"><label for="food-category">食物分類</label><select id="food-category" onchange="populateFoodItems()"></select></div>
+                            <div class="form-group"><label for="food-item">食物品項</label><select id="food-item"></select></div>
+                            <div class="form-group"><label for="food-quantity">份數</label><input type="number" id="food-quantity" value="1" min="0.1" step="0.1"></div>
+                            <div class="form-group"><button onclick="addDatabaseFood()">加入</button></div>
+                        </div>
+
+                        <hr>
+                        <h4>手動新增飲食</h4>
+                        <div class="form-grid">
+                            <div class="form-group"><label for="manual-food-name">食物名稱</label><input type="text" id="manual-food-name"></div>
+                            <div class="form-group"><label for="manual-food-calories">熱量 (大卡)</label><input type="number" id="manual-food-calories"></div>
+                            <div class="form-group"><label for="manual-food-protein">蛋白質 (克)</label><input type="number" id="manual-food-protein"></div>
+                            <div class="form-group"><label for="manual-food-carbs">碳水 (克)</label><input type="number" id="manual-food-carbs"></div>
+                            <div class="form-group"><label for="manual-food-fat">脂肪 (克)</label><input type="number" id="manual-food-fat"></div>
+                             <div class="form-group" style="justify-content: flex-end;"><button onclick="addManualFoodItem()">新增</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-section">
+                    <h3>今日飲食清單</h3>
+                    <ul id="diet-list"></ul>
+                    <div id="diet-summary"></div>
+                    <div id="calorie-goal-summary" style="margin-top: 15px;"></div>
+                </div>
+            </div>
+
+            <!-- Tab 3: 進度圖表 -->
+            <div id="charts-tab" class="tab-content">
+                <div id="weight-goal-progress-container" class="input-section" style="display: none;">
+                    <h3>體重目標總覽</h3>
+                    <div id="weight-goal-details">
+                        <span id="start-weight-display"></span>
+                        <span id="current-weight-display"></span>
+                        <span id="target-weight-display"></span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div id="weight-goal-progress-bar" class="progress-bar"></div>
+                    </div>
+                </div>
+
+                <h2>整體趨勢</h2>
+                <div class="results-grid"> 
+                    <div>
+                        <h4>體重變化 (公斤) <button class="small" onclick="downloadChart('weight', '體重變化')">下載圖表</button></h4>
+                        <canvas id="weight-chart"></canvas>
+                    </div>
+                    <div>
+                        <h4>每日熱量攝取 (大卡) <button class="small" onclick="downloadChart('calories', '熱量攝取')">下載圖表</button></h4>
+                        <canvas id="calories-chart"></canvas>
+                    </div>
+                </div>
+
+                 <h2>身體組成分析</h2>
+                <div class="results-grid">
+                    <div>
+                        <h4>體脂率變化 (%) <button class="small" onclick="downloadChart('bodyFat', '體脂率變化')">下載圖表</button></h4>
+                        <canvas id="bodyFat-chart"></canvas>
+                    </div>
+                    <div>
+                        <h4>肌肉量變化 (kg) <button class="small" onclick="downloadChart('muscleMass', '肌肉量變化')">下載圖表</button></h4>
+                        <canvas id="muscleMass-chart"></canvas>
+                    </div>
+                    <div>
+                        <h4>內臟脂肪等級 <button class="small" onclick="downloadChart('visceralFat', '內臟脂肪等級')">下載圖表</button></h4>
+                        <canvas id="visceralFat-chart"></canvas>
+                    </div>
+                    <div>
+                        <h4>身體年齡 <button class="small" onclick="downloadChart('bodyAge', '身體年齡變化')">下載圖表</button></h4>
+                        <canvas id="bodyAge-chart"></canvas>
+                    </div>
+                </div>
+
+                <h2>身體圍度變化趨勢 (公分)</h2>
+                <div class="results-grid">
+                    <div>
+                        <h4>腹圍 <button class="small" onclick="downloadChart('waist', '腹圍變化')">下載圖表</button></h4>
+                        <canvas id="waist-chart"></canvas>
+                    </div>
+                    <div>
+                        <h4>胸圍 & 臀圍 <button class="small" onclick="downloadChart('chestHip', '胸臀圍變化')">下載圖表</button></h4>
+                        <canvas id="chest-hip-chart"></canvas>
+                    </div>
+                    <div>
+                        <h4>手臂圍 & 大腿圍 <button class="small" onclick="downloadChart('limbs', '四肢圍度變化')">下載圖表</button></h4>
+                        <canvas id="limbs-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notification"></div>
+
+    <script>
+        // --- 全域變數 & 資料庫 ---
+        let allUsersData = {};
+        let currentUser = null;
+        let selectedDate = new Date();
+        let charts = {}; // Use an object to hold all chart instances
+        
+        const commonMealsDatabase = {
+            "麥當勞": [
+                { name: '大麥克', calories: 563, protein: 26, carbs: 46, fat: 31 },
+                { name: '雙層牛肉吉事堡', calories: 447, protein: 25, carbs: 36, fat: 23 },
+                { name: '麥香雞', calories: 371, protein: 16, carbs: 41, fat: 16 },
+                { name: '麥克雞塊 (6塊)', calories: 270, protein: 16, carbs: 16, fat: 16 },
+                { name: '勁辣雞腿堡', calories: 512, protein: 24, carbs: 51, fat: 24 },
+                { name: '薯條 (中)', calories: 337, protein: 4, carbs: 43, fat: 16 },
+                { name: '玉米湯 (大)', calories: 119, protein: 3, carbs: 22, fat: 2 },
+            ],
+            "台式早餐": [
+                { name: '原味蛋餅', calories: 280, protein: 10, carbs: 30, fat: 13 },
+                { name: '豬排蛋三明治', calories: 450, protein: 20, carbs: 45, fat: 21 },
+                { name: '蘿蔔糕 (2片)', calories: 250, protein: 4, carbs: 40, fat: 8 },
+                { name: '燒餅油條', calories: 550, protein: 12, carbs: 55, fat: 30 },
+                { name: '飯糰 (傳統)', calories: 450, protein: 10, carbs: 80, fat: 9 },
+                { name: '冰豆漿 (無糖)', calories: 150, protein: 14, carbs: 6, fat: 7 },
+                { name: '鹹豆漿', calories: 220, protein: 15, carbs: 12, fat: 12 },
+            ],
+            "外食/便當": [
+                { name: '雞腿便當', calories: 850, protein: 35, carbs: 100, fat: 30 }, { name: '排骨便當', calories: 950, protein: 30, carbs: 110, fat: 40 }, { name: '三寶飯', calories: 900, protein: 40, carbs: 105, fat: 35 }, { name: '滷肉飯 (大)', calories: 650, protein: 18, carbs: 80, fat: 28 }, { name: '牛肉麵', calories: 750, protein: 40, carbs: 85, fat: 25 }, { name: '鍋貼 (10顆)', calories: 600, protein: 25, carbs: 50, fat: 33 }, { name: '自助餐 (均衡)', calories: 700, protein: 30, carbs: 80, fat: 29 },
+            ],
+            "便利商店": [
+                { name: '鮪魚御飯糰', calories: 210, protein: 5, carbs: 35, fat: 5 }, { name: '肉鬆御飯糰', calories: 230, protein: 6, carbs: 38, fat: 6 }, { name: '雞肉沙拉', calories: 250, protein: 20, carbs: 10, fat: 15 }, { name: '火腿蛋三明治', calories: 350, protein: 15, carbs: 40, fat: 15 }, { name: '奮起湖便當', calories: 750, protein: 28, carbs: 95, fat: 28 }, { name: '奶油培根義大利麵', calories: 680, protein: 25, carbs: 70, fat: 32 },
+            ],
+            "點心/飲品": [
+                { name: '珍珠奶茶 (全糖)', calories: 600, protein: 3, carbs: 90, fat: 25 }, { name: '雞排', calories: 550, protein: 30, carbs: 30, fat: 35 }, { name: '車輪餅 (奶油)', calories: 180, protein: 4, carbs: 25, fat: 7 }, { name: '拿鐵 (中杯)', calories: 180, protein: 9, carbs: 15, fat: 9 }, { name: '美式咖啡', calories: 15, protein: 1, carbs: 3, fat: 0 },
+            ]
+        };
+
+        const foodDatabase = {
+            "全穀雜糧類": [
+                { name: '白飯 (每100g)', calories: 183, protein: 3.1, carbs: 41, fat: 0.3 }, { name: '糙米飯 (每100g)', calories: 180, protein: 3.6, carbs: 38.6, fat: 1.2 }, { name: '燕麥片 (每100g)', calories: 389, protein: 13.5, carbs: 67.7, fat: 6.5 }, { name: '吐司 (每100g)', calories: 277, protein: 10.7, carbs: 51.1, fat: 3.3 }, { name: '全麥麵包 (每100g)', calories: 248, protein: 13, carbs: 41, fat: 3.4 }, { name: '麵條(乾) (每100g)', calories: 358, protein: 12.1, carbs: 74.3, fat: 1.1 }, { name: '玉米 (每100g)', calories: 107, protein: 3.5, carbs: 22.8, fat: 1.5 }, { name: '地瓜 (每100g)', calories: 121, protein: 1.2, carbs: 28.5, fat: 0.2 }, { name: '馬鈴薯 (每100g)', calories: 81, protein: 2.1, carbs: 18.2, fat: 0.1 }, { name: '饅頭 (每100g)', calories: 275, protein: 8.5, carbs: 57.5, fat: 1 },
+            ],
+            "豆魚蛋肉類": [
+                { name: '雞胸肉(去皮) (每100g)', calories: 117, protein: 23.3, carbs: 0, fat: 1.9 }, { name: '雞腿肉(去皮) (每100g)', calories: 151, protein: 18.9, carbs: 0, fat: 7.8 }, { name: '豬里肌 (每100g)', calories: 140, protein: 21.6, carbs: 0, fat: 5.4 }, { name: '豬五花 (每100g)', calories: 407, protein: 13.9, carbs: 0, fat: 38.2 }, { name: '牛腱 (每100g)', calories: 131, protein: 20.3, carbs: 0.1, fat: 5 }, { name: '牛小排 (每100g)', calories: 325, protein: 15.6, carbs: 0, fat: 28.6 }, { name: '鮭魚 (每100g)', calories: 205, protein: 22.1, carbs: 0, fat: 12.3 }, { name: '鱈魚 (每100g)', calories: 84, protein: 18.6, carbs: 0, fat: 0.7 }, { name: '蝦仁 (每100g)', calories: 83, protein: 18.1, carbs: 0.4, fat: 0.8 }, { name: '雞蛋 (每顆約50g)', calories: 72, protein: 6.3, carbs: 0.4, fat: 4.8 }, { name: '傳統豆腐 (每100g)', calories: 88, protein: 8.5, carbs: 1.9, fat: 5.1 }, { name: '豆漿(無糖) (每100ml)', calories: 32, protein: 3.2, carbs: 0.7, fat: 1.7 },
+            ],
+            "蔬菜類": [ { name: '菠菜 (每100g)', calories: 22, protein: 2.5, carbs: 3.8, fat: 0.3 }, { name: '青江菜 (每100g)', calories: 13, protein: 1.5, carbs: 2.2, fat: 0.2 }, { name: '花椰菜 (每100g)', calories: 28, protein: 3.3, carbs: 5.2, fat: 0.4 }, { name: '高麗菜 (每100g)', calories: 23, protein: 1.3, carbs: 5.3, fat: 0.1 }, { name: '胡蘿蔔 (每100g)', calories: 37, protein: 0.8, carbs: 8.8, fat: 0.2 }, { name: '番茄 (每100g)', calories: 19, protein: 0.9, carbs: 4.1, fat: 0.2 }, { name: '洋蔥 (每100g)', calories: 40, protein: 1.1, carbs: 9.3, fat: 0.1 }, { name: '香菇 (每100g)', calories: 38, protein: 3, carbs: 7.9, fat: 0.2 }, ],
+            "水果類": [ { name: '蘋果 (每100g)', calories: 52, protein: 0.3, carbs: 13.8, fat: 0.2 }, { name: '香蕉 (每100g)', calories: 91, protein: 1.2, carbs: 23.4, fat: 0.3 }, { name: '芭樂 (每100g)', calories: 38, protein: 0.9, carbs: 9.6, fat: 0.2 }, { name: '葡萄 (每100g)', calories: 61, protein: 0.6, carbs: 15.8, fat: 0.2 }, { name: '橘子 (每100g)', calories: 40, protein: 0.8, carbs: 10.1, fat: 0.1 }, { name: '西瓜 (每100g)', calories: 32, protein: 0.6, carbs: 7.9, fat: 0.2 }, { name: '藍莓 (每100g)', calories: 57, protein: 0.7, carbs: 14.5, fat: 0.3 }, ],
+            "乳品類": [ { name: '全脂鮮乳 (每100ml)', calories: 63, protein: 3.1, carbs: 4.6, fat: 3.4 }, { name: '低脂鮮乳 (每100ml)', calories: 45, protein: 3.3, carbs: 4.8, fat: 1.3 }, { name: '優格(原味) (每100g)', calories: 61, protein: 3.8, carbs: 5.9, fat: 2.5 }, { name: '起司片 (每片約20g)', calories: 65, protein: 4.2, carbs: 0.4, fat: 5.1 }, ],
+            "油脂與堅果種子類": [ { name: '橄欖油 (每100g)', calories: 884, protein: 0, carbs: 0, fat: 100 }, { name: '杏仁 (每100g)', calories: 578, protein: 21.3, carbs: 19.7, fat: 50.6 }, { name: '核桃 (每100g)', calories: 654, protein: 15.2, carbs: 13.7, fat: 65.2 }, { name: '花生 (每100g)', calories: 567, protein: 25.8, carbs: 16.1, fat: 49.2 }, ]
+        };
+
+        // --- 核心功能 ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initQuickAddFoods();
+            initFoodSelector();
+            loadAllData();
+            initUserManagement();
+            const calculatorResultsHTML = `<h2>綜合計算結果</h2><div class="results-grid"><div class="result-card"><h3>體位指標 (BMI)</h3><div class="result-item"><span>身體質量指數 (BMI)</span><span id="bmi-result" class="result-item-value"></span></div><div id="bmi-status"></div></div><div class="result-card"><h3>熱量需求分析 (TDEE)</h3><div class="result-item"><span>基礎代謝率 (BMR)</span> <span id="bmr-result"></span></div><div class="result-item"><span>活動消耗熱量</span> <span id="activity-heat-result"></span></div><div class="result-item"><span>攝食產熱效應 (TEF)</span> <span id="tef-result"></span></div><hr><div class="result-item"><strong><span>每日總消耗熱量 (TDEE)</span></strong> <strong id="tdee-result" class="result-item-value"></strong></div></div><div class="result-card"><h3>體重管理預估</h3><div class="result-item"><span>每日熱量盈虧</span><span id="deficit-result" class="result-item-value"></span></div><div class="result-item"><span>預估每週體重變化</span><span id="weight-change-result"></span></div></div><div class="result-card" id="ratios-card" style="display:none;"><h3>健康風險指標</h3><div class="result-item" id="whr-item" style="display:none;"><span>腰臀比 (WHR)</span><span id="whr-result" class="result-item-value"></span></div><div id="whr-status"></div><div class="result-item" id="whtr-item" style="display:none;"><span>腰高比 (WHtR)</span><span id="whtr-result" class="result-item-value"></span></div><div id="whtr-status"></div></div></div><div class="info-box"><h3><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg> 關於身體組成</h3><p>此工具可讓您記錄由專業體脂計所測量的 **體脂率、肌肉量、內臟脂肪、身體年齡** 等數據。請注意，本工具**不會自行計算**這些數值，僅提供記錄與追蹤功能，以確保資訊的準確性。</p></div>`;
+            document.getElementById('results-container').innerHTML = calculatorResultsHTML;
+        });
+
+        function switchTab(tabName) {
+            if (!currentUser) {
+                showNotification('請先新增或選擇一位使用者！', 'error');
+                return;
+            }
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            document.querySelector(`.tab-button[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            if (tabName === 'logging') {
+                updateDateDisplay();
+                renderLogForDate();
+            } else if (tabName === 'charts') {
+                renderCharts();
+                renderWeightGoalProgress();
+            }
+        }
+        
+        // --- 資料處理 ---
+        function getFormattedDate(date) { return date.toISOString().split('T')[0]; }
+        function calculateAge(birthDateString) {
+            if (!birthDateString) return NaN;
+            const birthDate = new Date(birthDateString);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+        function loadAllData() {
+            const data = localStorage.getItem('multiUserHealthTracker');
+            allUsersData = data ? JSON.parse(data) : {};
+        }
+        function saveData() { 
+            localStorage.setItem('multiUserHealthTracker', JSON.stringify(allUsersData)); 
+            if(currentUser) localStorage.setItem('lastActiveUser', currentUser);
+        }
+
+        // --- 使用者管理 ---
+        function initUserManagement() {
+            const userSelect = document.getElementById('user-select');
+            userSelect.innerHTML = '';
+            const users = Object.keys(allUsersData);
+
+            if (users.length === 0) {
+                userSelect.innerHTML = '<option>尚無使用者</option>';
+                document.getElementById('app-content').classList.add('disabled');
+                currentUser = null;
+                return;
+            }
+
+            document.getElementById('app-content').classList.remove('disabled');
+            users.forEach(user => {
+                const option = new Option(user, user);
+                userSelect.add(option);
+            });
+
+            const lastUser = localStorage.getItem('lastActiveUser');
+            if (lastUser && users.includes(lastUser)) {
+                currentUser = lastUser;
+            } else {
+                currentUser = users[0];
+            }
+            userSelect.value = currentUser;
+            loadCurrentUserProfile();
+        }
+
+        function addUser() {
+            const newUserNameInput = document.getElementById('new-user-name');
+            const newUserName = newUserNameInput.value.trim();
+            if (!newUserName) {
+                showNotification('使用者名稱不能為空！', 'error');
+                return;
+            }
+            if (allUsersData[newUserName]) {
+                showNotification('此使用者名稱已存在！', 'error');
+                return;
+            }
+
+            allUsersData[newUserName] = { profile: {}, records: {} };
+            currentUser = newUserName;
+            saveData();
+            initUserManagement();
+            newUserNameInput.value = '';
+            showNotification(`使用者 "${newUserName}" 新增成功！`, 'success');
+        }
+
+        function switchUser() {
+            currentUser = document.getElementById('user-select').value;
+            localStorage.setItem('lastActiveUser', currentUser);
+            loadCurrentUserProfile();
+            showNotification(`已切換至使用者 "${currentUser}"`, 'success');
+        }
+
+        function deleteUser() {
+            if (!currentUser) {
+                showNotification('沒有可刪除的使用者！', 'error');
+                return;
+            }
+            const confirmation = prompt(`確定要刪除使用者 "${currentUser}" 的所有資料嗎？此操作無法復原！\n請輸入 "${currentUser}" 來確認刪除。`);
+            if (confirmation === currentUser) {
+                const userToDelete = currentUser;
+                delete allUsersData[userToDelete];
+                localStorage.removeItem('lastActiveUser');
+                currentUser = null;
+                saveData();
+                initUserManagement();
+                document.getElementById('calculator-form').reset();
+                document.getElementById('results-container').style.display = 'none';
+                renderCharts(); 
+                showNotification(`使用者 "${userToDelete}" 已成功刪除。`, 'success');
+            } else {
+                showNotification('刪除操作已取消。', 'error');
+            }
+        }
+
+        function loadCurrentUserProfile() {
+            if (!currentUser) return;
+            const profile = allUsersData[currentUser].profile || {};
+            document.getElementById('gender').value = profile.gender || 'male';
+            document.getElementById('birthdate').value = profile.birthdate || '';
+            document.getElementById('height').value = profile.height || '';
+            document.getElementById('weight').value = profile.weight || '';
+            document.getElementById('activity').value = profile.activity || '1.2';
+            document.getElementById('intake').value = profile.intake || '';
+            document.getElementById('targetWeight').value = profile.targetWeight || '';
+            document.getElementById('hip').value = profile.hip || '';
+            document.getElementById('chest').value = profile.chest || '';
+            document.getElementById('arm').value = profile.arm || '';
+            document.getElementById('waistUpper').value = profile.waistUpper || '';
+            document.getElementById('waistMiddle').value = profile.waistMiddle || '';
+            document.getElementById('waistLower').value = profile.waistLower || '';
+            document.getElementById('thigh').value = profile.thigh || '';
+            
+            const activeTab = document.querySelector('.tab-button.active').getAttribute('onclick').match(/'([^']+)'/)[1];
+            if (activeTab === 'logging') {
+                renderLogForDate();
+            } else if (activeTab === 'charts') {
+                renderCharts();
+                renderWeightGoalProgress();
+            } else {
+                document.getElementById('results-container').style.display = 'none';
+            }
+        }
+        
+        // --- 每日紀錄頁功能 ---
+
+        function initQuickAddFoods() {
+            const container = document.getElementById('quick-add-container');
+            container.innerHTML = '';
+            
+            const categoriesDiv = document.createElement('div');
+            categoriesDiv.className = 'quick-add-categories';
+            container.appendChild(categoriesDiv);
+
+            Object.keys(commonMealsDatabase).forEach(category => {
+                const btn = document.createElement('button');
+                btn.textContent = category;
+                btn.onclick = () => showQuickAddItems(category);
+                categoriesDiv.appendChild(btn);
+            });
+            
+            const itemsContainer = document.createElement('div');
+            itemsContainer.id = 'quick-add-items-container';
+            itemsContainer.className = 'quick-add-items-container';
+            container.appendChild(itemsContainer);
+        }
+
+        function showQuickAddItems(category) {
+            const itemsContainer = document.getElementById('quick-add-items-container');
+            itemsContainer.style.display = 'block';
+            itemsContainer.innerHTML = '';
+
+            const itemsDiv = document.createElement('div');
+            itemsDiv.className = 'quick-add-items';
+            
+            commonMealsDatabase[category].forEach(food => {
+                const btn = document.createElement('button');
+                btn.className = 'quick-add-item-btn';
+                btn.textContent = `${food.name} (${food.calories}卡)`;
+                btn.onclick = () => addQuickAddItem(food);
+                itemsDiv.appendChild(btn);
+            });
+            itemsContainer.appendChild(itemsDiv);
+        }
+
+        function addQuickAddItem(foodData) {
+            if (!currentUser) return;
+            const food = { ...foodData };
+            const dateStr = getFormattedDate(selectedDate);
+            const userRecords = allUsersData[currentUser].records;
+            if (!userRecords[dateStr]) userRecords[dateStr] = { diet: [], measurements: {} };
+            if (!userRecords[dateStr].diet) userRecords[dateStr].diet = [];
+            userRecords[dateStr].diet.push(food);
+            saveData();
+            renderLogForDate();
+        }
+
+        function toggleAdvancedAdd() {
+            const container = document.getElementById('advanced-add-container');
+            const toggle = document.querySelector('.advanced-add-toggle');
+            if (container.style.display === 'none' || container.style.display === '') {
+                container.style.display = 'block';
+                toggle.textContent = '隱藏進階選項';
+            } else {
+                container.style.display = 'none';
+                toggle.textContent = '顯示進階選項 (從食材庫新增/手動新增)';
+            }
+        }
+
+        function initFoodSelector() {
+            const categorySelect = document.getElementById('food-category');
+            categorySelect.innerHTML = Object.keys(foodDatabase).map(cat => `<option value="${cat}">${cat}</option>`).join('');
+            populateFoodItems();
+        }
+
+        function populateFoodItems() {
+            const category = document.getElementById('food-category').value;
+            const itemSelect = document.getElementById('food-item');
+            itemSelect.innerHTML = foodDatabase[category].map((food, index) => `<option value="${index}">${food.name}</option>`).join('');
+        }
+        
+        function addDatabaseFood() {
+            if (!currentUser) return;
+            const category = document.getElementById('food-category').value;
+            const itemIndex = document.getElementById('food-item').value;
+            const quantity = parseFloat(document.getElementById('food-quantity').value);
+            
+            if (isNaN(quantity) || quantity <= 0) {
+                showNotification('請輸入有效的份數！', 'error');
+                return;
+            }
+
+            const baseFoodData = foodDatabase[category][itemIndex];
+            const food = {
+                name: `${baseFoodData.name} x ${quantity}`,
+                calories: (baseFoodData.calories || 0) * quantity, protein: (baseFoodData.protein || 0) * quantity,
+                carbs: (baseFoodData.carbs || 0) * quantity, fat: (baseFoodData.fat || 0) * quantity,
+            };
+
+            const dateStr = getFormattedDate(selectedDate);
+            const userRecords = allUsersData[currentUser].records;
+            if (!userRecords[dateStr]) userRecords[dateStr] = { diet: [], measurements: {} };
+            if (!userRecords[dateStr].diet) userRecords[dateStr].diet = [];
+            userRecords[dateStr].diet.push(food);
+            saveData();
+            renderLogForDate();
+        }
+
+        function updateDateDisplay() { document.getElementById('current-date').textContent = getFormattedDate(selectedDate); }
+        function changeDate(days) {
+            if (!currentUser) return;
+            selectedDate.setDate(selectedDate.getDate() + days);
+            updateDateDisplay();
+            renderLogForDate();
+        }
+
+        function renderLogForDate() {
+            if (!currentUser) return;
+            const dateStr = getFormattedDate(selectedDate);
+            const userRecords = allUsersData[currentUser].records || {};
+            const dayData = userRecords[dateStr] || {};
+            
+            document.getElementById('log-weight').value = dayData.weight || '';
+            const measurements = dayData.measurements || {};
+            document.getElementById('log-chest').value = measurements.chest || '';
+            document.getElementById('log-arm').value = measurements.arm || '';
+            document.getElementById('log-waistUpper').value = measurements.waistUpper || '';
+            document.getElementById('log-waistMiddle').value = measurements.waistMiddle || '';
+            document.getElementById('log-waistLower').value = measurements.waistLower || '';
+            document.getElementById('log-hip').value = measurements.hip || '';
+            document.getElementById('log-thigh').value = measurements.thigh || '';
+            document.getElementById('log-bodyFat').value = measurements.bodyFat || '';
+            document.getElementById('log-muscleMass').value = measurements.muscleMass || '';
+            document.getElementById('log-visceralFat').value = measurements.visceralFat || '';
+            document.getElementById('log-bodyAge').value = measurements.bodyAge || '';
+
+            const dietList = document.getElementById('diet-list');
+            dietList.innerHTML = '';
+            let summary = { calories: 0, protein: 0, carbs: 0, fat: 0 };
+            (dayData.diet || []).forEach((food, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<div><strong>${food.name}</strong><div class="diet-macros">熱量:${(food.calories || 0).toFixed(0)} P:${(food.protein || 0).toFixed(1)} C:${(food.carbs || 0).toFixed(1)} F:${(food.fat || 0).toFixed(1)}</div></div><button class="danger" onclick="deleteFoodItem(${index})">刪除</button>`;
+                dietList.appendChild(li);
+                summary.calories += food.calories || 0;
+                summary.protein += food.protein || 0;
+                summary.carbs += food.carbs || 0;
+                summary.fat += food.fat || 0;
+            });
+            document.getElementById('diet-summary').innerHTML = `<strong>總計：</strong> 熱量 ${summary.calories.toFixed(0)} 大卡 | 蛋白質 ${summary.protein.toFixed(1)} 克 | 碳水 ${summary.carbs.toFixed(1)} 克 | 脂肪 ${summary.fat.toFixed(1)} 克`;
+
+            // Render Calorie Goal
+            const targetCalories = allUsersData[currentUser].profile?.intake;
+            const calorieGoalContainer = document.getElementById('calorie-goal-summary');
+            if(targetCalories > 0) {
+                const percentage = Math.round((summary.calories / targetCalories) * 100);
+                const isOver = summary.calories > targetCalories;
+                calorieGoalContainer.innerHTML = `
+                    <div>熱量目標達成率: <strong>${summary.calories.toFixed(0)} / ${targetCalories} kcal (${percentage}%)</strong></div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar ${isOver ? 'over' : ''}" style="width: ${Math.min(percentage, 100)}%">${percentage}%</div>
+                    </div>
+                `;
+            } else {
+                calorieGoalContainer.innerHTML = '請先在「健康計算機」頁面設定每日計畫攝取熱量。';
+            }
+        }
+
+        function saveDailyLog() {
+            if (!currentUser) return;
+            const dateStr = getFormattedDate(selectedDate);
+            const userRecords = allUsersData[currentUser].records;
+            if (!userRecords[dateStr]) userRecords[dateStr] = { diet: [], measurements: {} };
+            
+            userRecords[dateStr].weight = parseFloat(document.getElementById('log-weight').value) || null;
+            userRecords[dateStr].measurements = {
+                chest: parseFloat(document.getElementById('log-chest').value) || null,
+                arm: parseFloat(document.getElementById('log-arm').value) || null,
+                waistUpper: parseFloat(document.getElementById('log-waistUpper').value) || null,
+                waistMiddle: parseFloat(document.getElementById('log-waistMiddle').value) || null,
+                waistLower: parseFloat(document.getElementById('log-waistLower').value) || null,
+                hip: parseFloat(document.getElementById('log-hip').value) || null,
+                thigh: parseFloat(document.getElementById('log-thigh').value) || null,
+                bodyFat: parseFloat(document.getElementById('log-bodyFat').value) || null,
+                muscleMass: parseFloat(document.getElementById('log-muscleMass').value) || null,
+                visceralFat: parseFloat(document.getElementById('log-visceralFat').value) || null,
+                bodyAge: parseFloat(document.getElementById('log-bodyAge').value) || null,
+            };
+
+            saveData();
+            showNotification('今日身體數據已儲存！', 'success');
+        }
+
+        function addManualFoodItem() {
+            if (!currentUser) return;
+            const food = {
+                name: document.getElementById('manual-food-name').value, calories: parseFloat(document.getElementById('manual-food-calories').value) || 0,
+                protein: parseFloat(document.getElementById('manual-food-protein').value) || 0, carbs: parseFloat(document.getElementById('manual-food-carbs').value) || 0,
+                fat: parseFloat(document.getElementById('manual-food-fat').value) || 0,
+            };
+            if (!food.name || food.calories <= 0) {
+                showNotification('請輸入有效的食物名稱與熱量！', 'error');
+                return;
+            }
+            const dateStr = getFormattedDate(selectedDate);
+            const userRecords = allUsersData[currentUser].records;
+            if (!userRecords[dateStr]) userRecords[dateStr] = { diet: [], measurements: {} };
+            if(!userRecords[dateStr].diet) userRecords[dateStr].diet = [];
+            userRecords[dateStr].diet.push(food);
+            saveData();
+            renderLogForDate();
+            ['manual-food-name', 'manual-food-calories', 'manual-food-protein', 'manual-food-carbs', 'manual-food-fat'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        function deleteFoodItem(index) {
+            if (!currentUser) return;
+            const dateStr = getFormattedDate(selectedDate);
+            const userRecords = allUsersData[currentUser].records;
+            if (userRecords[dateStr] && userRecords[dateStr].diet && userRecords[dateStr].diet[index]) {
+                userRecords[dateStr].diet.splice(index, 1);
+                saveData();
+                renderLogForDate();
+            }
+        }
+
+        // --- 圖表頁功能 ---
+        function renderWeightGoalProgress() {
+            const container = document.getElementById('weight-goal-progress-container');
+            if (!currentUser) { container.style.display = 'none'; return; }
+
+            const targetWeight = allUsersData[currentUser].profile?.targetWeight;
+            const userRecords = allUsersData[currentUser].records || {};
+            const sortedDates = Object.keys(userRecords).sort((a,b) => new Date(a) - new Date(b));
+
+            const validWeightRecords = sortedDates.map(date => userRecords[date].weight).filter(w => w > 0);
+            
+            if (!targetWeight || validWeightRecords.length < 1) {
+                container.style.display = 'none';
+                return;
+            }
+            container.style.display = 'block';
+
+            const startWeight = validWeightRecords[0];
+            const currentWeight = validWeightRecords[validWeightRecords.length - 1];
+
+            document.getElementById('start-weight-display').textContent = `起始: ${startWeight} kg`;
+            document.getElementById('current-weight-display').textContent = `目前: ${currentWeight} kg`;
+            document.getElementById('target-weight-display').textContent = `目標: ${targetWeight} kg`;
+
+            const totalRange = startWeight - targetWeight;
+            const progressMade = startWeight - currentWeight;
+            let percentage = 0;
+            if (totalRange !== 0) {
+                percentage = Math.round((progressMade / totalRange) * 100);
+            } else if (currentWeight === targetWeight) {
+                percentage = 100;
+            }
+            percentage = Math.max(0, Math.min(percentage, 100)); // Clamp between 0 and 100
+
+            const progressBar = document.getElementById('weight-goal-progress-bar');
+            progressBar.style.width = `${percentage}%`;
+            progressBar.textContent = `${percentage}%`;
+        }
+
+        function renderCharts() {
+            const userData = currentUser ? allUsersData[currentUser].records || {} : {};
+            const sortedDates = Object.keys(userData).sort((a,b) => new Date(a) - new Date(b));
+            const labels = sortedDates;
+            
+            Object.values(charts).forEach(chart => { if (chart) chart.destroy(); });
+
+            const weightData = sortedDates.map(date => userData[date].weight || null);
+            const calorieData = sortedDates.map(date => (userData[date].diet || []).reduce((sum, food) => sum + (food.calories || 0), 0));
+            const chestData = sortedDates.map(date => userData[date].measurements?.chest || null);
+            const armData = sortedDates.map(date => userData[date].measurements?.arm || null);
+            const waistUpperData = sortedDates.map(date => userData[date].measurements?.waistUpper || null);
+            const waistMiddleData = sortedDates.map(date => userData[date].measurements?.waistMiddle || null);
+            const waistLowerData = sortedDates.map(date => userData[date].measurements?.waistLower || null);
+            const hipData = sortedDates.map(date => userData[date].measurements?.hip || null);
+            const thighData = sortedDates.map(date => userData[date].measurements?.thigh || null);
+            const bodyFatData = sortedDates.map(date => userData[date].measurements?.bodyFat || null);
+            const muscleMassData = sortedDates.map(date => userData[date].measurements?.muscleMass || null);
+            const visceralFatData = sortedDates.map(date => userData[date].measurements?.visceralFat || null);
+            const bodyAgeData = sortedDates.map(date => userData[date].measurements?.bodyAge || null);
+
+            charts.weight = new Chart(document.getElementById('weight-chart'), {type: 'line', data: {labels, datasets: [{label: '體重 (公斤)', data: weightData, borderColor: 'rgba(0, 123, 255, 1)', backgroundColor: 'rgba(0, 123, 255, 0.1)', fill: true, spanGaps: true,}]}});
+            charts.calories = new Chart(document.getElementById('calories-chart'), {type: 'bar', data: {labels, datasets: [{label: '熱量攝取 (大卡)', data: calorieData, backgroundColor: 'rgba(40, 167, 69, 0.7)',}]}});
+            charts.waist = new Chart(document.getElementById('waist-chart'), {type: 'line', data: {labels, datasets: [
+                { label: '上腹圍', data: waistUpperData, borderColor: 'rgba(255, 99, 132, 1)', fill: false, spanGaps: true },
+                { label: '中腹圍', data: waistMiddleData, borderColor: 'rgba(54, 162, 235, 1)', fill: false, spanGaps: true },
+                { label: '下腹圍', data: waistLowerData, borderColor: 'rgba(255, 206, 86, 1)', fill: false, spanGaps: true },
+            ]}});
+            charts.chestHip = new Chart(document.getElementById('chest-hip-chart'), {type: 'line', data: {labels, datasets: [
+                { label: '胸圍', data: chestData, borderColor: 'rgba(75, 192, 192, 1)', fill: false, spanGaps: true },
+                { label: '臀圍', data: hipData, borderColor: 'rgba(153, 102, 255, 1)', fill: false, spanGaps: true },
+            ]}});
+            charts.limbs = new Chart(document.getElementById('limbs-chart'), {type: 'line', data: {labels, datasets: [
+                { label: '手臂圍', data: armData, borderColor: 'rgba(255, 159, 64, 1)', fill: false, spanGaps: true },
+                { label: '大腿圍', data: thighData, borderColor: 'rgba(199, 199, 199, 1)', fill: false, spanGaps: true },
+            ]}});
+            charts.bodyFat = new Chart(document.getElementById('bodyFat-chart'), {type: 'line', data: {labels, datasets: [{label: '體脂率 (%)', data: bodyFatData, borderColor: '#d9534f', backgroundColor: 'rgba(217, 83, 79, 0.1)', fill: true, spanGaps: true }]}});
+            charts.muscleMass = new Chart(document.getElementById('muscleMass-chart'), {type: 'line', data: {labels, datasets: [{label: '肌肉量 (kg)', data: muscleMassData, borderColor: '#5cb85c', backgroundColor: 'rgba(92, 184, 92, 0.1)', fill: true, spanGaps: true }]}});
+            charts.visceralFat = new Chart(document.getElementById('visceralFat-chart'), {type: 'line', data: {labels, datasets: [{label: '內臟脂肪等級', data: visceralFatData, borderColor: '#f0ad4e', backgroundColor: 'rgba(240, 173, 78, 0.1)', fill: true, spanGaps: true }]}});
+            charts.bodyAge = new Chart(document.getElementById('bodyAge-chart'), {type: 'line', data: {labels, datasets: [{label: '身體年齡', data: bodyAgeData, borderColor: '#5bc0de', backgroundColor: 'rgba(91, 192, 222, 0.1)', fill: true, spanGaps: true }]}});
+        }
+
+        function downloadChart(chartKey, filename) {
+            if (charts[chartKey] && charts[chartKey].ctx) {
+                const url = charts[chartKey].toBase64Image();
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${currentUser}_${filename}_${getFormattedDate(new Date())}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                showNotification('圖表無數據，無法下載。', 'error');
+            }
+        }
+
+        function exportDataToCSV() {
+            if (!currentUser) {
+                showNotification('請先選擇一位使用者！', 'error');
+                return;
+            }
+            const userProfile = allUsersData[currentUser].profile || {};
+            const userData = allUsersData[currentUser].records || {};
+            if (Object.keys(userData).length === 0) {
+                showNotification('目前使用者沒有任何紀錄可匯出。', 'error');
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+            const headers = [
+                "使用者", "性別", "生日", "身高(cm)", "目標體重(kg)",
+                "紀錄日期", "體重(kg)", "體脂率(%)", "肌肉量(kg)", "內臟脂肪等級", "身體年齡", "胸圍(cm)", "手臂圍(cm)", 
+                "上腹圍(cm)", "中腹圍(cm)", "下腹圍(cm)", "臀圍(cm)", "大腿圍(cm)",
+                "總熱量(kcal)", "總蛋白質(g)", "總碳水(g)", "總脂肪(g)"
+            ];
+            csvContent += headers.join(',') + '\r\n';
+
+            const sortedDates = Object.keys(userData).sort((a, b) => new Date(a) - new Date(b));
+            
+            sortedDates.forEach(date => {
+                const dayData = userData[date];
+                const measurements = dayData.measurements || {};
+                const summary = (dayData.diet || []).reduce((acc, food) => {
+                    acc.calories += food.calories || 0;
+                    acc.protein += food.protein || 0;
+                    acc.carbs += food.carbs || 0;
+                    acc.fat += food.fat || 0;
+                    return acc;
+                }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
+                
+                const profileData = [
+                    currentUser,
+                    userProfile.gender || '',
+                    userProfile.birthdate || '',
+                    userProfile.height || '',
+                    userProfile.targetWeight || ''
+                ];
+
+                const dailyData = [
+                    date,
+                    dayData.weight || '',
+                    measurements.bodyFat || '', measurements.muscleMass || '', measurements.visceralFat || '', measurements.bodyAge || '',
+                    measurements.chest || '', measurements.arm || '', measurements.waistUpper || '', measurements.waistMiddle || '',
+                    measurements.waistLower || '', measurements.hip || '', measurements.thigh || '',
+                    summary.calories.toFixed(0), summary.protein.toFixed(1), summary.carbs.toFixed(1), summary.fat.toFixed(1)
+                ];
+
+                const row = [...profileData, ...dailyData];
+                csvContent += row.join(',') + '\r\n';
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `${currentUser}_健康數據紀錄_${getFormattedDate(new Date())}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportAllDataToJSON() {
+            if (Object.keys(allUsersData).length === 0) {
+                showNotification('沒有任何使用者資料可備份。', 'error');
+                return;
+            }
+            const jsonString = JSON.stringify(allUsersData, null, 2);
+            const blob = new Blob([jsonString], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `health_tracker_backup_${getFormattedDate(new Date())}.json`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function importDataFromJSON() {
+            document.getElementById('import-file-input').click();
+        }
+
+        document.getElementById('import-file-input').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    // Basic validation
+                    const firstUser = Object.keys(importedData)[0];
+                    if (firstUser && importedData[firstUser].profile && importedData[firstUser].records) {
+                        if (confirm('這將會覆蓋您目前所有的使用者資料，確定要繼續嗎？')) {
+                            allUsersData = importedData;
+                            currentUser = null;
+                            localStorage.removeItem('lastActiveUser');
+                            saveData();
+                            initUserManagement();
+                            showNotification('資料還原成功！', 'success');
+                        }
+                    } else {
+                        throw new Error('Invalid file format');
+                    }
+                } catch (error) {
+                    showNotification('讀取檔案失敗，請確認檔案格式是否正確。', 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; // Reset input to allow re-uploading the same file
+        });
+        
+        // --- 計算機功能 ---
+        function calculateAll() {
+            if (!currentUser) {
+                showNotification('請先新增或選擇一位使用者！', 'error');
+                return;
+            }
+            const profile = {
+                gender: document.getElementById("gender").value, 
+                birthdate: document.getElementById("birthdate").value,
+                height: parseFloat(document.getElementById("height").value),
+                weight: parseFloat(document.getElementById("weight").value), 
+                activity: parseFloat(document.getElementById("activity").value), 
+                intake: parseFloat(document.getElementById("intake").value),
+                targetWeight: parseFloat(document.getElementById("targetWeight").value),
+                chest: parseFloat(document.getElementById("chest").value), 
+                arm: parseFloat(document.getElementById("arm").value), 
+                waistUpper: parseFloat(document.getElementById("waistUpper").value),
+                waistMiddle: parseFloat(document.getElementById("waistMiddle").value), 
+                waistLower: parseFloat(document.getElementById("waistLower").value),
+                hip: parseFloat(document.getElementById("hip").value), 
+                thigh: parseFloat(document.getElementById("thigh").value),
+            };
+            
+            const age = calculateAge(profile.birthdate);
+
+            if (isNaN(age) || !profile.birthdate || isNaN(profile.height) || isNaN(profile.weight) || isNaN(profile.intake) || age <= 0 || profile.height <= 0 || profile.weight <= 0) {
+                showNotification("請在 A、B 區塊中輸入所有有效的正數值(包含生日)！", 'error'); return;
+            }
+
+            allUsersData[currentUser].profile = profile;
+            saveData();
+            showNotification('基本資料已儲存！', 'success');
+
+            const heightInMeters = profile.height / 100; const bmi = profile.weight / (heightInMeters * heightInMeters);
+            let bmr = profile.gender === "male" ? 10 * profile.weight + 6.25 * profile.height - 5 * age + 5 : 10 * profile.weight + 6.25 * profile.height - 5 * age - 161;
+            const activityHeat = bmr * (profile.activity - 1); const tef = (bmr + activityHeat) * 0.1; const tdee = bmr + activityHeat + tef;
+            const deficit = profile.intake - tdee; const weeklyChange = (7 * deficit) / 7700;
+
+            document.getElementById("results-container").style.display = "block"; document.getElementById("bmi-result").textContent = bmi.toFixed(2);
+            const bmiStatusEl = document.getElementById("bmi-status");
+            if (bmi < 18.5) { bmiStatusEl.innerHTML = '<div class="bmi-status status-warning">體重過輕</div>'; } else if (bmi < 24) { bmiStatusEl.innerHTML = '<div class="bmi-status status-healthy">健康體位</div>'; } else if (bmi < 27) { bmiStatusEl.innerHTML = '<div class="bmi-status status-warning">體重過重</div>'; } else { bmiStatusEl.innerHTML = '<div class="bmi-status status-danger">肥胖</div>'; }
+            document.getElementById("bmr-result").textContent = `${bmr.toFixed(0)} 大卡`; document.getElementById("activity-heat-result").textContent = `${activityHeat.toFixed(0)} 大卡`;
+            document.getElementById("tef-result").textContent = `${tef.toFixed(0)} 大卡`; document.getElementById("tdee-result").textContent = `${tdee.toFixed(0)} 大卡`;
+            document.getElementById("deficit-result").textContent = `${deficit.toFixed(0)} 大卡`;
+            const weightChangeEl = document.getElementById("weight-change-result");
+            if (weeklyChange >= 0) { weightChangeEl.textContent = `約增加 ${weeklyChange.toFixed(2)} 公斤`; weightChangeEl.style.color = "var(--danger-color)"; } else { weightChangeEl.textContent = `約減少 ${Math.abs(weeklyChange).toFixed(2)} 公斤`; weightChangeEl.style.color = "var(--success-color)"; }
+
+            const ratiosCard = document.getElementById("ratios-card"); const whrItem = document.getElementById("whr-item"); const whtrItem = document.getElementById("whtr-item");
+            let hasRatio = false;
+            if (!isNaN(profile.waistMiddle) && !isNaN(profile.hip) && profile.waistMiddle > 0 && profile.hip > 0) {
+                hasRatio = true; whrItem.style.display = "flex"; const whr = profile.waistMiddle / profile.hip; document.getElementById("whr-result").textContent = whr.toFixed(2);
+                const whrStatusEl = document.getElementById("whr-status"); const whrRisk = (profile.gender === "male" && whr > 0.9) || (profile.gender === "female" && whr > 0.85);
+                whrStatusEl.innerHTML = `<div class="bmi-status ${whrRisk ? "status-danger" : "status-healthy"}">${whrRisk ? "腹部肥胖，風險較高" : "正常範圍"}</div>`;
+            } else { whrItem.style.display = "none"; document.getElementById("whr-status").innerHTML = ""; }
+            if (!isNaN(profile.waistMiddle) && profile.waistMiddle > 0) {
+                hasRatio = true; whtrItem.style.display = "flex"; const whtr = profile.waistMiddle / profile.height; document.getElementById("whtr-result").textContent = whtr.toFixed(2);
+                const whtrStatusEl = document.getElementById("whtr-status"); const whtrRisk = whtr > 0.5;
+                whtrStatusEl.innerHTML = `<div class="bmi-status ${whtrRisk ? "status-danger" : "status-healthy"}">${whtrRisk ? "健康風險增加" : "正常範圍"}</div>`;
+            } else { whtrItem.style.display = "none"; document.getElementById("whtr-status").innerHTML = ""; }
+            ratiosCard.style.display = hasRatio ? "block" : "none";
+        }
+        
+        // --- 提示訊息功能 ---
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification'; // Reset
+            notification.classList.add(type);
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+    </script>
+
+</body>
+</html>
+

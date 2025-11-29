@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>照片套版列印工具 (記憶體優化版)</title>
+    <!-- JSZip library for creating zip files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- Google Fonts for custom fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+TC:wght@700&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS Reset and Basic Styles --- */
+        *, *::before, *::after { box-sizing: border-box; }
+        * { margin: 0; }
+        html { height: 100%; }
+        body { 
+            line-height: 1.5; 
+            -webkit-font-smoothing: antialiased; 
+            font-family: 'Noto Sans TC', sans-serif; 
+            background-color: #f3f4f6; 
+            min-height: 100%; /* Ensure body can grow */
+            overflow-y: auto; /* Allow vertical scrolling */
+        }
+        img, picture, video, canvas, svg { display: block; max-width: 100%; }
+        input, button, textarea, select { font: inherit; }
+        p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
+
+        /* --- Full-Screen Layout Styles --- */
+        .container {
+            width: 100%;
+            max-width: 80rem;
+            margin: 1rem auto; /* Use margin instead of fixed padding */
+            padding: 0 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        @media (min-width: 768px) {
+            .main-card { padding: 2rem; }
+        }
+        
+        /* Responsive Layout Grid */
+        .grid-container {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: 1fr;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        @media (min-width: 1024px) {
+            .grid-container {
+                grid-template-columns: minmax(350px, 1fr) 2fr;
+            }
+        }
+
+        .controls-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow-y: auto;
+            padding-right: 1rem;
+            max-height: calc(100vh - 12rem); /* Set max height for scrolling */
+        }
+        .preview-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-height: 0;
+        }
+        .preview-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            position: relative;
+            flex-grow: 1;
+            min-height: 200px;
+        }
+        .step-header {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #374151;
+            border-left-width: 4px;
+            padding-left: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .btn {
+            display: inline-block;
+            width: 100%;
+            font-weight: 700;
+            color: #ffffff;
+            padding: 0.6rem 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 150ms, border-color 150ms, color 150ms;
+            border: 1px solid transparent;
+        }
+        .btn-blue { background-color: #3b82f6; }
+        .btn-blue:hover { background-color: #2563eb; }
+        .btn-orange { background-color: #f97316; }
+        .btn-orange:hover { background-color: #ea580c; }
+        .btn-purple { background-color: #a855f7; }
+        .btn-purple:hover { background-color: #9333ea; }
+        .btn-teal { background-color: #14b8a6; }
+        .btn-teal:hover { background-color: #0d9488; }
+        .btn-red { background-color: #ef4444; } 
+        .btn-red:hover { background-color: #dc2626; }
+        .btn-gray { background-color: #6b7280; }
+        .btn-gray:hover { background-color: #4b5563; }
+        .btn:disabled {
+            background-color: #d1d5db;
+            cursor: not-allowed;
+            border-color: #d1d5db;
+        }
+        .file-upload-label {
+            display: block;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        #previewCanvas {
+            width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            aspect-ratio: 148 / 100;
+            cursor: default;
+        }
+        .hidden { display: none; }
+        .file-name-display {
+            font-size: 0.875rem; 
+            color: #6b7280; 
+            margin-top: 0.5rem; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap;
+        }
+        .loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            z-index: 10;
+        }
+        /* --- Thumbnail Styles --- */
+        .thumbnail-section {
+            width: 100%;
+            position: relative;
+        }
+        .thumbnail-container {
+            width: 100%;
+            overflow-x: hidden;
+            white-space: nowrap;
+            padding: 1rem;
+            background-color: #e5e7eb;
+            border-radius: 0.5rem;
+            scroll-behavior: smooth;
+        }
+        .thumbnail-item {
+            display: inline-block;
+            width: 100px;
+            height: 67px;
+            margin: 0 0.5rem;
+            border: 3px solid transparent;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            object-fit: cover;
+        }
+        .thumbnail-item.selected {
+            border-color: #3b82f6;
+        }
+        .scroll-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .scroll-arrow:hover { background-color: white; }
+        .scroll-arrow:disabled { opacity: 0.2; cursor: not-allowed; }
+        #scroll-left { left: -15px; }
+        #scroll-right { right: -15px; }
+
+        /* --- SOP/Rules Style --- */
+        .rules-box {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-size: 0.875rem;
+            color: #1e40af;
+            margin-bottom: 1.5rem;
+        }
+        .rules-box h4 { font-weight: 700; margin-bottom: 0.5rem; }
+        .rules-box ol { padding-left: 1.5rem; }
+        .rules-box li { margin-bottom: 0.5rem; }
+        .rules-box ul { list-style-type: disc; padding-left: 1.5rem; margin-top: 0.25rem; }
+
+        /* --- Clear Button Style --- */
+        #clearButton {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: auto;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+        @media (min-width: 768px) {
+            #clearButton { top: 1.5rem; right: 1.5rem; }
+        }
+        
+        /* --- Adjustment Controls --- */
+        .adjustment-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .adjustment-controls label {
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+        .adjustment-controls input[type="range"] {
+            width: 100%;
+        }
+        .control-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        #text-input, #font-select {
+            width: 100%;
+            padding: 0.4rem;
+            border: 1px solid #ccc;
+            border-radius: 0.25rem;
+        }
+        input[type="color"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 32px;
+            height: 32px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border-radius: 50%;
+            border: 1px solid #ccc;
+        }
+        input[type="color"]::-moz-color-swatch {
+            border-radius: 50%;
+            border: 1px solid #ccc;
+        }
+        .mode-toggle-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .mode-btn {
+            background-color: #e5e7eb;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+        }
+        .mode-btn.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        .divider {
+            border-top: 1px solid #e5e7eb;
+            margin: 0.75rem 0;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #2563eb; }
+        input:checked + .slider:before { transform: translateX(20px); }
+        
+        /* --- Sticker Controls --- */
+        .sticker-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .sticker-btn {
+            background-color: #e5e7eb;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .sticker-btn:hover {
+            background-color: #d1d5db;
+        }
+        .sticker-btn svg {
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="main-card">
+            <button id="clearButton" class="btn btn-red">清除並釋放記憶體</button>
+            <header style="text-align: center; margin-bottom: 1.5rem;">
+                <h1 style="font-size: 2rem; font-weight: 700; color: #1f293d;">照片套版列印工具 (穩定版)</h1>
+                <p style="color: #6b7280; margin-top: 0.5rem;">輕鬆製作您的專屬相片 (橫式 14.8x10 cm)</p>
+            </header>
+
+            <div class="rules-box">
+                <h4>功能使用 SOP</h4>
+                <ol>
+                    <li><b>上傳照片</b>：點擊「步驟一」按鈕，選取您所有要處理的照片。</li>
+                    <li><b>微調與加字/貼圖</b>：使用「微調」、「加入文字」與「創意貼圖」區塊，為每張照片進行客製化。</li>
+                    <li><b>(可選) 更換畫框</b>：點擊「步驟三」按鈕，上傳您自訂的 <code>.png</code> 透明畫框。</li>
+                    <li><b>執行輸出</b>：點擊「步驟四」的按鈕下載或列印。
+                        <ul>
+                            <li><b><span style="color: #c026d3;">效能提示</span></b>：批次列印大量照片會消耗較多電腦資源，**建議分批處理 (例如一次 20-30 張)** 以獲得最佳體驗。</li>
+                            <li><b><span style="color: #1d4ed8;">滿版秘訣</span></b>：在印表機設定中尋找「無邊界」或「滿版」選項並啟用。</li>
+                        </ul>
+                    </li>
+                     <li><b>完成後</b>：點擊右上角「<b>清除並釋放記憶體</b>」按鈕，以利進行下一批工作。</li>
+                </ol>
+            </div>
+
+            <div class="grid-container">
+                <!-- 左側：控制面板 -->
+                <div class="controls-panel">
+                    <!-- 步驟一 -->
+                    <div>
+                        <h2 class="step-header" style="border-color: #3b82f6;">步驟一：選擇照片</h2>
+                        <label for="photoUpload" class="file-upload-label btn btn-blue">點我上傳照片 (可多選)</label>
+                        <input type="file" id="photoUpload" accept="image/*" multiple>
+                        <p id="photoFileName" class="file-name-display"></p>
+                    </div>
+                    
+                    <!-- 步驟 1.5: 微調 -->
+                    <div id="adjustment-section" class="hidden">
+                        <h2 class="step-header" style="border-color: #d97706;">步驟 1.5：微調物件</h2>
+                        <div class="adjustment-controls">
+                            <label>編輯模式：</label>
+                            <div class="mode-toggle-group">
+                                <button id="mode-photo" class="btn mode-btn active">移動照片</button>
+                                <button id="mode-text" class="btn mode-btn">移動文字</button>
+                                <button id="mode-sticker" class="btn mode-btn">編輯貼圖</button>
+                            </div>
+                            <label for="zoom-slider">照片縮放</label>
+                            <input type="range" id="zoom-slider" min="1" max="3" step="0.01" value="1">
+                            <button id="reset-adjustment" class="btn btn-gray" style="width: auto; padding: 0.4rem 0.8rem; margin-top: 0.5rem;">重設調整</button>
+                        </div>
+                    </div>
+
+                    <!-- 步驟 2.5: 加入文字 -->
+                    <div id="text-section" class="hidden">
+                        <h2 class="step-header" style="border-color: #10b981;">步驟 2.5：加入文字</h2>
+                        <div class="adjustment-controls text-controls">
+                            <label for="text-input">文字內容</label>
+                            <input type="text" id="text-input" placeholder="在此輸入文字...">
+                            <label for="font-select">字體選擇</label>
+                            <select id="font-select">
+                                <option value="Noto Sans TC">思源黑體 (網路)</option>
+                                <option value="Ma Shan Zheng">馬善政 (網路書法)</option>
+                                <option value="Zhi Mang Xing">指尖悅動 (網路手寫)</option>
+                                <option value="Microsoft JhengHei">微軟正黑體 (系統)</option>
+                                <option value="KaiTi">標楷體 (系統)</option>
+                            </select>
+                            <label for="font-size-slider">文字大小</label>
+                            <input type="range" id="font-size-slider" min="20" max="150" step="1" value="60">
+                            <div class="control-group">
+                                <label for="text-color-picker">文字顏色：</label>
+                                <input type="color" id="text-color-picker" value="#FFFFFF">
+                            </div>
+                            <div class="divider"></div>
+                            <div class="control-group">
+                                <label for="text-bg-enable">啟用背景</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="text-bg-enable">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div id="text-bg-controls" class="adjustment-controls hidden">
+                                <div class="control-group">
+                                    <label for="text-bg-color-picker">背景顏色：</label>
+                                    <input type="color" id="text-bg-color-picker" value="#000000">
+                                </div>
+                                <label for="text-bg-opacity-slider">背景透明度</label>
+                                <input type="range" id="text-bg-opacity-slider" min="0" max="1" step="0.05" value="0.5">
+                                <label for="text-bg-padding-slider">背景邊距</label>
+                                <input type="range" id="text-bg-padding-slider" min="0" max="100" step="1" value="20">
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                                <button id="apply-text-all" class="btn btn-gray">套用至全部</button>
+                                <button id="clear-text" class="btn btn-gray">重設文字</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步驟 2.6: 加入貼圖 -->
+                    <div id="sticker-section" class="hidden">
+                        <h2 class="step-header" style="border-color: #8b5cf6;">步驟 2.6：加入創意貼圖</h2>
+                        <div class="sticker-gallery" id="sticker-gallery">
+                            <!-- 預設貼圖會由 JS 加入 -->
+                        </div>
+                        <label for="stickerUpload" class="file-upload-label btn btn-gray" style="margin-bottom: 1rem;">上傳自訂貼圖 (.png)</label>
+                        <input type="file" id="stickerUpload" accept="image/png">
+                        <div id="sticker-controls" class="adjustment-controls hidden">
+                            <div class="divider"></div>
+                            <label>已選定貼圖編輯：</label>
+                            <p style="font-size: 0.875rem; color: #4b5563;">提示：直接拖曳貼圖的角落來縮放與旋轉。</p>
+                            <button id="delete-sticker" class="btn btn-red" style="width: auto; padding: 0.4rem 0.8rem; margin-top: 0.5rem;">刪除此貼圖</button>
+                        </div>
+                    </div>
+
+
+                    <!-- 步驟三 -->
+                    <div>
+                        <h2 class="step-header" style="border-color: #f97316;">步驟三：選擇畫框</h2>
+                        <label for="frameUpload" class="file-upload-label btn btn-orange">點我上傳畫框</label>
+                        <input type="file" id="frameUpload" accept="image/png">
+                        <p id="frameFileName" class="file-name-display"></p>
+                    </div>
+
+                    <!-- 步驟四 -->
+                    <div>
+                        <h2 class="step-header" style="border-color: #22c55e;">步驟四：下載或列印</h2>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <button id="downloadButton" class="btn btn-purple" disabled>下載照片</button>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <button id="printSelectedButton" class="btn btn-teal" disabled>列印選定照片</button>
+                                <button id="printAllButton" class="btn btn-teal" disabled>列印所有照片</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右側：預覽區域 -->
+                <div class="preview-panel">
+                    <div class="preview-main">
+                        <p id="previewMessage" style="color: #6b7280; text-align: center;">請先上傳照片</p>
+                        <canvas id="previewCanvas" class="hidden"></canvas>
+                        <div id="loader" class="loader hidden"></div>
+                    </div>
+                    <div id="thumbnail-section" class="thumbnail-section hidden">
+                        <button id="scroll-left" class="scroll-arrow">&lt;</button>
+                        <div id="thumbnail-strip" class="thumbnail-container"></div>
+                        <button id="scroll-right" class="scroll-arrow">&gt;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM 元素 ---
+        const photoUpload = document.getElementById('photoUpload');
+        const frameUpload = document.getElementById('frameUpload');
+        const photoFileNameDisplay = document.getElementById('photoFileName');
+        const frameFileNameDisplay = document.getElementById('frameFileName');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const previewMessage = document.getElementById('previewMessage');
+        const thumbnailSection = document.getElementById('thumbnail-section');
+        const thumbnailStrip = document.getElementById('thumbnail-strip');
+        const scrollLeftBtn = document.getElementById('scroll-left');
+        const scrollRightBtn = document.getElementById('scroll-right');
+        const downloadButton = document.getElementById('downloadButton');
+        const printSelectedButton = document.getElementById('printSelectedButton');
+        const printAllButton = document.getElementById('printAllButton');
+        const clearButton = document.getElementById('clearButton');
+        const loader = document.getElementById('loader');
+        
+        // Adjustment Elements
+        const adjustmentSection = document.getElementById('adjustment-section');
+        const zoomSlider = document.getElementById('zoom-slider');
+        const resetAdjustmentBtn = document.getElementById('reset-adjustment');
+        const modePhotoBtn = document.getElementById('mode-photo');
+        const modeTextBtn = document.getElementById('mode-text');
+        const modeStickerBtn = document.getElementById('mode-sticker');
+        
+        // Text Elements
+        const textSection = document.getElementById('text-section');
+        const textInput = document.getElementById('text-input');
+        const fontSelect = document.getElementById('font-select');
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const textColorPicker = document.getElementById('text-color-picker');
+        const applyTextAllBtn = document.getElementById('apply-text-all');
+        const clearTextBtn = document.getElementById('clear-text');
+        const textBgEnable = document.getElementById('text-bg-enable');
+        const textBgControls = document.getElementById('text-bg-controls');
+        const textBgColorPicker = document.getElementById('text-bg-color-picker');
+        const textBgOpacitySlider = document.getElementById('text-bg-opacity-slider');
+        const textBgPaddingSlider = document.getElementById('text-bg-padding-slider');
+
+        // Sticker Elements
+        const stickerSection = document.getElementById('sticker-section');
+        const stickerGallery = document.getElementById('sticker-gallery');
+        const stickerUpload = document.getElementById('stickerUpload');
+        const stickerControls = document.getElementById('sticker-controls');
+        const deleteStickerBtn = document.getElementById('delete-sticker');
+
+        const ctx = previewCanvas.getContext('2d');
+
+        // --- 狀態管理 ---
+        let photoData = []; // [{ image, file, settings: {...} }]
+        let customFrame = null;
+        let backupFrame = null;
+        let selectedImageIndex = 0;
+        let selectedStickerIndex = -1;
+        let editMode = 'photo'; // 'photo', 'text', or 'sticker'
+        let startDrag = null;
+        let dragAction = null; // 'move-photo', 'move-text', 'move-sticker', 'resize-sticker', 'rotate-sticker'
+        const stickerHandleSize = 30;
+
+        // --- 設定 ---
+        const CANVAS_WIDTH = 1748;
+        const CANVAS_HEIGHT = 1181;
+        previewCanvas.width = CANVAS_WIDTH;
+        previewCanvas.height = CANVAS_HEIGHT;
+
+        // --- 初始化 ---
+        function initialize() {
+            createBackupFrame();
+            populateDefaultStickers();
+            photoUpload.addEventListener('change', handlePhotoUpload);
+            frameUpload.addEventListener('change', handleFrameUpload);
+            downloadButton.addEventListener('click', handleDownload);
+            printSelectedButton.addEventListener('click', handleSinglePrint);
+            printAllButton.addEventListener('click', handleBatchPrint);
+            clearButton.addEventListener('click', handleClear);
+            scrollLeftBtn.addEventListener('click', () => scrollThumbnails(-1));
+            scrollRightBtn.addEventListener('click', () => scrollThumbnails(1));
+            thumbnailStrip.addEventListener('scroll', updateScrollButtons);
+            window.addEventListener('resize', updateScrollButtons);
+            
+            // Adjustment listeners
+            zoomSlider.addEventListener('input', handleZoom);
+            resetAdjustmentBtn.addEventListener('click', handleResetAdjustment);
+            modePhotoBtn.addEventListener('click', () => setEditMode('photo'));
+            modeTextBtn.addEventListener('click', () => setEditMode('text'));
+            modeStickerBtn.addEventListener('click', () => setEditMode('sticker'));
+            
+            // Text listeners
+            [textInput, fontSelect, fontSizeSlider, textColorPicker, textBgEnable, textBgColorPicker, textBgOpacitySlider, textBgPaddingSlider].forEach(el => {
+                el.addEventListener('input', handleTextControlChange);
+            });
+            applyTextAllBtn.addEventListener('click', handleApplyTextToAll);
+            clearTextBtn.addEventListener('click', handleClearText);
+
+            // Sticker Listeners
+            stickerUpload.addEventListener('change', handleStickerUpload);
+            deleteStickerBtn.addEventListener('click', deleteSelectedSticker);
+
+            // Canvas interaction listeners
+            previewCanvas.addEventListener('mousedown', handleMouseDown);
+            previewCanvas.addEventListener('mousemove', handleMouseMove);
+            previewCanvas.addEventListener('mouseup', handleMouseUp);
+            previewCanvas.addEventListener('mouseleave', handleMouseUp);
+            previewCanvas.addEventListener('touchstart', handleMouseDown, { passive: false });
+            previewCanvas.addEventListener('touchmove', handleMouseMove, { passive: false });
+            previewCanvas.addEventListener('touchend', handleMouseUp);
+        }
+        
+        // --- 核心功能函式 ---
+        
+        function createBackupFrame(){
+            const frameCanvas=document.createElement('canvas');frameCanvas.width=CANVAS_WIDTH;frameCanvas.height=CANVAS_HEIGHT;const frameCtx=frameCanvas.getContext('2d');const borderWidth=CANVAS_WIDTH*0.04;frameCtx.fillStyle='white';frameCtx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);frameCtx.clearRect(borderWidth,borderWidth,CANVAS_WIDTH-borderWidth*2,CANVAS_HEIGHT-borderWidth*2);const frameImage=new Image();frameImage.onload=()=>{backupFrame=frameImage;frameFileNameDisplay.textContent=`已載入預設畫框`;};frameImage.src=frameCanvas.toDataURL();
+        }
+        function handleClear(){photoData=[];customFrame=null;selectedImageIndex=0;selectedStickerIndex=-1;photoUpload.value='';frameUpload.value='';stickerUpload.value='';photoFileNameDisplay.textContent='';frameFileNameDisplay.textContent='已載入預設畫框';setEditMode('photo');populateThumbnails();renderMainPreview();}
+        function handlePhotoUpload(event){const files=event.target.files;if(!files||files.length===0){photoData=[];photoFileNameDisplay.textContent='';renderMainPreview();populateThumbnails();return;}
+        photoData=[];selectedImageIndex=0;selectedStickerIndex=-1;photoFileNameDisplay.textContent=`正在讀取 ${files.length} 張照片...`;const promises=Array.from(files).map(file=>{return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=(e)=>{const img=new Image();img.onload=()=>resolve({image:img,file:file,settings:{zoom:1,offsetX:0,offsetY:0,text:'',textColor:'#FFFFFF',textSize:60,textFont:'Noto Sans TC',textX:CANVAS_WIDTH/2,textY:CANVAS_HEIGHT/2,textBgEnabled:false,textBgColor:'#000000',textBgOpacity:0.5,textBgPadding:20,stickers:[]}});img.onerror=reject;img.src=e.target.result;};reader.onerror=reject;reader.readAsDataURL(file);});});Promise.all(promises).then(data=>{photoData=data;photoFileNameDisplay.textContent=`已選擇 ${data.length} 張照片`;setEditMode('photo');populateThumbnails();renderMainPreview();}).catch(error=>{console.error("讀取圖片時發生錯誤:",error);alert("部分圖片讀取失敗，請檢查檔案是否正常。");});}
+        function handleFrameUpload(event){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=(e)=>{const img=new Image();img.onload=()=>{customFrame=img;frameFileNameDisplay.textContent=`已更換為: ${file.name}`;renderMainPreview();};img.onerror=()=>{alert('無法讀取畫框檔案，請確認檔案為有效的 PNG 圖片。');};img.src=e.target.result;};reader.readAsDataURL(file);}
+        function populateThumbnails(){thumbnailStrip.innerHTML='';if(photoData.length>0){thumbnailSection.classList.remove('hidden');}else{thumbnailSection.classList.add('hidden');return;}
+        photoData.forEach((data,index)=>{const thumbImg=document.createElement('img');thumbImg.src=data.image.src;thumbImg.className='thumbnail-item';thumbImg.dataset.index=index;if(index===selectedImageIndex){thumbImg.classList.add('selected');}
+        thumbImg.addEventListener('click',()=>{selectedImageIndex=index;selectedStickerIndex=-1;document.querySelectorAll('.thumbnail-item').forEach(item=>item.classList.remove('selected'));thumbImg.classList.add('selected');setEditMode('photo');renderMainPreview();});thumbnailStrip.appendChild(thumbImg);});setTimeout(updateScrollButtons,0);}
+        function renderMainPreview(isFinal=false){const isPhotoReady=photoData.length>0;const isFrameReady=customFrame||backupFrame;adjustmentSection.classList.toggle('hidden',!isPhotoReady);textSection.classList.toggle('hidden',!isPhotoReady);stickerSection.classList.toggle('hidden',!isPhotoReady);if(isPhotoReady){previewMessage.classList.add('hidden');previewCanvas.classList.remove('hidden');updateControlsToSelection();}else{previewMessage.classList.remove('hidden');previewCanvas.classList.add('hidden');}
+        downloadButton.disabled=!(isPhotoReady&&isFrameReady);printSelectedButton.disabled=!isPhotoReady;printAllButton.disabled=!isPhotoReady;downloadButton.textContent=photoData.length>1?'下載所有照片 (.zip)':'下載照片 (.jpg)';ctx.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);if(isPhotoReady){const currentPhoto=photoData[selectedImageIndex];drawImageWithTransform(currentPhoto.image,currentPhoto.settings);drawStickers(currentPhoto.settings,isFinal);}
+        const frameToUse=customFrame||backupFrame;if(isPhotoReady&&frameToUse){ctx.drawImage(frameToUse,0,0,CANVAS_WIDTH,CANVAS_HEIGHT);}
+        if(isPhotoReady){drawTextOnCanvas(photoData[selectedImageIndex].settings);}}
+        function drawImageWithTransform(img,settings){const{zoom,offsetX,offsetY}=settings;const imgRatio=img.width/img.height;const canvasRatio=CANVAS_WIDTH/CANVAS_HEIGHT;let sWidth,sHeight,sx,sy;if(imgRatio>canvasRatio){sHeight=img.height;sWidth=sHeight*canvasRatio;}else{sWidth=img.width;sHeight=sWidth/canvasRatio;}
+        sWidth/=zoom;sHeight/=zoom;sx=(img.width-sWidth)/2-offsetX*(img.width/zoom);sy=(img.height-sHeight)/2-offsetY*(img.height/zoom);ctx.drawImage(img,sx,sy,sWidth,sHeight,0,0,CANVAS_WIDTH,CANVAS_HEIGHT);}
+        function drawTextOnCanvas(settings){if(!settings.text)return;ctx.font=`bold ${settings.textSize}px "${settings.textFont}"`;const metrics=ctx.measureText(settings.text);const textWidth=metrics.width;const textHeight=metrics.actualBoundingBoxAscent+metrics.actualBoundingBoxDescent;const padding=settings.textBgPadding;if(settings.textBgEnabled){ctx.globalAlpha=settings.textBgOpacity;ctx.fillStyle=settings.textBgColor;ctx.fillRect(settings.textX-textWidth/2-padding,settings.textY-textHeight/2-padding,textWidth+padding*2,textHeight+padding*2);ctx.globalAlpha=1.0;}
+        ctx.fillStyle=settings.textColor;ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=5;ctx.shadowOffsetX=2;ctx.shadowOffsetY=2;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(settings.text,settings.textX,settings.textY);ctx.shadowColor='transparent';}
+        function setEditMode(mode){editMode=mode;modePhotoBtn.classList.toggle('active',mode==='photo');modeTextBtn.classList.toggle('active',mode==='text');modeStickerBtn.classList.toggle('active',mode==='sticker');zoomSlider.disabled=(mode!=='photo');if(mode!=='sticker'){selectedStickerIndex=-1;}
+        renderMainPreview();}
+        function handleZoom(event){if(photoData.length===0)return;photoData[selectedImageIndex].settings.zoom=parseFloat(event.target.value);renderMainPreview();}
+        function handleResetAdjustment(){if(photoData.length===0)return;const currentSettings=photoData[selectedImageIndex].settings;currentSettings.zoom=1;currentSettings.offsetX=0;currentSettings.offsetY=0;renderMainPreview();}
+        function handleTextControlChange(){if(photoData.length===0)return;const currentSettings=photoData[selectedImageIndex].settings;currentSettings.text=textInput.value;currentSettings.textFont=fontSelect.value;currentSettings.textSize=parseInt(fontSizeSlider.value,10);currentSettings.textColor=textColorPicker.value;currentSettings.textBgEnabled=textBgEnable.checked;currentSettings.textBgColor=textBgColorPicker.value;currentSettings.textBgOpacity=parseFloat(textBgOpacitySlider.value);currentSettings.textBgPadding=parseInt(textBgPaddingSlider.value,10);textBgControls.classList.toggle('hidden',!currentSettings.textBgEnabled);modeTextBtn.disabled=!currentSettings.text;renderMainPreview();}
+        function handleApplyTextToAll(){if(photoData.length===0)return;const sourceSettings=photoData[selectedImageIndex].settings;photoData.forEach(data=>{data.settings.text=sourceSettings.text;data.settings.textFont=sourceSettings.textFont;data.settings.textSize=sourceSettings.textSize;data.settings.textColor=sourceSettings.textColor;data.settings.textX=sourceSettings.textX;data.settings.textY=sourceSettings.textY;data.settings.textBgEnabled=sourceSettings.textBgEnabled;data.settings.textBgColor=sourceSettings.textBgColor;data.settings.textBgOpacity=sourceSettings.textBgOpacity;data.settings.textBgPadding=sourceSettings.textBgPadding;});alert(`已將文字設定套用至全部 ${photoData.length} 張照片。`);renderMainPreview();}
+        function handleClearText(){if(photoData.length===0)return;const currentSettings=photoData[selectedImageIndex].settings;currentSettings.text='';currentSettings.textBgEnabled=false;renderMainPreview();}
+        function updateControlsToSelection(){if(photoData.length===0)return;const currentSettings=photoData[selectedImageIndex].settings;zoomSlider.value=currentSettings.zoom;textInput.value=currentSettings.text;fontSelect.value=currentSettings.textFont;fontSizeSlider.value=currentSettings.textSize;textColorPicker.value=currentSettings.textColor;textBgEnable.checked=currentSettings.textBgEnabled;textBgColorPicker.value=currentSettings.textBgColor;textBgOpacitySlider.value=currentSettings.textBgOpacity;textBgPaddingSlider.value=currentSettings.textBgPadding;textBgControls.classList.toggle('hidden',!currentSettings.textBgEnabled);modeTextBtn.disabled=!currentSettings.text;stickerControls.classList.toggle('hidden',selectedStickerIndex===-1);}
+        function getEventLocation(e){if(e.touches&&e.touches.length===1){return{x:e.touches[0].clientX,y:e.touches[0].clientY};}else if(e.clientX&&e.clientY){return{x:e.clientX,y:e.clientY};}}
+        function scrollThumbnails(direction){const scrollAmount=thumbnailStrip.clientWidth*0.8;thumbnailStrip.scrollBy({left:scrollAmount*direction,behavior:'smooth'});}
+        function updateScrollButtons(){setTimeout(()=>{const isScrollable=thumbnailStrip.scrollWidth>thumbnailStrip.clientWidth;if(isScrollable){scrollLeftBtn.classList.remove('hidden');scrollRightBtn.classList.remove('hidden');}else{scrollLeftBtn.classList.add('hidden');scrollRightBtn.classList.add('hidden');return;}
+        scrollLeftBtn.disabled=thumbnailStrip.scrollLeft<1;const maxScrollLeft=thumbnailStrip.scrollWidth-thumbnailStrip.clientWidth;scrollRightBtn.disabled=thumbnailStrip.scrollLeft>=maxScrollLeft-1;},100);}
+        function populateDefaultStickers(){const stickers=[{name:'Heart',svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'},{name:'Star',svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="gold"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>'},{name:'Like',svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#3b82f6"><path d="M23 10.76c0-1.09-.39-1.95-1.1-2.58-.7-.63-1.6-1-2.65-1.15-1.42-.21-2.94-.49-4.5-.49H9.5a2.5 2.5 0 00-2.5 2.5v6.25a2.5 2.5 0 002.5 2.5h6.38c.9 0 1.7-.33 2.3-.9.6-.58.92-1.34.92-2.22 0-.9-.3-1.68-.88-2.28-.58-.6-1.38-.95-2.32-.95h-4.3v-2.5h5.25c1.45 0 2.65-.48 3.5-1.24.93-.84 1.4-1.9 1.4-3.12zM4 18.25h-2v-7.5h2v7.5z"/></svg>'}];stickers.forEach(sticker=>{const btn=document.createElement('button');btn.className='sticker-btn';btn.innerHTML=sticker.svg;btn.onclick=()=>{const img=new Image();img.onload=()=>addSticker(img);img.src='data:image/svg+xml;base64,'+btoa(sticker.svg);};stickerGallery.appendChild(btn);});}
+        function handleStickerUpload(event){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>addSticker(img);img.src=e.target.result;};reader.readAsDataURL(file);event.target.value='';}
+        function addSticker(img){if(photoData.length===0){alert('請先上傳照片！');return;}
+        const currentSettings=photoData[selectedImageIndex].settings;const sticker={img:img,x:CANVAS_WIDTH/2,y:CANVAS_HEIGHT/2,width:200,height:200*(img.height/img.width),rotation:0};currentSettings.stickers.push(sticker);selectedStickerIndex=currentSettings.stickers.length-1;setEditMode('sticker');renderMainPreview();}
+        function drawStickers(settings,isFinal){const handleSize=30;settings.stickers.forEach((sticker,index)=>{ctx.save();ctx.translate(sticker.x,sticker.y);ctx.rotate(sticker.rotation*Math.PI/180);ctx.drawImage(sticker.img,-sticker.width/2,-sticker.height/2,sticker.width,sticker.height);if(!isFinal&&index===selectedStickerIndex&&editMode==='sticker'){ctx.strokeStyle='#3b82f6';ctx.lineWidth=8;ctx.strokeRect(-sticker.width/2,-sticker.height/2,sticker.width,sticker.height);ctx.fillStyle='#3b82f6';const corners=[{x:-sticker.width/2,y:-sticker.height/2},{x:sticker.width/2,y:-sticker.height/2},{x:-sticker.width/2,y:sticker.height/2},{x:sticker.width/2,y:sticker.height/2}];corners.forEach(corner=>{ctx.beginPath();ctx.arc(corner.x,corner.y,handleSize/2,0,2*Math.PI);ctx.fill();});}
+        ctx.restore();});}
+        function deleteSelectedSticker(){if(selectedStickerIndex===-1)return;photoData[selectedImageIndex].settings.stickers.splice(selectedStickerIndex,1);selectedStickerIndex=-1;renderMainPreview();}
+        function getCanvasPoint(e){const rect=previewCanvas.getBoundingClientRect();const location=getEventLocation(e);return{x:(location.x-rect.left)*(CANVAS_WIDTH/rect.width),y:(location.y-rect.top)*(CANVAS_HEIGHT/rect.height)};}
+        function handleMouseDown(e){if(photoData.length===0)return;e.preventDefault();const currentSettings=photoData[selectedImageIndex].settings;const point=getCanvasPoint(e);startDrag={x:point.x,y:point.y};if(editMode==='sticker'){let foundSticker=-1;dragAction=null;for(let i=currentSettings.stickers.length-1;i>=0;i--){const sticker=currentSettings.stickers[i];const corner=getStickerCorner(point.x,point.y,sticker);if(corner){foundSticker=i;dragAction=corner;break;}
+        if(isPointInSticker(point.x,point.y,sticker)){foundSticker=i;dragAction='move-sticker';break;}}
+        if(foundSticker===-1){selectedStickerIndex=-1;}else{selectedStickerIndex=foundSticker;}}else if(editMode==='text'&&currentSettings.text){dragAction='move-text';}else{dragAction='move-photo';}
+        renderMainPreview();}
+        function handleMouseMove(e){if(!startDrag||photoData.length===0)return;e.preventDefault();const point=getCanvasPoint(e);const dx=point.x-startDrag.x;const dy=point.y-startDrag.y;const currentSettings=photoData[selectedImageIndex].settings;if(dragAction==='move-photo'){currentSettings.offsetX+=dx/CANVAS_WIDTH*currentSettings.zoom;currentSettings.offsetY+=dy/CANVAS_HEIGHT*currentSettings.zoom;}else if(dragAction==='move-text'){currentSettings.textX+=dx;currentSettings.textY+=dy;}else if(dragAction==='move-sticker'&&selectedStickerIndex!==-1){const sticker=currentSettings.stickers[selectedStickerIndex];sticker.x+=dx;sticker.y+=dy;}else if(dragAction&&dragAction.startsWith('resize-')&&selectedStickerIndex!==-1){const sticker=currentSettings.stickers[selectedStickerIndex];const angle=-sticker.rotation*Math.PI/180;const cos=Math.cos(angle);const sin=Math.sin(angle);const rotatedDx=dx*cos-dy*sin;const rotatedDy=dx*sin+dy*cos;const handle=dragAction.split('-')[1];if(handle.includes('right')){sticker.width+=rotatedDx;}else{sticker.width-=rotatedDx;}
+        if(handle.includes('bottom')){sticker.height+=rotatedDy;}else{sticker.height-=rotatedDy;}
+        sticker.width=Math.max(20,sticker.width);sticker.height=Math.max(20,sticker.height);}
+        startDrag=point;renderMainPreview();}
+        function handleMouseUp(){startDrag=null;dragAction=null;}
+        function getStickerCorner(x,y,sticker){const handleSize=30;const corners=[{id:'resize-top-left',x:-sticker.width/2,y:-sticker.height/2},{id:'resize-top-right',x:sticker.width/2,y:-sticker.height/2},{id:'resize-bottom-left',x:-sticker.width/2,y:sticker.height/2},{id:'resize-bottom-right',x:sticker.width/2,y:sticker.height/2}];const angle=sticker.rotation*Math.PI/180;const cos=Math.cos(angle);const sin=Math.sin(angle);for(const corner of corners){const rotatedX=corner.x*cos-corner.y*sin+sticker.x;const rotatedY=corner.x*sin+corner.y*cos+sticker.y;const dist=Math.hypot(x-rotatedX,y-rotatedY);if(dist<handleSize/2){return corner.id;}}
+        return null;}
+        function isPointInSticker(x,y,sticker){const angle=sticker.rotation*Math.PI/180;const cos=Math.cos(-angle);const sin=Math.sin(-angle);const translatedX=x-sticker.x;const translatedY=y-sticker.y;const rotatedX=translatedX*cos-translatedY*sin;const rotatedY=translatedX*sin+translatedY*cos;return Math.abs(rotatedX)<=sticker.width/2&&Math.abs(rotatedY)<=sticker.height/2;}
+        
+        // [FIXED] Time-sliced batch processing
+        async function processBatch(items, processFunction) {
+            return new Promise(resolve => {
+                let index = 0;
+                const results = [];
+                function next() {
+                    if (index >= items.length) {
+                        resolve(results);
+                        return;
+                    }
+                    const item = items[index];
+                    showLoader(`正在處理 ${index + 1} / ${items.length} 張照片...`);
+                    // Process one item
+                    processFunction(item).then(result => {
+                        results.push(result);
+                        index++;
+                        // Yield to the main thread before processing the next item
+                        setTimeout(next, 0);
+                    });
+                }
+                next();
+            });
+        }
+
+        async function handleDownload(){if(photoData.length===0)return;const frameToUse=customFrame||backupFrame;if(!frameToUse){alert('畫框尚未準備好，無法下載。');return;}
+        if(photoData.length===1){showLoader('正在準備下載...');const photo=photoData[0];renderFinalImage(photo.image,photo.settings,frameToUse);try{const dataUrl=previewCanvas.toDataURL('image/jpeg',0.95);const link=document.createElement('a');link.download=`processed_${photo.file.name.split('.').slice(0,-1).join('.')}.jpg`;link.href=dataUrl;link.click();}catch(e){console.error('下載失敗:',e);alert('下載失敗！您的瀏覽器可能有安全性限制。');}
+        hideLoader();renderMainPreview();}else{const zip=new JSZip();const processedBlobs=await processBatch(photoData,async(photo)=>{renderFinalImage(photo.image,photo.settings,frameToUse);return new Promise(resolve=>previewCanvas.toBlob(resolve,'image/jpeg',0.95));});processedBlobs.forEach((blob,i)=>{zip.file(`processed_${photoData[i].file.name}`,blob);});showLoader('正在產生 ZIP 檔案...');zip.generateAsync({type:"blob"}).then(function(content){const link=document.createElement('a');link.href=URL.createObjectURL(content);link.download="processed_photos.zip";link.click();hideLoader();renderMainPreview();});}}
+        async function handleSinglePrint(){if(photoData.length===0)return;const photosToPrint=[photoData[selectedImageIndex]];await executePrint(photosToPrint);}
+        async function handleBatchPrint(){if(photoData.length===0)return;await executePrint(photoData);}
+        async function executePrint(photos){const frameToUse=customFrame||backupFrame;const printWindow=window.open('','_blank');if(!printWindow){alert('快顯視窗被封鎖！請允許此網站的快顯視窗以進行列印。');hideLoader();return;}
+        const blobUrls=await processBatch(photos,async(photo)=>{renderFinalImage(photo.image,photo.settings,frameToUse);const blob=await new Promise(resolve=>previewCanvas.toBlob(resolve,'image/jpeg',0.95));return URL.createObjectURL(blob);});printWindow.document.write(`<html><head><title>列印預覽</title><style>
+                    @media print { @page { size: landscape; margin: 0; } body { margin: 0; } img { width: 14.8cm; height: 10cm; page-break-after: always; } }
+                    body { margin: 0; }
+                </style></head><body>${blobUrls.map(url=>`<img src="${url}" />`).join('')}</body></html>`);printWindow.document.close();printWindow.onload=function(){printWindow.focus();printWindow.print();blobUrls.forEach(url=>URL.revokeObjectURL(url));hideLoader();renderMainPreview();};}
+        
+        function renderFinalImage(image,settings,frameToUse){ctx.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);drawImageWithTransform(image,settings);drawStickers(settings,true);if(frameToUse){ctx.drawImage(frameToUse,0,0,CANVAS_WIDTH,CANVAS_HEIGHT);}
+        drawTextOnCanvas(settings);}
+        function showLoader(message){loader.textContent=message;loader.classList.remove('hidden');}
+        function hideLoader(){loader.classList.add('hidden');}
+        initialize();
+    </script>
+</body>
+</html>

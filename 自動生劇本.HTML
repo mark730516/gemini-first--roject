@@ -1,0 +1,502 @@
+import React, { useState } from 'react';
+
+// Main App component for the Script Generator
+const App = () => {
+  // State variables for user inputs
+  const [topic, setTopic] = useState(''); // 主題
+  const [characters, setCharacters] = useState(''); // 角色 (主要角色)
+  const [situation, setSituation] = useState({ // 情境描述細分
+    who: '',    // 人 (Who)
+    what: '',   // 事 (What)
+    when: '',   // 時 (When)
+    where: '',  // 地 (Where)
+    object: ''  // 物 (Object/Things)
+  });
+  const [length, setLength] = useState('medium'); // 長度 (short, medium, long)
+  const [generatedContent, setGeneratedContent] = useState(null); // 儲存結構化生成內容 (JSON)
+  const [isLoading, setIsLoading] = useState(false); // 劇本生成載入狀態
+  const [error, setError] = useState(''); // 劇本生成錯誤訊息
+
+  const [summary, setSummary] = useState(''); // 劇本摘要
+  const [isSummarizing, setIsSummarizing] = useState(false); // 摘要生成載入狀態
+  const [summaryError, setSummaryError] = useState(''); // 摘要生成錯誤訊息
+
+  // Defined themes based on the provided micro-film titles
+  const themes = [
+    { value: '', label: '請選擇一個主題' }, // Default empty option
+    { value: '我的怪咖同事', label: '《我的怪咖同事》' },
+    { value: '沒說出口的謝謝', label: '《沒說出口的謝謝》' },
+    { value: '就這樣約定囉', label: '《就這樣約定囉》' },
+    { value: '最美的角落', label: '《最美的角落》' },
+    { value: '珍貴的禮物', label: '《珍貴的禮物》' },
+  ];
+
+  // Common options for "When" (時)
+  const whenOptions = [
+    { value: '', label: '請選擇時間' },
+    { value: '清晨', label: '清晨' },
+    { value: '早上', label: '早上' },
+    { value: '中午休息時間', label: '中午休息時間' },
+    { value: '下午', label: '下午' },
+    { value: '傍晚', label: '傍晚' },
+    { value: '下班後', label: '下班後' },
+    { value: '夜晚', label: '夜晚' },
+    { value: '專案進行期間', label: '專案進行期間' },
+    { value: '緊急狀況發生時', label: '緊急狀況發生時' },
+  ];
+
+  // Common options for "Where" (地)
+  const whereOptions = [
+    { value: '', label: '請選擇地點' },
+    { value: '辦公室', label: '辦公室' },
+    { value: '工廠生產線', label: '工廠生產線' },
+    { value: '休息室', label: '休息室' },
+    { value: '茶水間', label: '茶水間' },
+    { value: '會議室', label: '會議室' },
+    { value: '戶外空間', label: '戶外空間' },
+    { value: '資料室/檔案室', label: '資料室/檔案室' },
+    { value: '客戶現場', label: '客戶現場' },
+  ];
+
+  /**
+   * Handles changes to the situation object.
+   * @param {string} field - The field name (e.g., 'who', 'what').
+   * @param {string} value - The new value for the field.
+   */
+  const handleSituationChange = (field, value) => {
+    setSituation(prev => ({ ...prev, [field]: value }));
+  };
+
+  /**
+   * Handles the script generation process.
+   * Calls the Gemini API to generate a script based on user inputs.
+   */
+  const generateScript = async () => {
+    setIsLoading(true); // Set loading state to true
+    setGeneratedContent(null); // Clear previous content
+    setSummary(''); // Clear previous summary
+    setError(''); // Clear previous errors
+    setSummaryError(''); // Clear previous summary errors
+
+    if (!topic) {
+        setError('請選擇一個劇本主題。');
+        setIsLoading(false);
+        return;
+    }
+
+    // Construct the detailed situation string from the object
+    const fullSituation = `
+      人物：${situation.who || '未指定人物'}
+      事件：${situation.what || '未指定事件'}
+      時間：${situation.when || '未指定時間'}
+      地點：${situation.where || '未指定地點'}
+      物品：${situation.object || '未指定物品'}
+    `.trim(); // Trim to remove leading/trailing newlines if all fields are empty
+
+    // Construct the prompt for the Gemini API
+    const prompt = `
+      請為我生成一個微電影劇本，並提供劇本大綱、完整腳本、分鏡列表和整體拍攝方式建議。
+      請以 JSON 格式輸出，包含以下鍵值：
+      - "scriptOutline": 劇本大綱的文字內容。
+      - "fullScript": 完整的劇本內容，包含場景、人物對話和動作描述。
+      - "shotList": 一個陣列，每個元素是一個物件，包含 "scene" (場景名稱), "shotDescription" (鏡頭描述), "filmingMethod" (拍攝方式)。
+      - "generalFilmingMethods": 整體拍攝方式的文字建議。
+
+      主題：${topic}
+      主要角色：${characters || '未指定角色'}
+      情境描述：
+      ${fullSituation}
+      劇本長度：${length === 'short' ? '簡短' : length === 'medium' ? '中等' : '詳細'}
+
+      請參考微電影《${topic}》的風格和核心概念來創作。
+    `;
+
+    let chatHistory = [];
+    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+    const payload = {
+      contents: chatHistory,
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "OBJECT",
+          properties: {
+            "scriptOutline": { "type": "STRING" },
+            "fullScript": { "type": "STRING" },
+            "shotList": {
+              "type": "ARRAY",
+              "items": {
+                "type": "OBJECT",
+                "properties": {
+                  "scene": { "type": "STRING" },
+                  "shotDescription": { "type": "STRING" },
+                  "filmingMethod": { "type": "STRING" }
+                },
+                "propertyOrdering": ["scene", "shotDescription", "filmingMethod"]
+              }
+            },
+            "generalFilmingMethods": { "type": "STRING" }
+          },
+          "propertyOrdering": ["scriptOutline", "fullScript", "shotList", "generalFilmingMethods"]
+        }
+      }
+    };
+    const apiKey = ""; // API key will be provided by the Canvas environment
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed with status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('API Raw Result:', result); // Debugging: Log the raw result
+
+      // Check if the response contains valid content
+      if (result.candidates && result.candidates.length > 0 &&
+          result.candidates[0].content && result.candidates[0].content.parts &&
+          result.candidates[0].content.parts.length > 0) {
+        const jsonText = result.candidates[0].content.parts[0].text;
+        try {
+          const parsedContent = JSON.parse(jsonText);
+          setGeneratedContent(parsedContent); // Set the parsed JSON content
+        } catch (parseError) {
+          setError(`解析劇本內容時發生錯誤: ${parseError.message}. 原始回應: ${jsonText}`);
+          console.error('JSON Parse Error:', parseError);
+        }
+      } else {
+        setError('未能生成劇本。請嘗試不同的輸入。');
+        console.error('Unexpected API response structure:', result);
+      }
+    } catch (err) {
+      console.error('Error generating script:', err);
+      setError(`生成劇本時發生錯誤: ${err.message}`);
+    } finally {
+      setIsLoading(false); // Set loading state to false
+    }
+  };
+
+  /**
+   * Summarizes the generated script using the Gemini API.
+   */
+  const summarizeScript = async () => {
+    setIsSummarizing(true);
+    setSummary('');
+    setSummaryError('');
+
+    if (!generatedContent || !generatedContent.fullScript) {
+      setSummaryError('沒有劇本可以摘要。請先生成一個劇本。');
+      setIsSummarizing(false);
+      return;
+    }
+
+    const prompt = `請為以下劇本提供一個簡潔的摘要：\n\n${generatedContent.fullScript}\n\n摘要：`;
+
+    let chatHistory = [];
+    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+    const payload = { contents: chatHistory };
+    const apiKey = ""; // API key will be provided by the Canvas environment
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed with status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.candidates && result.candidates.length > 0 &&
+          result.candidates[0].content && result.candidates[0].content.parts &&
+          result.candidates[0].content.parts.length > 0) {
+        const generatedSummary = result.candidates[0].content.parts[0].text;
+        setSummary(generatedSummary);
+      } else {
+        setSummaryError('未能生成劇本摘要。');
+        console.error('Unexpected API response structure for summary:', result);
+      }
+    } catch (err) {
+      console.error('Error summarizing script:', err);
+      setSummaryError(`生成摘要時發生錯誤: ${err.message}`);
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-8 font-sans text-gray-800">
+      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+        {/* Header Section */}
+        <div className="bg-indigo-600 text-white p-6 sm:p-8 rounded-t-xl">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2">自動劇本產生器</h1>
+          <p className="text-center text-indigo-200 text-lg sm:text-xl">輸入您的想法，讓AI為您創作劇本！</p>
+        </div>
+
+        {/* Input Form Section */}
+        <div className="p-6 sm:p-8 space-y-6">
+          {/* Topic Selection */}
+          <div>
+            <label htmlFor="topic" className="block text-lg font-semibold text-gray-700 mb-2">劇本主題：</label>
+            <select
+              id="topic"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 shadow-sm bg-white"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+            >
+              {themes.map((themeOption) => (
+                <option key={themeOption.value} value={themeOption.value}>
+                  {themeOption.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Characters Input */}
+          <div>
+            <label htmlFor="characters" className="block text-lg font-semibold text-gray-700 mb-2">主要角色：</label>
+            <input
+              type="text"
+              id="characters"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 shadow-sm"
+              placeholder="例如：小明、小華、老師 (與情境中的人物區分，此為主要出場人物)"
+              value={characters}
+              onChange={(e) => setCharacters(e.target.value)}
+            />
+          </div>
+
+          {/* Situation Inputs (人、事、時、地、物) */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold text-gray-800 border-b pb-2 mb-4">情境描述 (人、事、時、地、物)</h3>
+            {/* 人 (Who) */}
+            <div>
+              <label htmlFor="situation-who" className="block text-lg font-semibold text-gray-700 mb-2">人物：</label>
+              <input
+                type="text"
+                id="situation-who"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 shadow-sm"
+                placeholder="例如：一位資深工程師和一位新進助理"
+                value={situation.who}
+                onChange={(e) => handleSituationChange('who', e.target.value)}
+              />
+            </div>
+            {/* 事 (What) */}
+            <div>
+              <label htmlFor="situation-what" className="block text-lg font-semibold text-gray-700 mb-2">事件：</label>
+              <input
+                type="text"
+                id="situation-what"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 shadow-sm"
+                placeholder="例如：解決一個突發的系統故障"
+                value={situation.what}
+                onChange={(e) => handleSituationChange('what', e.target.value)}
+              />
+            </div>
+            {/* 時 (When) */}
+            <div>
+              <label htmlFor="situation-when" className="block text-lg font-semibold text-gray-700 mb-2">時間：</label>
+              <select
+                id="situation-when"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 shadow-sm bg-white"
+                value={situation.when}
+                onChange={(e) => handleSituationChange('when', e.target.value)}
+              >
+                {whenOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* 地 (Where) */}
+            <div>
+              <label htmlFor="situation-where" className="block text-lg font-semibold text-gray-700 mb-2">地點：</label>
+              <select
+                id="situation-where"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 shadow-sm bg-white"
+                value={situation.where}
+                onChange={(e) => handleSituationChange('where', e.target.value)}
+              >
+                {whereOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* 物 (Object/Things) */}
+            <div>
+              <label htmlFor="situation-object" className="block text-lg font-semibold text-gray-700 mb-2">物品：</label>
+              <input
+                type="text"
+                id="situation-object"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 shadow-sm"
+                placeholder="例如：故障的伺服器、一份舊文件"
+                value={situation.object}
+                onChange={(e) => handleSituationChange('object', e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Length Selection */}
+          <div>
+            <label htmlFor="length" className="block text-lg font-semibold text-gray-700 mb-2">劇本長度：</label>
+            <select
+              id="length"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 shadow-sm bg-white"
+              value={length}
+              onChange={(e) => setLength(e.target.value)}
+            >
+              <option value="short">簡短</option>
+              <option value="medium">中等</option>
+              <option value="long">詳細</option>
+            </select>
+          </div>
+
+          {/* Generate Script Button */}
+          <button
+            onClick={generateScript}
+            disabled={isLoading}
+            className={`w-full py-3 px-6 rounded-lg text-xl font-bold transition duration-300 ease-in-out
+              ${isLoading
+                ? 'bg-indigo-300 cursor-not-allowed'
+                : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg transform hover:scale-105'
+              }`}
+          >
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                生成劇本中...
+              </div>
+            ) : (
+              '生成劇本'
+            )}
+          </button>
+
+          {/* Error Message Display for Script Generation */}
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
+              <strong className="font-bold">錯誤！</strong>
+              <span className="block sm:inline"> {error}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Generated Script Display Section */}
+        {generatedContent && (
+          <div className="p-6 sm:p-8 bg-gray-50 border-t border-gray-200 rounded-b-xl">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">生成的劇本成果</h2>
+
+            {/* 劇本大綱 */}
+            <div className="mb-8">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 border-b pb-2">劇本大綱</h3>
+              <div className="bg-white p-4 sm:p-6 border border-gray-200 rounded-lg shadow-inner whitespace-pre-wrap leading-relaxed text-gray-700">
+                {generatedContent.scriptOutline}
+              </div>
+            </div>
+
+            {/* 腳本 */}
+            <div className="mb-8">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 border-b pb-2">腳本</h3>
+              <div className="bg-white p-4 sm:p-6 border border-gray-200 rounded-lg shadow-inner max-h-96 overflow-y-auto whitespace-pre-wrap leading-relaxed text-gray-700">
+                {generatedContent.fullScript}
+              </div>
+            </div>
+
+            {/* 分鏡 */}
+            <div className="mb-8">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 border-b pb-2">分鏡</h3>
+              {generatedContent.shotList && generatedContent.shotList.length > 0 ? (
+                <div className="overflow-x-auto rounded-lg shadow-inner border border-gray-200">
+                  <table className="min-w-full bg-white divide-y divide-gray-200">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tl-lg">場景</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">鏡頭描述</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tr-lg">拍攝方式</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {generatedContent.shotList.map((shot, index) => (
+                        <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                          <td className="px-4 py-3 whitespace-pre-wrap text-sm text-gray-900">{shot.scene}</td>
+                          <td className="px-4 py-3 whitespace-pre-wrap text-sm text-gray-900">{shot.shotDescription}</td>
+                          <td className="px-4 py-3 whitespace-pre-wrap text-sm text-gray-900">{shot.filmingMethod}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-gray-600 p-4 bg-white rounded-lg border border-gray-200">無分鏡資訊。</p>
+              )}
+            </div>
+
+            {/* 拍攝方式 */}
+            <div className="mb-8">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 border-b pb-2">拍攝方式</h3>
+              <div className="bg-white p-4 sm:p-6 border border-gray-200 rounded-lg shadow-inner whitespace-pre-wrap leading-relaxed text-gray-700">
+                {generatedContent.generalFilmingMethods}
+              </div>
+            </div>
+
+            {/* Summarize Script Button */}
+            <button
+              onClick={summarizeScript}
+              disabled={isSummarizing}
+              className={`mt-6 w-full py-3 px-6 rounded-lg text-xl font-bold transition duration-300 ease-in-out
+                ${isSummarizing
+                  ? 'bg-purple-300 cursor-not-allowed'
+                  : 'bg-purple-600 hover:bg-purple-700 text-white shadow-lg transform hover:scale-105'
+                }`}
+            >
+              {isSummarizing ? (
+                <div className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  生成摘要中...
+                </div>
+              ) : (
+                '✨ 劇本摘要 ✨'
+              )}
+            </button>
+
+            {/* Error Message Display for Summary Generation */}
+            {summaryError && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mt-4" role="alert">
+                <strong className="font-bold">錯誤！</strong>
+                <span className="block sm:inline"> {summaryError}</span>
+              </div>
+            )}
+
+            {/* Generated Summary Display */}
+            {summary && (
+              <div className="mt-6">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 text-center">劇本摘要</h3>
+                <div className="bg-white p-4 sm:p-6 border border-gray-200 rounded-lg shadow-inner max-h-60 overflow-y-auto whitespace-pre-wrap leading-relaxed text-gray-700">
+                  {summary}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default App;
