@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDIO X | 機台內部佈光策略模擬</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #0f172a; color: white; font-family: 'Noto Sans TC', sans-serif; }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(15, 23, 42, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            pointer-events: none;
+            max-width: 320px;
+        }
+        .strategy-tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="info">
+        <h1 class="text-xl font-bold font-orbitron text-cyan-400 mb-2">狹窄空間佈光策略</h1>
+        <p class="text-xs text-slate-400 mb-4">模擬封閉機台內部的拍攝方案</p>
+        
+        <div class="space-y-4">
+            <div class="border-l-2 border-amber-500 pl-3">
+                <span class="strategy-tag bg-amber-900 text-amber-400">策略 A：外部注入 (External)</span>
+                <p class="text-xs text-slate-300">利用 <span class="text-white font-bold">神牛 SL150III</span> 從維修窗口或玻璃強行打入光束。</p>
+            </div>
+            <div class="border-l-2 border-cyan-500 pl-3">
+                <span class="strategy-tag bg-cyan-900 text-cyan-400">策略 B：內部寄生 (Parasitic)</span>
+                <p class="text-xs text-slate-300">使用 <span class="text-white font-bold">磁吸 RGB 口袋燈</span> (模擬) 吸附在機台內壁，創造環境光。</p>
+            </div>
+            <div class="border-l-2 border-emerald-500 pl-3">
+                <span class="strategy-tag bg-emerald-900 text-emerald-400">策略 C：微型機位 (Action Cam)</span>
+                <p class="text-xs text-slate-300">使用 <span class="text-white font-bold">Pocket 3</span> 深入死角。</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // Scene
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050505);
+        scene.fog = new THREE.Fog(0x050505, 5, 20);
+
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(4, 2, 5); // Outside looking in
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.target.set(0, 1, 0);
+
+        // --- Geometry: The Machine Enclosure (Cutaway) ---
+        const machineGroup = new THREE.Group();
+
+        // Walls (Cutaway view)
+        const wallMat = new THREE.MeshStandardMaterial({ 
+            color: 0x333333, 
+            roughness: 0.2, 
+            metalness: 0.8,
+            side: THREE.DoubleSide
+        });
+
+        // Floor
+        const floor = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), wallMat);
+        floor.rotation.x = -Math.PI/2;
+        floor.receiveShadow = true;
+        machineGroup.add(floor);
+
+        // Back Wall
+        const backWall = new THREE.Mesh(new THREE.PlaneGeometry(4, 3), wallMat);
+        backWall.position.set(0, 1.5, -2);
+        backWall.receiveShadow = true;
+        machineGroup.add(backWall);
+
+        // Left Wall (with Window)
+        // Use Shape to cut a hole
+        const wallShape = new THREE.Shape();
+        wallShape.moveTo(-2, 0);
+        wallShape.lineTo(2, 0);
+        wallShape.lineTo(2, 3);
+        wallShape.lineTo(-2, 3);
+        wallShape.lineTo(-2, 0);
+
+        const windowHole = new THREE.Path();
+        windowHole.moveTo(-1, 1);
+        windowHole.lineTo(1, 1);
+        windowHole.lineTo(1, 2);
+        windowHole.lineTo(-1, 2);
+        windowHole.lineTo(-1, 1);
+        wallShape.holes.push(windowHole);
+
+        const leftWallGeo = new THREE.ShapeGeometry(wallShape);
+        const leftWall = new THREE.Mesh(leftWallGeo, wallMat);
+        leftWall.rotation.y = Math.PI/2;
+        leftWall.position.set(-2, 0, 0); // Actually Left side
+        leftWall.castShadow = true;
+        leftWall.receiveShadow = true;
+        machineGroup.add(leftWall);
+
+        // Top (Ceiling)
+        const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), wallMat);
+        ceiling.rotation.x = Math.PI/2;
+        ceiling.position.y = 3;
+        machineGroup.add(ceiling);
+
+        scene.add(machineGroup);
+
+        // --- The Subject: Wafer Robot Arm ---
+        const robotGroup = new THREE.Group();
+        
+        // Base
+        const rBase = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.4, 0.5, 16), new THREE.MeshStandardMaterial({color: 0x222222, metalness: 0.8}));
+        rBase.position.y = 0.25;
+        robotGroup.add(rBase);
+
+        // Arm
+        const rArm = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.1, 1.5), new THREE.MeshStandardMaterial({color: 0x555555, metalness: 0.9}));
+        rArm.position.set(0, 0.6, 0.5);
+        robotGroup.add(rArm);
+
+        // Wafer on Arm
+        const wafer = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, 0.02, 32), new THREE.MeshStandardMaterial({color: 0x111111, metalness: 1.0, roughness: 0.1}));
+        wafer.position.set(0, 0.66, 0.8);
+        robotGroup.add(wafer);
+
+        scene.add(robotGroup);
+
+
+        // --- Lighting Strategy ---
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+        scene.add(ambientLight);
+
+        // Strategy A: External Injection (SL150III through Window)
+        // High intensity beam entering from the left window
+        const externalLight = new THREE.SpotLight(0xffaa00, 500); // Warm Amber
+        externalLight.position.set(-5, 1.5, 0);
+        externalLight.target.position.set(0, 0.6, 0.8); // Aim at Wafer
+        externalLight.angle = Math.PI / 8;
+        externalLight.penumbra = 0.2;
+        externalLight.castShadow = true;
+        externalLight.shadow.bias = -0.0001;
+        scene.add(externalLight);
+        scene.add(externalLight.target);
+
+        // Visual Beam for External Light
+        const beamGeo = new THREE.ConeGeometry(0.4, 4, 32, 1, true);
+        const beamMat = new THREE.MeshBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 0.05, side: THREE.DoubleSide, depthWrite: false });
+        const beam = new THREE.Mesh(beamGeo, beamMat);
+        beam.position.set(-3, 1.5, 0);
+        beam.rotation.z = -Math.PI/2;
+        scene.add(beam);
+
+        // Strategy B: Internal Parasitic (Magnetic Tube Lights)
+        // 1. Hidden inside back corner (Teal Rim)
+        const tubeLight1 = new THREE.PointLight(0x00ffff, 50, 3);
+        tubeLight1.position.set(1.8, 0.5, -1.8); // Back Right Corner
+        scene.add(tubeLight1);
+
+        // Visual rep of tube light
+        const tubeMesh1 = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.3), new THREE.MeshBasicMaterial({color: 0x00ffff}));
+        tubeMesh1.position.copy(tubeLight1.position);
+        scene.add(tubeMesh1);
+
+        // 2. Hidden on Ceiling (Top Fill)
+        const tubeLight2 = new THREE.PointLight(0x0000ff, 30, 3);
+        tubeLight2.position.set(0, 2.8, 0);
+        scene.add(tubeLight2);
+
+        // --- Camera Representation ---
+        // DJI Pocket 3 inside
+        const pocketGeo = new THREE.BoxGeometry(0.1, 0.3, 0.1);
+        const pocketMat = new THREE.MeshLambertMaterial({color: 0xffffff});
+        const pocket = new THREE.Mesh(pocketGeo, pocketMat);
+        pocket.position.set(1.5, 1.0, 1.0); // Mounted inside right wall
+        pocket.lookAt(0, 0.6, 0.8);
+        scene.add(pocket);
+        
+        // Suction Cup mount visual
+        const suction = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.05), new THREE.MeshBasicMaterial({color: 0x000000}));
+        suction.rotation.z = Math.PI/2;
+        suction.position.set(1.6, 1.0, 1.0); // Attached to invisible right wall
+        scene.add(suction);
+
+
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            
+            // Animate Robot Arm
+            const time = Date.now() * 0.001;
+            robotGroup.rotation.y = Math.sin(time) * 0.2;
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+
+    </script>
+</body>
+</html>
