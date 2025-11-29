@@ -4,24 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>知識穹頂 V2.0 - 模組化設計</title>
+    <title>知識穹頂 V2.0 - 分區模組展示</title>
 
     <style>
         /* 基礎變數與全局設定 */
         :root {
-            --bg-color: #0b0f19;
-            --main-color: #ffffff;
-            --accent-color: #4CAF50; /* 突出的綠色 */
-            --card-bg: #1a202c; /* 卡片背景色 */
+            --bg-dark: #0b0f19;
+            --main-text: #ffffff;
+            --card-bg: #1a202c;
+            --card-hover: #2a3443;
+            
+            /* 五大類別色彩 */
+            --color-hr: #2196F3;     /* 淺藍色 */
+            --color-data: #4CAF50;   /* 綠色 */
+            --color-tech: #FFC107;   /* 黃色 */
+            --color-strategy: #9C27B0; /* 紫色 */
+            --color-esg: #00BCD4;    /* 青色 */
         }
         
         body {
-            background-color: var(--bg-color); 
-            color: var(--main-color);
+            background-color: var(--bg-dark); 
+            color: var(--main-text);
             font-family: 'Arial', 'Microsoft JhengHei', sans-serif;
             margin: 0;
             padding: 0;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -29,7 +35,7 @@
 
         .main-wrapper {
             width: 90%;
-            max-width: 1200px;
+            max-width: 1400px;
             padding: 40px 0;
         }
 
@@ -40,103 +46,87 @@
         }
 
         .header h1 {
-            font-size: 3.5em;
+            font-size: 3.8em;
             letter-spacing: 3px;
             margin-bottom: 5px;
         }
 
         .header .subtitle {
-            font-size: 1.2em;
+            font-size: 1.3em;
             opacity: 0.7;
         }
 
-        /* 篩選與標籤區塊 */
-        .filter-menu {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 40px;
-            padding: 15px;
-            border-bottom: 1px solid var(--card-bg); /* 視覺區隔線 */
+        /* 內容分區設定 */
+        .category-section {
+            margin-bottom: 60px;
+            padding: 30px;
+            border-radius: 12px;
+            /* 讓每個區塊有微小的邊緣間距 */
+            border: 1px solid rgba(255, 255, 255, 0.05); 
         }
 
-        .filter-menu button {
-            background-color: transparent;
-            color: var(--main-color);
-            border: 1px solid var(--accent-color);
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
-            font-size: 0.9em;
+        .category-section h2 {
+            font-size: 2em;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid; /* 區塊標題下劃線 */
+            margin-bottom: 25px;
         }
-
-        .filter-menu button:hover, .filter-menu button.active {
-            background-color: var(--accent-color);
-            color: var(--bg-color);
-            transform: translateY(-2px);
-        }
-
-        /* 內容卡片佈局 */
+        
+        /* 網格佈局 */
         .content-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 自動響應式網格 */
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 25px;
         }
 
+        /* 內容卡片樣式 */
         .content-card {
             background-color: var(--card-bg);
-            border-radius: 8px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s, background-color 0.3s;
+            text-decoration: none;
+            color: var(--main-text);
+            display: block;
+            padding: 20px;
+            min-height: 150px;
+            position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s, box-shadow 0.3s;
-            text-decoration: none; /* 移除連結下劃線 */
-            color: var(--main-color);
-            display: flex;
-            flex-direction: column;
         }
 
         .content-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            background-color: var(--card-hover);
         }
 
-        .card-body {
-            padding: 20px;
-            flex-grow: 1;
-        }
-
-        .card-body h3 {
-            font-size: 1.5em;
-            margin-top: 0;
+        .card-title {
+            font-size: 1.4em;
+            margin-top: 10px;
             margin-bottom: 10px;
+            font-weight: bold;
+            line-height: 1.4;
         }
 
         .card-tag {
-            font-size: 0.8em;
-            background-color: var(--accent-color);
-            color: var(--bg-color);
-            padding: 3px 8px;
+            font-size: 0.85em;
+            padding: 4px 10px;
             border-radius: 4px;
             display: inline-block;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            font-weight: 500;
         }
 
-        /* 頁腳 */
-        .footer {
-            text-align: center;
-            padding: 20px;
-            margin-top: 50px;
-            font-size: 0.85em;
-            opacity: 0.5;
+        .card-summary {
+            font-size: 0.9em;
+            opacity: 0.7;
         }
 
         /* 響應式調整 */
         @media (max-width: 768px) {
             .header h1 { font-size: 2.5em; }
-            .header .subtitle { font-size: 1em; }
-            .content-grid { grid-template-columns: 1fr; } /* 手機上變為單欄 */
+            .category-section { padding: 20px; }
+            .content-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -144,45 +134,105 @@
     <div class="main-wrapper">
         <header class="header">
             <h1>知識穹頂 V2.0</h1>
-            <p class="subtitle">領域化分組儀表板 • 預設顯示各領域最新 3 專題</p>
+            <p class="subtitle">全面展示與模組化分類 • 您的知識資產儀表板</p>
         </header>
 
-        <div class="filter-menu">
-            <button class="active">全部內容</button>
-            <button>HR 數位化</button>
-            <button>數據視覺化</button>
-            <button>技術與軟體</button>
-            <button>策略與規劃</button>
-            <button>ESG/永續</button>
-        </div>
+        <section class="category-section" style="border-left: 5px solid var(--color-hr);">
+            <h2 style="color: var(--color-hr); border-color: var(--color-hr);">HR 數位化與體驗中心 (HR Digital)</h2>
+            <div class="content-grid">
+                
+                <a href="hr-digital-center-plan.html" class="content-card">
+                    <span class="card-tag" style="background-color: var(--color-hr);">規劃</span>
+                    <h3 class="card-title">HR 數位媒體體驗中心 - 全方位建置規劃書</h3>
+                    <p class="card-summary">深入探討體驗中心之組織、技術藍圖與營運模式，具體規劃分階段實施路徑。</p>
+                </a>
 
-        <section class="content-grid">
-            
-            <a href="hr-digital-center-plan.html" class="content-card">
-                <div class="card-body">
-                    <span class="card-tag">HR 數位化</span>
-                    <h3>HR 數位媒體體驗中心 - 全方位建置規劃書</h3>
-                    <p>摘要：深入探討體驗中心之組織、技術藍圖與營運模式，具體規劃分階段實施路徑。</p>
-                </div>
-            </a>
+                <a href="hr-digital-feasibility-strategy.html" class="content-card">
+                    <span class="card-tag" style="background-color: var(--color-hr);">策略</span>
+                    <h3 class="card-title">HR 數位媒體體驗中心 可行性評估與戰略規劃</h3>
+                    <p class="card-summary">從市場與內部資源角度，分析建置體驗中心的可行性，並制定初期推廣策略。</p>
+                </a>
 
-            <a href="tsmc-apts-visual-strategy-list.html" class="content-card">
-                <div class="card-body">
-                    <span class="card-tag">數據視覺化</span>
-                    <h3>TSMC APTS 全領域視覺戰略總表</h3>
-                    <p>摘要：涵蓋 APTS 各業務領域，制定統一的視覺標準和數據傳達策略，確保資訊一致性。</p>
-                </div>
-            </a>
+                <a href="hr-digital-ai-strategy.html" class="content-card">
+                    <span class="card-tag" style="background-color: var(--color-hr);">AI 整合</span>
+                    <h3 class="card-title">HR 數位媒體體驗中心：AI 戰略整合評估</h3>
+                    <p class="card-summary">評估 AI 技術在 HR 數位體驗中的應用潛力與風險，規劃智慧化服務的整合路徑。</p>
+                </a>
 
-            <a href="obs-transition-plugin-guide.html" class="content-card">
-                <div class="card-body">
-                    <span class="card-tag">技術與軟體</span>
-                    <h3>OBS 特色換場插件開發指南</h3>
-                    <p>摘要：提供 OBS 換場插件的從零開始的開發教學，包括 API 接口與編譯指南。</p>
-                </div>
-            </a>
+            </div>
+        </section>
 
-            </section>
+        <section class="category-section" style="border-left: 5px solid var(--color-data);">
+            <h2 style="color: var(--color-data); border-color: var(--color-data);">數據視覺化與儀表板 (Data Visualization)</h2>
+            <div class="content-grid">
+                
+                <a href="2025-data-vis-status.html" class="content-card">
+                    <span class="card-tag" style="background-color: var(--color-data);">趨勢</span>
+                    <h3 class="card-title">2025 年數據視覺化現況</h3>
+                    <p class="card-summary">分析最新視覺化工具、設計趨勢與技術應用場景，為年度策略提供參考。</p>
+                </a>
+
+                <a href="tsmc-apts-visual-strategy-list.html" class="content-card">
+                    <span class="card-tag" style="background-color: var(--color-data);">戰略總表</span>
+                    <h3 class="card-title">TSMC APTS 全領域視覺戰略總表</h3>
+                    <p class="card-summary">針對 APTS 各業務領域，統一視覺標準和數據傳達策略，確保資訊一致性與效率。</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="category-section" style="border-left: 5px solid var(--color-tech);">
+            <h2 style="color: var(--color-tech); border-color: var(--color-tech);">技術與軟體應用 (Tech & Software)</h2>
+            <div class="content-grid">
+                
+                <a href="obs-transition-plugin-guide.html" class="content-card">
+                    <span class="card-tag" style="background-color: var(--color-tech);">開發指南</span>
+                    <h3 class="card-title">OBS 特色換場插件開發指南</h3>
+                    <p class="card-summary">提供 OBS 換場插件的從零開始的開發教學，包括 API 接口與編譯指南。</p>
+                </a>
+                
+                <a href="lightroom-workflow-infographic.html" class="content-card">
+                    <span class="card-tag" style="background-color: var(--color-tech);">攝影工作流</span>
+                    <h3 class="card-title">Lightroom 專業攝影工作流程資訊圖表</h3>
+                    <p class="card-summary">標準化攝影後期流程，確保影像處理品質與效率，適用於專業與業餘愛好者。</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="category-section" style="border-left: 5px solid var(--color-strategy);">
+            <h2 style="color: var(--color-strategy); border-color: var(--color-strategy);">策略與規劃 (Strategy & Planning)</h2>
+            <div class="content-grid">
+                
+                <a href="hsinchu-science-park-2024-report.html" class="content-card">
+                    <span class="card-tag" style="background-color: var(--color-strategy);">年度報告</span>
+                    <h3 class="card-title">新竹科學園區：2024 年度績效與未來展望</h3>
+                    <p class="card-summary">回顧園區 2024 年重點產業績效，並對未來五年關鍵技術發展趨勢進行展望。</p>
+                </a>
+
+                <a href="personalized-weight-schedule.html" class="content-card">
+                    <span class="card-tag" style="background-color: var(--color-strategy);">個人化</span>
+                    <h3 class="card-title">個人化體重調理與補劑優化排程</h3>
+                    <p class="card-summary">基於數據分析的個人化健康排程，優化體重管理與營養補充方案。</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="category-section" style="border-left: 5px solid var(--color-esg);">
+            <h2 style="color: var(--color-esg); border-color: var(--color-esg);">ESG 與影像處理 (ESG & Image Processing)</h2>
+            <div class="content-grid">
+                
+                <a href="hsinchu-baoshan-esg-infographic.html" class="content-card">
+                    <span class="card-tag" style="background-color: var(--color-esg);">ESG 永續</span>
+                    <h3 class="card-title">新竹寶山新城社區 ESG 永續發展資訊圖表</h3>
+                    <p class="card-summary">視覺化呈現社區在環境、社會、公司治理方面的永續成果與未來目標。</p>
+                </a>
+                
+                <a href="raw-file-digital-darkroom-guide.html" class="content-card">
+                    <span class="card-tag" style="background-color: var(--color-esg);">數位暗房</span>
+                    <h3 class="card-title">駕馭 RAW 檔案：數位暗房指南</h3>
+                    <p class="card-summary">從專業角度教導如何處理和編輯 RAW 格式照片，實現最佳畫質輸出。</p>
+                </a>
+            </div>
+        </section>
         
         <footer class="footer">
             設計原則：聚焦領域、即時內容、彈性編程。
