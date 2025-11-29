@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蔡孟璋個人多媒體成果展示</title>
+    <!-- 引入 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 自定義樣式：設置字體和捲軸樣式 */
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s;
+        }
+        
+        /* 影片縮圖容器：用於維持 16:9 比例 */
+        .video-thumbnail-container {
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 比例 (9 / 16 * 100%) */
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.75rem 0.75rem 0 0; 
+        }
+        .video-thumbnail-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease-out;
+        }
+
+        /* 攝影作品使用 1:1 比例 */
+        .photo-image-container {
+            width: 100%;
+            padding-top: 100%; /* 1:1 比例 */
+            position: relative;
+            overflow: hidden;
+        }
+        .photo-image-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease-out;
+        }
+        
+        /* 卡片懸停效果 */
+        .project-card {
+            transition: transform 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+            cursor: pointer;
+        }
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+        }
+        .project-card:hover .photo-image-container img {
+             transform: scale(1.05);
+        }
+        .project-card:hover .video-thumbnail-container img {
+             transform: scale(1.05);
+        }
+        /* 針對無連結的 DIV 移除指標 */
+        .cursor-default {
+            cursor: default;
+        }
+        /* 隱藏未選中的區塊 */
+        .portfolio-section {
+            display: none;
+        }
+        /* 導航活躍狀態 */
+        .nav-link.active {
+            color: #FFD700; /* primary-accent */
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 4px;
+        }
+
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#141414',
+                        'dark-card': '#1f1f1f',
+                        'primary-accent': '#FFD700', /* 金色/亮色強調 */
+                    }
+                }
+            }
+        }
+
+        // 從 CSV 整理出的影片作品資料 (已修正語法錯誤)
+        const projectVideoData = {
+            '主題影片': [
+                { title: 'IDEA微電影', id: 'rd7JZWXbzfU', link: 'https://youtu.be/rd7JZWXbzfU', thumbnail: 'https://img.youtube.com/vi/rd7JZWXbzfU/hqdefault.jpg' },
+                { title: '2025 家庭日', id: 'KQ-GZDqUbWA', link: 'https://youtu.be/KQ-GZDqUbWA', thumbnail: 'https://img.youtube.com/vi/KQ-GZDqUbWA/hqdefault.jpg' },
+                { title: '2025家庭日版一日工程師', id: 'cCSOdlPlaaM', link: 'https://youtu.be/cCSOdlPlaaM', thumbnail: 'https://img.youtube.com/vi/cCSOdlPlaaM/hqdefault.jpg' },
+                { title: '2020尾牙影片_新竹', id: 'HlyJ1tB_OUs', link: 'https://youtu.be/HlyJ1tB_OUs', thumbnail: 'https://img.youtube.com/vi/HlyJ1tB_OUs/hqdefault.jpg' },
+                { title: '2020尾牙影片_龍潭', id: '5Hwcr44VeB8', link: 'https://youtu.be/5Hwcr44VeB8', thumbnail: 'https://img.youtube.com/vi/5Hwcr44VeB8/hqdefault.jpg' },
+                { title: '2020尾牙影片_台中', id: 'AAjoyH3EhKc', link: 'https://youtu.be/AAjoyH3EhKc', thumbnail: 'https://img.youtube.com/vi/AAjoyH3EhKc/hqdefault.jpg' },
+                { title: '2020尾牙影片_台南', id: 'UsOUhcwJdsA', link: 'https://youtu.be/UsOUhcwJdsA', thumbnail: 'https://img.youtube.com/vi/UsOUhcwJdsA/hqdefault.jpg' }
+            ],
+            '活動紀錄': [
+                { title: '2025運動會吉象隊進場', link: 'https://youtu.be/l8rFP40G0rw', thumbnail: 'https://img.youtube.com/vi/l8rFP40G0rw/hqdefault.jpg' },
+                { title: '微電影影片花絮', link: 'https://youtu.be/b5E7vcmj8b0', thumbnail: 'https://img.youtube.com/vi/b5E7vcmj8b0/hqdefault.jpg' },
+				{ title: '2025竹南廠區家庭日', link: 'https://youtu.be/sKLLXxoOpEs', thumbnail: 'https://img.youtube.com/vi/sKLLXxoOpEs/hqdefault.jpg' }
+            ],
+			'科技論壇': [
+                { title: '2025科技論壇AI影片', link: 'https://youtu.be/OQYVULipHWM', thumbnail: 'https://img.youtube.com/vi/OQYVULipHWM/hqdefault.jpg' }
+            ]
+        };
+
+        // 整合使用者提供的相片作品資料 (已修正圖片路徑以匹配上傳檔案大小寫)
+        const projectPhotoData = {
+            '活動攝影': [
+                { title: '20251101-02 GlobalFamily@Taitung', link: 'https://photos.app.goo.gl/Ly2Fr2956XDed5TP8', imageUrl: './images/taitun_gf.jpeg' },
+                { title: '20251018 Global Family@tsmcHAPPY DIWALI', link: 'https://photos.app.goo.gl/6xt5w4ZrBYu3R6k87', imageUrl: './images/diwali.JPG' }, 
+                { title: '20250315 Global Family@tsmc 色彩節', link: 'https://photos.app.goo.gl/HqBKTZQL2yDV768E8', imageUrl: './images/color_festival.jpeg' }, 
+                { title: '2025 吉象隊進場大隊回憶錄', link: 'https://photos.app.goo.gl/S1b4xFnuf4bZKCy49', imageUrl: './images/elephant_team.JPG' }, 
+                { title: '20250802 竹南廠區家庭日', link: 'https://photos.app.goo.gl/exiuR1RjxAofux3X7', imageUrl: './images/zhunan_family.JPG' }, 
+                { title: '20251108台積電運動會', link: 'https://photos.app.goo.gl/KXQzLVSBnv3zkC348', imageUrl: './images/tsmc_sports.JPG' }
+            ],
+            
+        };
+
+        // 渲染影片作品區塊
+        function renderVideos() {
+            const videoContainer = document.getElementById('video-content-container');
+            if (!videoContainer) return;
+            videoContainer.innerHTML = ''; // 清空內容
+
+            for (const category in projectVideoData) {
+                if (projectVideoData.hasOwnProperty(category)) {
+                    const items = projectVideoData[category];
+                    
+                    // 1. 建立類別標題
+                    const categoryTitle = document.createElement('h4');
+                    categoryTitle.className = 'text-2xl font-bold text-white mb-6 mt-10 border-l-4 border-primary-accent pl-4 tracking-wider';
+                    categoryTitle.textContent = category;
+                    videoContainer.appendChild(categoryTitle);
+
+                    // 2. 建立網格容器
+                    const grid = document.createElement('div');
+                    grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8';
+                    
+                    // 3. 遍歷類別內的作品項目
+                    items.forEach(item => {
+                        const cardHTML = `
+                            <a href="${item.link}" target="_blank" class="project-card block bg-dark-card rounded-xl overflow-hidden shadow-2xl hover:shadow-primary-accent/30">
+                                <div class="video-thumbnail-container relative">
+                                    <img src="${item.thumbnail}" onerror="this.onerror=null;this.src='https://placehold.co/640x360/333/FFF?text=Video+Link';" alt="${item.title} 縮圖" class="w-full h-full">
+                                    <!-- 播放圖示疊加層 -->
+                                    <div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-80 hover:opacity-100 transition duration-300">
+                                        <svg class="w-12 h-12 text-white/90" fill="currentColor" viewBox="0 0 24 24"><path d="M6 3l12 9-12 9V3z"/></svg>
+                                    </div>
+                                </div>
+                                <div class="p-5">
+                                    <h5 class="text-xl font-semibold text-white mb-2 truncate">${item.title}</h5>
+                                    <p class="text-gray-400 text-sm">類別: ${category} | 點擊前往 YouTube 觀看</p>
+                                    <span class="inline-block mt-3 text-xs font-medium text-primary-accent/80 border border-primary-accent/50 rounded-full px-3 py-1">#${category}</span>
+                                </div>
+                            </a>
+                        `;
+                        grid.innerHTML += cardHTML;
+                    });
+                    
+                    videoContainer.appendChild(grid);
+                }
+            }
+        }
+
+        // 渲染相片作品區塊
+        function renderPhotos() {
+            const photoContainer = document.getElementById('photo-content-container');
+            if (!photoContainer) return;
+            photoContainer.innerHTML = ''; // 清空內容
+
+            for (const category in projectPhotoData) {
+                if (projectPhotoData.hasOwnProperty(category)) {
+                    const items = projectPhotoData[category];
+                    
+                    // 1. 建立類別標題
+                    const categoryTitle = document.createElement('h4');
+                    categoryTitle.className = 'text-2xl font-bold text-white mb-6 mt-10 border-l-4 border-primary-accent pl-4 tracking-wider';
+                    categoryTitle.textContent = category;
+                    photoContainer.appendChild(categoryTitle);
+
+                    // 2. 建立網格容器
+                    const grid = document.createElement('div');
+                    grid.className = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6';
+                    
+                    // 3. 遍歷類別內的作品項目
+                    items.forEach(item => {
+                        const isLink = item.link && item.link.trim() !== '';
+
+                        // 基礎卡片內容
+                        const cardContent = `
+                            <div class="photo-image-container">
+                                <img src="${item.imageUrl}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/333/FFF?text=Image+Missing';" alt="${item.title}" class="w-full h-full">
+                            </div>
+                            <div class="p-4">
+                                <h5 class="text-lg font-semibold text-white truncate">${item.title}</h5>
+                                <p class="text-gray-400 text-xs mt-1">類別: ${category} ${isLink ? '| 點擊前往新分頁' : '| 僅供預覽'}</p>
+                                <span class="inline-block mt-2 text-xs font-medium text-primary-accent/80 border border-primary-accent/50 rounded-full px-2 py-0.5">#${category.replace('/', '')}</span>
+                            </div>
+                        `;
+                        
+                        let cardHTML = '';
+                        const baseClasses = "project-card block bg-dark-card rounded-lg overflow-hidden shadow-lg ";
+                        
+                        if (isLink) {
+                            // 有連結時，使用 A 標籤，並保留所有懸停效果 (在新分頁開啟)
+                            const linkClasses = baseClasses + "hover:shadow-primary-accent/30";
+                            cardHTML = `<a href="${item.link}" target="_blank" class="${linkClasses}">${cardContent}</a>`;
+                        } else {
+                            // 無連結時，使用 DIV 標籤，並移除滑鼠指標
+                            const divClasses = baseClasses + "cursor-default";
+                            cardHTML = `<div class="${divClasses}">${cardContent}</div>`;
+                        }
+
+                        grid.innerHTML += cardHTML;
+                    });
+                    
+                    photoContainer.appendChild(grid);
+                }
+            }
+        }
+
+        // 路由處理函數 (Router)
+        function handleRoute() {
+            const hash = window.location.hash || '#videos'; // 預設頁面
+            
+            // 隱藏所有區塊
+            document.querySelectorAll('.portfolio-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            // 移除所有活躍狀態
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // 顯示當前區塊並設定活躍狀態
+            const targetSection = document.querySelector(hash);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+                document.querySelector(`.nav-link[href="${hash}"]`).classList.add('active');
+            }
+
+            // 確保內容已渲染 (只在需要時渲染)
+            if (hash === '#videos' && document.getElementById('video-content-container').innerHTML === '') {
+                renderVideos();
+            } else if (hash === '#photos' && document.getElementById('photo-content-container').innerHTML === '') {
+                renderPhotos();
+            }
+        }
+
+        // 監聽哈希變化和頁面載入
+        window.addEventListener('hashchange', handleRoute);
+        document.addEventListener('DOMContentLoaded', () => {
+            // 在 DOM 載入後先渲染一次所有內容（確保路由切換時是瞬時的）
+            renderVideos();
+            renderPhotos();
+            handleRoute(); // 執行初始路由
+        });
+
+    </script>
+</head>
+<body class="bg-dark-bg text-gray-100">
+
+    <!-- 頂部導航欄 (固定) -->
+    <header class="fixed top-0 left-0 w-full bg-dark-bg/95 backdrop-blur-sm shadow-xl z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <!-- Logo/首頁連結 -->
+            <a href="#videos" class="text-xl font-bold text-primary-accent tracking-widest">
+                蔡孟璋
+            </a>
+            <nav class="space-x-6">
+                <!-- 路由連結 -->
+                <a href="#videos" class="nav-link text-gray-400 hover:text-primary-accent transition duration-300">🎥 影片作品集</a>
+                <a href="#photos" class="nav-link text-gray-400 hover:text-primary-accent transition duration-300">📸 攝影作品集</a>
+                <a href="#about" class="nav-link text-gray-400 hover:text-primary-accent transition duration-300">🙋 關於我</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主內容區 -->
+    <main class="pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- 影片作品區塊 (主頁面 1) -->
+        <section id="videos" class="portfolio-section py-16">
+            <h2 class="text-5xl font-extrabold text-center mb-4 text-white">
+                動態影像作品集
+            </h2>
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto text-center mb-12">
+                主題影片與活動紀錄的精選，點擊縮圖前往 YouTube 觀看。
+            </p>
+
+            <div class="py-4">
+                <h3 class="text-3xl font-bold text-center mb-12 text-primary-accent border-b border-primary-accent/30 pb-4">
+                    YouTube 連結
+                </h3>
+            </div>
+
+            <div id="video-content-container">
+                <!-- 影片內容將由 JavaScript 動態生成 -->
+            </div>
+        </section>
+
+        <!-- 攝影作品區塊 (主頁面 2) -->
+        <section id="photos" class="portfolio-section py-16">
+            <h2 class="text-5xl font-extrabold text-center mb-4 text-white">
+                靜態攝影作品集
+            </h2>
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto text-center mb-12">
+                精選活動攝影與專案花絮，點擊卡片前往 Google 相簿。
+            </p>
+            
+            <div class="py-4">
+                <h3 class="text-3xl font-bold text-center mb-12 text-primary-accent border-b border-primary-accent/30 pb-4">
+                    活動攝影相簿連結
+                </h3>
+            </div>
+            
+            <div id="photo-content-container">
+                <!-- 相片內容將由 JavaScript 動態生成 -->
+            </div>
+
+            
+        </section>
+        
+        <!-- 關於我區塊 (單獨頁面) -->
+        <section id="about" class="portfolio-section py-16 text-center">
+            <h2 class="text-5xl font-extrabold text-center mb-4 text-white">
+                🙋 關於我
+            </h2>
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto text-center mb-12">
+                我的專長與聯絡方式
+            </p>
+            <div class="flex flex-col md:flex-row items-center justify-center max-w-4xl mx-auto">
+                <img src="./images/profile.jpg" alt="您的頭像" onerror="this.onerror=null;this.src='https://placehold.co/150x150/333/ccc?text=Your+Photo';" class="rounded-full w-32 h-32 object-cover mb-6 md:mb-0 md:mr-8 border-4 border-primary-accent/50">
+                <div class="text-left">
+                    <p class="text-gray-300 text-lg mb-4">
+                        我是蔡孟璋，一位熱衷於用影像捕捉時光的創作者。我的專長涵蓋從概念發想到後期製作的整個流程，特別擅長光影控制與鏡頭敘事。
+                    </p>
+                    <div class="mt-4 space-x-4">
+                        <a href="mailto:mark730516@gmail.com" class="text-primary-accent hover:text-white transition duration-300 underline">Email 聯繫</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部版權宣告 -->
+    <footer class="mt-12 py-6 bg-dark-card text-center text-gray-500">
+        <p>
+            &copy; 2025 蔡孟璋. All rights reserved. | Style: Dark Mode & Hierarchical
+        </p>
+    </footer>
+</body>
+</html>
