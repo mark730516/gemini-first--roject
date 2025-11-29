@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>知識穹頂 (Knowledge Nexus) | 專屬專案總覽</title>
+    <title>知識穹頂 V2.0 (分組儀表板) | 專案總覽</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -12,19 +12,22 @@
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
             background-color: #0F172A; /* Slate 900 - 深藍科技感 */
             color: #E2E8F0; /* Slate 200 - 淺色文字 */
+            min-height: 100vh;
         }
         .text-neon-cyan {
             color: #22D3EE; /* Cyan 400 */
         }
-        .card-bg {
-            background-color: #1E293B; /* Slate 800 - 卡片背景 */
+        .panel-bg {
+            background-color: #1E293B; /* Slate 800 - 面板背景 */
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
-        .card-shadow {
-            box-shadow: 0 4px 15px rgba(34, 211, 238, 0.1);
+        .card-bg {
+            background-color: #0F172A; /* Slate 900 - 卡片背景 */
         }
         .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(34, 211, 238, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(34, 211, 238, 0.2);
             border-color: #22D3EE;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -35,6 +38,20 @@
             padding: 0.25rem 0.6rem;
             border-radius: 9999px;
             white-space: nowrap;
+        }
+        .panel-header {
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+        .panel-header:hover {
+            background-color: #334155;
+        }
+        .panel-icon {
+            transition: transform 0.3s ease;
+        }
+        .panel-collapsed .panel-icon {
+            transform: rotate(-90deg);
         }
         /* 自定義捲軸 */
         ::-webkit-scrollbar { width: 8px; }
@@ -47,186 +64,112 @@
 
     <div class="max-w-7xl mx-auto">
         
-        <header class="text-center py-12 border-b border-slate-700 mb-12 sticky top-0 bg-slate-900/90 backdrop-blur-sm z-50">
+        <header class="text-center py-12 border-b border-slate-700 mb-12">
             <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight mb-2">
-                知識<span class="text-neon-cyan">穹頂</span>
+                知識<span class="text-neon-cyan">穹頂</span> V2.0
             </h1>
-            <p class="text-xl text-slate-400">專屬議題與報告總覽 (Knowledge Nexus)</p>
-            <div class="mt-6 flex flex-wrap justify-center gap-3" id="tag-filter-container">
-                </div>
+            <p class="text-xl text-slate-400">領域化分組儀表板：預設顯示各領域最新 3 專題</p>
         </header>
 
-        <section id="project-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            </section>
+        <div id="content-panels" class="space-y-10">
+            </div>
 
         <footer class="text-center mt-20 py-8 border-t border-slate-700">
-            <p class="text-slate-500 text-sm">所有專案資料皆源自使用者上傳內容。自動化生成並可彈性擴展。</p>
+            <p class="text-slate-500 text-sm">設計原則：聚焦領域、即時內容、彈性擴展。</p>
         </footer>
 
     </div>
 
     <script>
-        // --- 核心資料庫: 所有專案數據 (未來只需修改此區塊即可自動新增/更新) ---
+        // --- 核心資料庫: 專案數據 (使用優化後的標籤) ---
+        // 註：我將項目順序重排，讓「最新」項目能被正確演示。
         const projectsData = [
-            {
-                id: 'hr-digital-media-center',
-                title: 'HR 數位媒體體驗中心',
-                subtitle: '可行性評估與戰略規劃：Microsoft Teams 原生整合與 AI 對接',
-                tags: ['企業戰略', '硬體設備', 'AI整合', 'Teams', '預算分析'],
-                file: 'HR 數位媒體體驗中心可行性評估與戰略規劃.html',
-                icon: '🖥️'
-            },
-            {
-                id: 'obs-transition-plugin',
-                title: 'OBS 特色換場插件開發',
-                subtitle: '視覺過渡技術指南：Shader 渲染邏輯與類型分析矩陣',
-                tags: ['軟體開發', 'OBS', '編程指南', 'Shader', '視覺特效'],
-                file: 'OBS 特色換場插件開發指南.html',
-                icon: '🎮'
-            },
-            {
-                id: 'lightroom-workflow',
-                title: 'Lightroom 專業攝影工作流程',
-                subtitle: '從混亂到精選：高效篩選漏斗與智慧後製步驟',
-                tags: ['專業技能', '攝影', '工作流程', '圖表分析', '效率優化'],
-                file: 'Lightroom 專業攝影工作流程資訊圖表.html',
-                icon: '📸'
-            },
-            {
-                id: 'bio-rhythm-schedule',
-                title: '個人化體重調理與補劑優化排程',
-                subtitle: '生物時鐘優化：針對「抽筋、痠痛」的補劑時程與交互作用避雷區',
-                tags: ['個人健康', '生物科技', '營養學', '圖表分析', '優化排程'],
-                file: '個人化體重調理與補劑優化排程.html',
-                icon: '🧬'
-            },
-            {
-                id: 'hsinchu-xincheng-esg',
-                title: '新竹寶山新城社區 ESG 永續發展',
-                subtitle: '黑糖反哺長照典範：核心困境與品牌拓展建議',
-                tags: ['地方創生', 'ESG', '社會議題', '戰略規劃', '農產'],
-                file: '新竹寶山新城社區 ESG 永續發展資訊圖表.html',
-                icon: '🌱'
-            },
-            {
-                id: 'hsinchu-science-park',
-                title: '新竹科學園區年度績效',
-                subtitle: '2024 總覽：核心產業深度解析與未來技術焦點 (AI, 6G, Chiplet)',
-                tags: ['產業分析', '半導體', '企業戰略', 'AI', '趨勢報告'],
-                file: '新竹科學園區：2024年度績效與未來展望.html',
-                icon: '💡'
-            },
-            {
-                id: 'raw-darkroom-guide',
-                title: '駕馭 RAW 檔案：數位暗房指南',
-                subtitle: '14 位元數據的力量：專業四步驟修圖流程與搶救不可挽回的照片',
-                tags: ['專業技能', '攝影', '工作流程', '技術指南', '圖表分析'],
-                file: '駕馭 RAW 檔案：數位暗房指南.html',
-                icon: '🖼️'
-            },
-            {
-                id: 'tsmc-apts-strategy',
-                title: 'TSMC APTS 全領域視覺戰略',
-                subtitle: '從「代工廠」重塑為奈米級建築工藝：COUPÉ 堆疊與 OHT 自動化協奏',
-                tags: ['半導體', '製造技術', '企業戰略', '工程', '視覺化'],
-                file: 'TSMC APTS 全領域視覺戰略總表.html',
-                icon: '🔬'
-            }
-            // 💡 後續新增的專案，只需在這個陣列中新增物件即可。 
-            // 範例: { id: 'new-project', title: '新專案名稱', subtitle: '摘要', tags: ['新標籤'], file: '新專案檔案.html', icon: '✨' }
+            // 專業技能 (Pro Skills)
+            { id: 'lightroom-workflow', title: 'Lightroom 專業攝影工作流程', subtitle: '高效篩選漏斗與智慧後製步驟', tags: ['專業技能', '工作流程', '影像處理', '效率優化', '技術指南'], file: 'Lightroom 專業攝影工作流程資訊圖表.html', icon: '📸' },
+            { id: 'raw-darkroom-guide', title: '駕馭 RAW 檔案：數位暗房指南', subtitle: '14 位元數據的力量：專業四步驟修圖流程', tags: ['專業技能', '影像處理', '技術指南', '報告分析', '效率優化'], file: '駕馭 RAW 檔案：數位暗房指南.html', icon: '🖼️' },
+            
+            // 科技製造 (Tech/Mfg)
+            { id: 'hr-digital-media-center', title: 'HR 數位媒體體驗中心', subtitle: '可行性評估：Teams 整合與 AI 對接戰略', tags: ['科技製造', '戰略規劃', '工程技術', 'AI整合', '報告分析'], file: 'HR 數位媒體體驗中心可行性評估與戰略規劃.html', icon: '🖥️' },
+            { id: 'tsmc-apts-strategy', title: 'TSMC APTS 全領域視覺戰略', subtitle: '奈米級建築工藝：COUPÉ 堆疊與 OHT 自動化協奏', tags: ['科技製造', '戰略規劃', '製造流程', '工程技術', '報告分析'], file: 'TSMC APTS 全領域視覺戰略總表.html', icon: '🔬' },
+            { id: 'hsinchu-science-park', title: '新竹科學園區年度績效', subtitle: '核心產業深度解析與未來技術焦點 (AI, 6G, Chiplet)', tags: ['科技製造', '產業趨勢', '戰略規劃', '報告分析', 'AI整合'], file: '新竹科學園區：2024年度績效與未來展望.html', icon: '💡' },
+
+            // 軟體開發 (Software Dev)
+            { id: 'obs-transition-plugin', title: 'OBS 特色換場插件開發', subtitle: '視覺過渡技術指南：Shader 渲染邏輯與類型分析矩陣', tags: ['軟體開發', '插件開發', '編程指南', '視覺特效', '技術指南'], file: 'OBS 特色換場插件開發指南.html', icon: '🎮' },
+            
+            // 社會人文 (Social/Health)
+            { id: 'bio-rhythm-schedule', title: '個人化體重調理與補劑優化排程', subtitle: '生物時鐘優化：針對「抽筋、痠痛」的補劑時程', tags: ['社會人文', '健康優化', '營養學', '效率優化', '報告分析'], file: '個人化體重調理與補劑優化排程.html', icon: '🧬' },
+            { id: 'hsinchu-xincheng-esg', title: '寶山新城社區 ESG 永續發展', subtitle: '黑糖反哺長照典範：核心困境與品牌拓展建議', tags: ['社會人文', 'ESG', '地方創生', '戰略規劃', '報告分析'], file: '新竹寶山新城社區 ESG 永續發展資訊圖表.html', icon: '🌱' },
         ];
         
-        // --- 核心渲染函數 ---
-        const projectGrid = document.getElementById('project-grid');
-        const tagFilterContainer = document.getElementById('tag-filter-container');
-        let currentFilter = 'all';
+        // --- 領域定義與分組邏輯 ---
+        const domains = {
+            '科技製造': { icon: '🤖', description: '專注於半導體、高科技設施與企業數位轉型戰略。', count: 0, items: [] },
+            '軟體開發': { icon: '💻', description: '專注於編程指南、插件開發與程式視覺化技術。', count: 0, items: [] },
+            '專業技能': { icon: '🛠️', description: '專注於個人專業工具、工作流程與效率優化。', count: 0, items: [] },
+            '社會人文': { icon: '🌍', description: '專注於 ESG、地方創生與個人健康優化。', count: 0, items: [] }
+        };
 
-        // 1. 生成卡片 HTML
-        function createCard(project) {
-            const tagsHtml = project.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+        // 1. 將專案依據第一個標籤 (領域) 進行分組和計數
+        projectsData.forEach(project => {
+            const domainKey = project.tags[0];
+            if (domains[domainKey]) {
+                domains[domainKey].items.push(project);
+                domains[domainKey].count++;
+            }
+        });
+
+        const contentPanels = document.getElementById('content-panels');
+
+        // 2. 核心渲染函數：生成整個分組面板
+        function renderPanels() {
+            contentPanels.innerHTML = ''; // 清空內容
+
+            Object.keys(domains).forEach(domainKey => {
+                const domain = domains[domainKey];
+                const totalItems = domain.items.length;
+                const latestItems = domain.items.slice(0, 3); // 只取最新的 3 個專題
+
+                const panelHtml = `
+                    <div id="panel-${domainKey.replace(/\s/g, '-')}" class="panel-bg p-6">
+                        <div class="panel-header flex justify-between items-center p-2 rounded-t-lg mb-4" onclick="togglePanel('${domainKey.replace(/\s/g, '-')}', this)">
+                            <h2 class="text-3xl font-bold flex items-center">
+                                <span class="text-neon-cyan text-4xl mr-3">${domain.icon}</span>
+                                ${domainKey} (${totalItems} 篇)
+                            </h2>
+                            <span class="text-neon-cyan text-3xl panel-icon transform rotate-0">▼</span>
+                        </div>
+
+                        <div class="panel-body grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-total-count="${totalItems}">
+                            ${latestItems.map(createCardHtml).join('')}
+                        </div>
+
+                        ${totalItems > 3 ? `
+                            <div class="text-center mt-6">
+                                <button class="bg-neon-cyan hover:bg-cyan-400 text-slate-900 font-bold py-2 px-6 rounded-full transition-colors" onclick="showAllItems('${domainKey.replace(/\s/g, '-')}', this)">
+                                    顯示所有 ${totalItems} 篇報告
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                contentPanels.innerHTML += panelHtml;
+            });
+        }
+
+        // 3. 生成單一專題卡片 HTML
+        function createCardHtml(project) {
+            // 第一個標籤是領域標籤，略過
+            const contentTags = project.tags.slice(1).map(tag => `<span class="tag">${tag}</span>`).join('');
             
-            // 使用 a 標籤確保連結功能
             return `
-                <a href="${project.file}" target="_blank" class="card-bg p-6 rounded-xl border border-slate-700 card-shadow card-hover block">
-                    <div class="text-4xl mb-4 text-neon-cyan">${project.icon}</div>
-                    <h3 class="text-xl font-bold text-white mb-2">${project.title}</h3>
-                    <p class="text-sm text-slate-400 mb-4">${project.subtitle}</p>
-                    <div class="flex flex-wrap gap-2">${tagsHtml}</div>
+                <a href="${project.file}" target="_blank" class="card-bg p-4 rounded-lg border border-slate-700 card-hover block">
+                    <div class="text-2xl mb-2 text-neon-cyan">${project.icon}</div>
+                    <h3 class="text-lg font-bold text-white mb-1">${project.title}</h3>
+                    <p class="text-xs text-slate-400 mb-3 truncate">${project.subtitle}</p>
+                    <div class="flex flex-wrap gap-2">${contentTags}</div>
                 </a>
             `;
         }
 
-        // 2. 篩選與渲染卡片
-        function renderCards(filterTag) {
-            projectGrid.innerHTML = ''; // 清空現有卡片
-            
-            const filteredProjects = projectsData.filter(project => {
-                if (filterTag === 'all') return true;
-                return project.tags.includes(filterTag);
-            });
-
-            filteredProjects.forEach(project => {
-                projectGrid.innerHTML += createCard(project);
-            });
-        }
-
-        // 3. 創建標籤篩選器
-        function setupFilters() {
-            const allTags = new Set();
-            projectsData.forEach(project => {
-                project.tags.forEach(tag => allTags.add(tag));
-            });
-
-            // 預設的「所有項目」按鈕
-            let filterHtml = `
-                <button class="interactive-btn all-tag active" data-tag="all">
-                    全部項目 (${projectsData.length})
-                </button>
-            `;
-
-            // 其他標籤按鈕
-            allTags.forEach(tag => {
-                const count = projectsData.filter(p => p.tags.includes(tag)).length;
-                filterHtml += `
-                    <button class="interactive-btn" data-tag="${tag}">
-                        ${tag} (${count})
-                    </button>
-                `;
-            });
-
-            tagFilterContainer.innerHTML = filterHtml;
-
-            // 4. 綁定篩選器點擊事件
-            tagFilterContainer.addEventListener('click', (e) => {
-                const button = e.target.closest('.interactive-btn');
-                if (!button) return;
-
-                const tag = button.dataset.tag;
-                if (tag === currentFilter) return;
-
-                // 更新狀態
-                currentFilter = tag;
-                
-                // 更新按鈕樣式
-                document.querySelectorAll('.interactive-btn').forEach(btn => {
-                    btn.classList.remove('bg-neon-cyan', 'text-slate-900', 'active');
-                    btn.classList.add('bg-slate-700', 'text-slate-200');
-                });
-                button.classList.add('bg-neon-cyan', 'text-slate-900', 'active');
-                button.classList.remove('bg-slate-700', 'text-slate-200');
-
-                // 重新渲染卡片
-                renderCards(tag);
-            });
-
-            // 初始化按鈕樣式
-            document.querySelector('.all-tag').classList.add('bg-neon-cyan', 'text-slate-900');
-            document.querySelector('.all-tag').classList.remove('bg-slate-700', 'text-slate-200');
-        }
-
-        // --- 初始化頁面 ---
-        setupFilters();
-        renderCards(currentFilter); // 預設顯示所有項目
-    </script>
-</body>
-</html>
+        // 4. 收合/展開功能 (Toggle)
+        window.togglePanel = function(panelId, headerElement) {
